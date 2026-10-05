@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#10151d">
+<title>Kaduna Life — V2</title>
+<style>
+:root{
+  --bg:#090d13; --panel:#111822; --panel2:#17212d; --line:#273342;
+  --text:#f5f7fa; --muted:#98a6b7; --accent:#36d06f; --accent2:#54a9ff;
+  --gold:#f3c65b; --danger:#ff6b6b; --shadow:0 16px 50px rgba(0,0,0,.28);
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at top,#172332 0,#090d13 48%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;min-height:100vh}
+button,input,select{font:inherit}
+button{border:0;cursor:pointer}
+.app{max-width:1100px;margin:auto;padding:18px 14px 50px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+.brand{display:flex;align-items:center;gap:10px}.flag{font-size:28px}.brand h1{font-size:20px;margin:0}.brand small{color:var(--muted)}
+.iconbtn{background:var(--panel2);color:#fff;border:1px solid var(--line);border-radius:13px;padding:10px 12px}
+.hero{background:linear-gradient(135deg,#18283a,#101721 65%);border:1px solid #304153;border-radius:24px;padding:22px;box-shadow:var(--shadow);overflow:hidden;position:relative}
+.hero:after{content:"";position:absolute;width:220px;height:220px;border-radius:50%;right:-70px;top:-90px;background:rgba(54,208,111,.12)}
+.hero h2{margin:0 0 6px;font-size:32px}.hero p{margin:0;color:#b6c1cf}.hero-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.pill{background:#0c131c;border:1px solid var(--line);padding:9px 12px;border-radius:999px;font-weight:700}.pill span{color:var(--gold)}
+.tabs{display:flex;gap:8px;overflow:auto;padding:14px 0}.tab{white-space:nowrap;background:var(--panel);color:#cbd4df;border:1px solid var(--line);padding:11px 15px;border-radius:12px}.tab.active{background:#203529;color:#dfffe8;border-color:#32794a}
+.grid{display:grid;grid-template-columns:1.25fr .75fr;gap:14px}
+.card{background:rgba(17,24,34,.94);border:1px solid var(--line);border-radius:19px;padding:17px;box-shadow:0 10px 30px rgba(0,0,0,.15)}
+.card h3{margin:0 0 13px;font-size:18px}.sub{color:var(--muted);font-size:13px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.stat{background:#0d141d;border:1px solid var(--line);padding:11px;border-radius:13px}.stat b{display:block;font-size:17px;margin-top:4px}.bar{height:6px;background:#222d39;border-radius:99px;overflow:hidden;margin-top:7px}.bar i{display:block;height:100%;background:var(--accent);border-radius:99px}
+.money{font-size:28px;font-weight:900;color:#8bf0aa}.section{margin-top:14px}
+.location-grid,.job-grid,.shop-grid,.event-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.location,.job,.shop,.event{background:#0d141d;border:1px solid var(--line);border-radius:15px;padding:13px;transition:.15s}.location:hover,.job:hover,.shop:hover{transform:translateY(-2px);border-color:#3a526b}
+.location strong,.job strong{display:block;margin-bottom:5px}.tag{display:inline-block;color:#b8c7d8;background:#18222d;border-radius:999px;padding:4px 7px;font-size:11px;margin-top:7px}
+.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.action{padding:13px;background:#172331;color:#fff;border:1px solid #2b3b4d;border-radius:13px;text-align:left}.action:hover{border-color:#4d6a84}
+.action b{display:block}.action span{font-size:12px;color:var(--muted)}
+.profile{display:flex;gap:13px;align-items:center}.avatar{width:62px;height:62px;border-radius:18px;display:grid;place-items:center;font-size:31px;background:linear-gradient(135deg,#25394c,#173022);border:1px solid #3b5368}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:9px}.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}.field input,.field select{width:100%;background:#0b121a;color:#fff;border:1px solid var(--line);padding:11px;border-radius:11px;outline:none}
+.primary{background:var(--accent);color:#07120b;font-weight:900;padding:12px 16px;border-radius:12px}.secondary{background:#1b2734;color:#fff;border:1px solid var(--line);padding:12px 16px;border-radius:12px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.between{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.log{max-height:250px;overflow:auto}.log div{padding:9px 0;border-bottom:1px solid #202b37;color:#cbd5df;font-size:13px}.log div:last-child{border:0}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;padding:18px;z-index:20}.modal.show{display:flex}.modalbox{max-width:520px;width:100%;background:#101821;border:1px solid #344556;border-radius:20px;padding:20px;box-shadow:var(--shadow)}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%) translateY(30px);opacity:0;background:#eafbf0;color:#0b1b10;padding:11px 15px;border-radius:999px;font-weight:800;z-index:30;transition:.25s}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.badge{background:#342b13;color:#ffe28b;border:1px solid #665320;padding:5px 8px;border-radius:999px;font-size:11px}
+.locked{opacity:.48}.smallbtn{padding:8px 10px;border-radius:9px;background:#192532;color:#fff;border:1px solid var(--line)}
+footer{text-align:center;color:#687789;font-size:12px;padding:25px 0}
+@media(max-width:800px){.grid{grid-template-columns:1fr}.location-grid,.job-grid,.shop-grid,.event-grid{grid-template-columns:1fr 1fr}.stats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.app{padding:12px 10px 40px}.hero h2{font-size:27px}.location-grid,.job-grid,.shop-grid,.event-grid,.actions{grid-template-columns:1fr}.form{grid-template-columns:1fr}.hero{padding:18px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand"><div class="flag">🇳🇬</div><div><h1>Kaduna Life</h1><small>V2 • Your Kaduna. Your Story.</small></div></div>
+    <div class="row"><button class="iconbtn" onclick="saveGame()">💾 Save</button><button class="iconbtn" onclick="newLife()">↻ New</button></div>
+  </header>
+
+  <section class="hero">
+    <div class="between"><div><h2 id="heroTitle">Build your life.</h2><p id="heroSub">Start small. Make smart moves. Become a Kaduna legend.</p></div><div class="badge">V2</div></div>
+    <div class="hero-row">
+      <div class="pill">💰 <span id="money">₦10,000</span></div>
+      <div class="pill">📍 <span id="place">Kaduna Central</span></div>
+      <div class="pill">⭐ Level <span id="level">1</span></div>
+      <div class="pill">🏆 <span id="rep">0</span> rep</div>
+    </div>
+  </section>
+
+  <nav class="tabs">
+    <button class="tab active" onclick="scrollToId('dashboard')">Dashboard</button>
+    <button class="tab" onclick="scrollToId('map')">Kaduna Map</button>
+    <button class="tab" onclick="scrollToId('careers')">Careers</button>
+    <button class="tab" onclick="scrollToId('shop')">Market</button>
+    <button class="tab" onclick="scrollToId('events')">Events</button>
+  </nav>
+
+  <main id="dashboard" class="grid">
+    <div>
+      <section class="card">
+        <div class="profile">
+          <div class="avatar" id="avatar">🧑🏾‍💼</div>
+          <div><div class="sub">PLAYER</div><h3 id="playerName" style="margin:2px 0">New Player</h3><div id="careerText" class="sub">Unemployed • Room</div></div>
+        </div>
+        <div class="section stats" id="stats"></div>
+      </section>
+
+      <section class="card section">
+        <div class="between"><div><h3>⚡ Quick actions</h3><div class="sub">Every action changes your life.</div></div><span class="badge">Daily life</span></div>
+        <div class="actions" style="margin-top:12px">
+          <button class="action" onclick="act('work')"><b>💼 Work</b><span>Earn cash, use energy</span></button>
+          <button class="action" onclick="act('eat')"><b>🍲 Eat</b><span>Restore hunger</span></button>
+          <button class="action" onclick="act('rest')"><b>🛏️ Rest</b><span>Recover energy</span></button>
+          <button class="action" onclick="act('social')"><b>🗣️ Socialize</b><span>Gain happiness & rep</span></button>
+          <button class="action" onclick="act('study')"><b>📚 Learn</b><span>Improve intelligence</span></button>
+          <button class="action" onclick="lifeEvent()"><b>🎲 Life event</b><span>Something unexpected</span></button>
+        </div>
+      </section>
+
+      <section class="card section" id="map">
+        <div class="between"><div><h3>🗺️ Explore Kaduna</h3><div class="sub">Choose where your next chapter happens.</div></div><span class="badge">6 districts</span></div>
+        <div class="location-grid" style="margin-top:12px" id="locations"></div>
+      </section>
+
+      <section class="card section" id="careers">
+        <div class="between"><div><h3>💼 Careers</h3><div class="sub">Build skills and unlock better income.</div></div></div>
+        <div class="job-grid" style="margin-top:12px" id="jobs"></div>
+      </section>
+    </div>
+
+    <aside>
+      <section class="card">
+        <div class="between"><h3>🎯 Today's goals</h3><span id="goalCount" class="badge">0/3</span></div>
+        <div id="goals" class="log"></div>
+      </section>
+
+      <section class="card section" id="shop">
+        <div class="between"><div><h3>🛍️ Kaduna Market</h3><div class="sub">Cosmetics & useful upgrades.</div></div><span class="badge">No real money</span></div>
+        <div class="shop-grid" style="margin-top:12px" id="shopItems"></div>
+      </section>
+
+      <section class="card section" id="events">
+        <div class="between"><div><h3>📰 City Feed</h3><div class="sub">Your life log.</div></div></div>
+        <div class="log" id="log"></div>
+      </section>
+
+      <section class="card section">
+        <h3>🏆 Achievements</h3>
+        <div id="achievements" class="log"></div>
+      </section>
+    </aside>
+  </main>
+
+  <section class="card section">
+    <div class="between"><div><h3>✨ Start / edit your character</h3><div class="sub">Your choices shape your story.</div></div></div>
+    <div class="form" style="margin-top:12px">
+      <div class="field"><label>Name</label><input id="nameInput" placeholder="Enter a name" maxlength="20"></div>
+      <div class="field"><label>Ambition</label><select id="ambition"><option>Build a business</option><option>Become wealthy</option><option>Master technology</option><option>Become a creator</option><option>Help my community</option></select></div>
+    </div>
+    <div class="row" style="margin-top:12px"><button class="primary" onclick="startLife()">Start / Update Life</button><button class="secondary" onclick="loadGame()">Load saved life</button></div>
+  </section>
+
+  <footer>Kaduna Life V2 • fictional game economy • no real-money transactions</footer>
+</div>
+
+<div class="modal" id="modal"><div class="modalbox"><div class="between"><h3 id="modalTitle">Life Event</h3><button class="iconbtn" onclick="closeModal()">✕</button></div><p id="modalText" class="sub" style="font-size:15px;line-height:1.6"></p><div id="modalChoices" class="row" style="margin-top:14px"></div></div></div>
+<div class="toast" id="toast">Saved</div>
+
+<script>
+const defaultState={
+ name:"New Player", ambition:"Build a business", money:10000, place:"Kaduna Central", level:1, rep:0,
+ energy:82,hunger:74,happiness:68,social:45,intelligence:35,business:20,creativity:30,
+ career:"Unemployed", house:"Room", inventory:[], achievements:[], log:["Welcome to Kaduna Life V2! Choose a district and build your story."],
+ goals:{work:false,explore:false,learn:false}
+};
+let s=JSON.parse(localStorage.getItem("kadunaLifeV2")||"null")||structuredClone(defaultState);
+
+const locations=[
+ ["Kawo","🛣️","Shops & transport"],["Kaduna Central","🏙️","Bank & city centre"],["Malali","☕","Homes & cafés"],
+ ["Barnawa","🛒","Markets & services"],["Kakuri","🏭","Industry & workshops"],["Sabon Tasha","🏘️","Neighbourhood life"]
+];
+const jobs=[
+ ["Content Creator","🎥",4500,"creativity"],["Designer","🎨",5200,"creativity"],["Teacher","📚",4800,"intelligence"],
+ ["Tech Worker","💻",7500,"intelligence"],["Shop Owner","🏪",6200,"business"],["Food Business","🍲",5600,"business"]
+];
+const items=[
+ ["Fresh Sneakers","👟",2500,"Style boost"],["Phone Upgrade","📱",5000,"Creator boost"],["Desk Setup","🖥️",6500,"Study boost"],
+ ["Market Stall Kit","🧺",8000,"Business boost"],["Comfy Bed","🛏️",4500,"Energy boost"],["City Jacket","🧥",3000,"Rep boost"]
+];
+
+function money(n){return "₦"+Math.max(0,Math.round(n)).toLocaleString("en-NG")}
+function clamp(n){return Math.max(0,Math.min(100,Math.round(n)))}
+function addLog(x){s.log.unshift("• "+x);s.log=s.log.slice(0,30)}
+function toast(x){const t=document.getElementById("toast");t.textContent=x;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1600)}
+function saveGame(){localStorage.setItem("kadunaLifeV2",JSON.stringify(s));toast("Life saved ✓")}
+function loadGame(){const x=JSON.parse(localStorage.getItem("kadunaLifeV2")||"null");if(x){s=x;render();toast("Saved life loaded ✓")}else toast("No saved life yet")}
+function newLife(){if(confirm("Start a completely new life?")){s=structuredClone(defaultState);localStorage.removeItem("kadunaLifeV2");render();toast("New life started")}}
+function startLife(){const n=document.getElementById("nameInput").value.trim();if(n)s.name=n;s.ambition=document.getElementById("ambition").value;addLog(`${s.name} chose the ambition: ${s.ambition}.`);render();saveGame();toast("Character updated ✓")}
+function scrollToId(id){document.getElementById(id).scrollIntoView({behavior:"smooth",block:"start"})}
+
+function act(type){
+ if(type==="work"){
+   const job=jobs.find(j=>j[0]===s.career); const pay=job?job[2]:2200;
+   if(s.energy<15){toast("You're too tired to work");return}
+   s.money+=pay;s.energy=clamp(s.energy-18);s.hunger=clamp(s.hunger-12);s.rep+=2;s.goals.work=true;
+   addLog(`Worked as ${s.career}, earned ${money(pay)}.`);
+ }
+ if(type==="eat"){if(s.money<800){toast("Not enough money");return} s.money-=800;s.hunger=clamp(s.hunger+28);s.energy=clamp(s.energy+4);addLog("Grabbed a meal in the city.");}
+ if(type==="rest"){s.energy=clamp(s.energy+28);s.hunger=clamp(s.hunger-5);addLog("Rested and recovered energy.");}
+ if(type==="social"){if(s.energy<8){toast("Rest first");return}s.energy=clamp(s.energy-8);s.happiness=clamp(s.happiness+10);s.social=clamp(s.social+8);s.rep+=3;addLog("Met people and improved your social circle.");}
+ if(type==="study"){if(s.energy<10){toast("Not enough energy");return}s.energy=clamp(s.energy-10);s.intelligence=clamp(s.intelligence+7);s.happiness=clamp(s.happiness-1);s.goals.learn=true;addLog("Spent time learning a useful skill.");}
+ levelUp();render();saveGame();
+}
+function move(place){s.place=place;s.energy=clamp(s.energy-4);s.happiness=clamp(s.happiness+3);s.rep+=1;s.goals.explore=true;addLog(`Travelled to ${place}.`);render();saveGame()}
+function chooseJob(name){const j=jobs.find(x=>x[0]===name);if(!j)return;const skill=s[j[3]];if(skill<20 && name!=="Content Creator"){toast("Build more skills first");return}s.career=name;s.happiness=clamp(s.happiness+4);addLog(`Career changed to ${name}.`);render();saveGame()}
+function buy(item){if(s.inventory.includes(item[0])){toast("Already owned");return}if(s.money<item[2]){toast("Not enough money");return}s.money-=item[2];s.inventory.push(item[0]);addLog(`Bought ${item[0]} for ${money(item[2])}.`);if(item[0]==="Comfy Bed")s.energy=clamp(s.energy+10);if(item[0]==="City Jacket")s.rep+=5;if(item[0]==="Phone Upgrade")s.creativity=clamp(s.creativity+5);if(item[0]==="Desk Setup")s.intelligence=clamp(s.intelligence+5);if(item[0]==="Market Stall Kit")s.business=clamp(s.business+6);if(item[0]==="Fresh Sneakers")s.happiness=clamp(s.happiness+6);render();saveGame()}
+function levelUp(){const target=s.level*120;s.xp=(s.xp||0)+18;if(s.xp>=target){s.xp-=target;s.level++;s.money+=s.level*1000;s.rep+=10;addLog(`🎉 Level ${s.level} reached! Bonus ${money(s.level*1000)}.`)}}
+function lifeEvent(){
+ const events=[
+  {t:"A local opportunity",d:"A small business owner needs help with a weekend project.",c:[["Take the project",()=>{s.money+=3500;s.business=clamp(s.business+5);s.energy=clamp(s.energy-12);addLog("Helped with a weekend project and earned ₦3,500.")}],["Pass for now",()=>{s.happiness=clamp(s.happiness+3);addLog("Passed on a project and kept your free time.")}]]},
+  {t:"Unexpected good news",d:"A friend recommends you for a useful skill workshop.",c:[["Go learn",()=>{s.intelligence=clamp(s.intelligence+9);s.rep+=4;addLog("Attended a useful skill workshop.")}],["Skip it",()=>{s.energy=clamp(s.energy+8);addLog("Skipped the workshop and rested.")}]]},
+  {t:"City challenge",d:"You find a community event looking for volunteers.",c:[["Volunteer",()=>{s.rep+=10;s.social=clamp(s.social+7);s.happiness=clamp(s.happiness+6);addLog("Volunteered at a community event.")}],["Keep moving",()=>{s.energy=clamp(s.energy+4);addLog("Kept your schedule and moved on.")}]]}
+ ];
+ const e=events[Math.floor(Math.random()*events.length)];document.getElementById("modalTitle").textContent=e.t;document.getElementById("modalText").textContent=e.d;const box=document.getElementById("modalChoices");box.innerHTML="";e.c.forEach(([label,fn])=>{const b=document.createElement("button");b.className="primary";b.textContent=label;b.onclick=()=>{fn();closeModal();levelUp();render();saveGame()};box.appendChild(b)});document.getElementById("modal").classList.add("show")
+}
+function closeModal(){document.getElementById("modal").classList.remove("show")}
+
+function render(){
+ document.getElementById("money").textContent=money(s.money);document.getElementById("place").textContent=s.place;document.getElementById("level").textContent=s.level;document.getElementById("rep").textContent=s.rep;
+ document.getElementById("playerName").textContent=s.name;document.getElementById("careerText").textContent=`${s.career} • ${s.house}`;document.getElementById("nameInput").value=s.name;document.getElementById("ambition").value=s.ambition;
+ document.getElementById("heroTitle").textContent=s.name==="New Player"?"Build your life.":`Welcome back, ${s.name}.`;
+ document.getElementById("heroSub").textContent=s.ambition+" • "+s.place;
+ const stats=[["⚡","Energy",s.energy],["🍽️","Hunger",s.hunger],["😊","Happiness",s.happiness],["🗣️","Social",s.social],["🧠","Intelligence",s.intelligence],["💼","Business",s.business],["🎨","Creativity",s.creativity],["⭐","Reputation",Math.min(100,s.rep)]];
+ document.getElementById("stats").innerHTML=stats.map(x=>`<div class="stat"><span>${x[0]} ${x[1]}</span><b>${x[2]}${x[1]==="Reputation"?"":"%"}</b><div class="bar"><i style="width:${x[2]}%"></i></div></div>`).join("");
+ document.getElementById("locations").innerHTML=locations.map(x=>`<button class="location" onclick="move('${x[0]}')"><strong>${x[1]} ${x[0]}</strong><span class="sub">${x[2]}</span><span class="tag">${s.place===x[0]?"You are here":"Explore"}</span></button>`).join("");
+ document.getElementById("jobs").innerHTML=jobs.map(x=>`<button class="job ${s.career===x[0]?"":" "}" onclick="chooseJob('${x[0]}')"><strong>${x[1]} ${x[0]}</strong><span class="sub">${money(x[2])}/shift • needs ${x[3]}</span><span class="tag">${s.career===x[0]?"Current":"Choose"}</span></button>`).join("");
+ document.getElementById("shopItems").innerHTML=items.map(x=>`<div class="shop"><div style="font-size:25px">${x[1]}</div><strong>${x[0]}</strong><div class="sub">${x[3]}</div><div class="between" style="margin-top:8px"><b>${money(x[2])}</b><button class="smallbtn" onclick='buy(${JSON.stringify(x)})'>${s.inventory.includes(x[0])?"Owned":"Buy"}</button></div></div>`).join("");
+ document.getElementById("log").innerHTML=s.log.map(x=>`<div>${x}</div>`).join("");
+ const gs=[["work","Work a shift"],["explore","Explore a district"],["learn","Learn a skill"]];let done=0;
+ document.getElementById("goals").innerHTML=gs.map(g=>{const ok=s.goals[g[0]];if(ok)done++;return `<div>${ok?"✅":"⬜"} ${g[1]}</div>`}).join("");document.getElementById("goalCount").textContent=`${done}/3`;
+ const ach=[];if(s.money>=20000)ach.push("💰 Built ₦20k+ savings");if(s.level>=3)ach.push("⭐ Reached level 3");if(s.rep>=30)ach.push("🏆 City reputation 30+");if(s.inventory.length>=3)ach.push("🛍️ Market regular");if(s.goals.work&&s.goals.explore&&s.goals.learn)ach.push("🎯 Completed daily goals");
+ document.getElementById("achievements").innerHTML=(ach.length?ach:["🔒 More achievements unlock as you play."]).map(x=>`<div>${x}</div>`).join("");
+}
+render();
+</script>
+</body>
+</html>
