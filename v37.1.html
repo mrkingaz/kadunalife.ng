@@ -1,0 +1,4686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>Kaduna Life — V37</title>
+
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+
+<style>
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,
+body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#0d1117;
+  color:white;
+}
+
+button,
+input{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+#app{
+  width:100%;
+  height:100%;
+  position:relative;
+  overflow:hidden;
+}
+
+/* =========================
+   AUTH
+========================= */
+
+#authScreen{
+  position:absolute;
+  inset:0;
+  z-index:1000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:
+    radial-gradient(circle at top,#263b57 0,#101820 42%,#080c11 100%);
+  padding:20px;
+}
+
+.authCard{
+  width:min(430px,100%);
+  background:rgba(20,27,36,.96);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:24px;
+  padding:26px;
+  box-shadow:0 20px 60px rgba(0,0,0,.5);
+}
+
+.logo{
+  font-size:32px;
+  font-weight:900;
+  text-align:center;
+  margin-bottom:6px;
+}
+
+.logo span{
+  color:#56d364;
+}
+
+.authSub{
+  text-align:center;
+  color:#9da7b3;
+  margin-bottom:24px;
+}
+
+.authTabs{
+  display:flex;
+  gap:8px;
+  margin-bottom:18px;
+}
+
+.authTabs button{
+  flex:1;
+  border:0;
+  padding:12px;
+  border-radius:12px;
+  background:#202938;
+  color:#cbd5e1;
+}
+
+.authTabs button.active{
+  background:#56d364;
+  color:#07100a;
+  font-weight:800;
+}
+
+.field{
+  margin-bottom:13px;
+}
+
+.field label{
+  display:block;
+  font-size:12px;
+  color:#9da7b3;
+  margin-bottom:6px;
+}
+
+.field input{
+  width:100%;
+  padding:13px;
+  border-radius:12px;
+  border:1px solid #303b4a;
+  background:#0d131b;
+  color:white;
+  outline:none;
+}
+
+.field input:focus{
+  border-color:#56d364;
+}
+
+.primaryBtn{
+  width:100%;
+  border:0;
+  padding:14px;
+  border-radius:13px;
+  background:#56d364;
+  color:#061008;
+  font-weight:900;
+  margin-top:5px;
+}
+
+.authMessage{
+  min-height:20px;
+  text-align:center;
+  margin-top:13px;
+  color:#ffcc66;
+  font-size:13px;
+}
+
+/* =========================
+   CHARACTER CREATION
+========================= */
+
+#characterScreen{
+  position:absolute;
+  inset:0;
+  z-index:900;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:linear-gradient(145deg,#101923,#081016);
+}
+
+.characterCard{
+  width:min(450px,100%);
+  background:#141c26;
+  border:1px solid #293544;
+  border-radius:22px;
+  padding:24px;
+}
+
+.characterCard h1{
+  margin-top:0;
+}
+
+.preview{
+  height:110px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-bottom:18px;
+}
+
+.avatarBig{
+  width:76px;
+  height:76px;
+  border-radius:50%;
+  border:5px solid white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:35px;
+  background:#4f8cff;
+  box-shadow:0 10px 25px rgba(0,0,0,.4);
+}
+
+/* =========================
+   GAME
+========================= */
+
+#gameScreen{
+  position:absolute;
+  inset:0;
+  display:none;
+  background:#d8e2d0;
+}
+
+#map{
+  position:absolute;
+  inset:0;
+  z-index:1;
+}
+
+.leaflet-container{
+  background:#d9e4d1;
+}
+
+.leaflet-control-attribution{
+  font-size:9px!important;
+}
+
+/* Disable normal Leaflet zoom controls on mobile */
+.leaflet-control-zoom{
+  display:none;
+}
+
+/* =========================
+   TOP HUD
+========================= */
+
+#topHud{
+  position:absolute;
+  top:10px;
+  left:10px;
+  right:10px;
+  z-index:500;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  pointer-events:none;
+}
+
+.hudLeft,
+.hudRight{
+  pointer-events:auto;
+}
+
+.playerCard{
+  background:rgba(10,15,21,.88);
+  backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:15px;
+  padding:9px 12px;
+  min-width:170px;
+  box-shadow:0 8px 25px rgba(0,0,0,.25);
+}
+
+.playerName{
+  font-weight:900;
+}
+
+.playerMeta{
+  color:#aeb8c4;
+  font-size:11px;
+  margin-top:2px;
+}
+
+.money{
+  color:#65e66f;
+  font-weight:900;
+}
+
+.hudButtons{
+  display:flex;
+  gap:7px;
+}
+
+.hudBtn{
+  width:43px;
+  height:43px;
+  border-radius:13px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(10,15,21,.88);
+  color:white;
+  font-size:18px;
+  backdrop-filter:blur(10px);
+}
+
+#onlineBadge{
+  position:absolute;
+  top:68px;
+  left:10px;
+  z-index:500;
+  background:rgba(10,15,21,.82);
+  border-radius:10px;
+  padding:6px 9px;
+  color:#77ef83;
+  font-size:11px;
+}
+
+/* =========================
+   LOCATION
+========================= */
+
+#locationBadge{
+  position:absolute;
+  top:68px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:500;
+  background:rgba(10,15,21,.88);
+  border:1px solid rgba(255,255,255,.12);
+  padding:8px 14px;
+  border-radius:20px;
+  font-size:12px;
+  white-space:nowrap;
+  backdrop-filter:blur(10px);
+}
+
+/* =========================
+   TAP HINT
+========================= */
+
+#tapHint{
+  position:absolute;
+  bottom:24px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:500;
+  background:rgba(8,13,18,.9);
+  border:1px solid rgba(255,255,255,.13);
+  padding:10px 16px;
+  border-radius:22px;
+  font-size:12px;
+  color:#d7dee8;
+  pointer-events:none;
+  transition:.25s;
+}
+
+#tapHint.hidden{
+  opacity:0;
+  transform:translate(-50%,10px);
+}
+
+/* =========================
+   DESTINATION MARKER
+========================= */
+
+.destinationMarker{
+  width:30px;
+  height:30px;
+  border-radius:50%;
+  border:3px solid white;
+  background:#4f8cff;
+  box-shadow:
+    0 0 0 8px rgba(79,140,255,.2),
+    0 5px 18px rgba(0,0,0,.35);
+}
+
+.destinationPulse{
+  animation:pulseDestination 1.1s infinite;
+}
+
+@keyframes pulseDestination{
+  0%{
+    box-shadow:
+      0 0 0 0 rgba(79,140,255,.55),
+      0 5px 18px rgba(0,0,0,.35);
+  }
+
+  70%{
+    box-shadow:
+      0 0 0 16px rgba(79,140,255,0),
+      0 5px 18px rgba(0,0,0,.35);
+  }
+
+  100%{
+    box-shadow:
+      0 0 0 0 rgba(79,140,255,0),
+      0 5px 18px rgba(0,0,0,.35);
+  }
+}
+
+/* =========================
+   PLAYER MARKERS
+========================= */
+
+.playerMarkerWrap{
+  position:relative;
+  width:55px;
+  height:75px;
+}
+
+.playerAvatar{
+  width:46px;
+  height:46px;
+  border-radius:50%;
+  border:4px solid white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:22px;
+  box-shadow:0 5px 15px rgba(0,0,0,.35);
+}
+
+.playerLabel{
+  position:absolute;
+  top:49px;
+  left:50%;
+  transform:translateX(-50%);
+  white-space:nowrap;
+  background:rgba(0,0,0,.75);
+  padding:3px 7px;
+  border-radius:7px;
+  font-size:9px;
+  font-weight:700;
+}
+
+/* =========================
+   POI MARKERS
+========================= */
+
+.poiMarker{
+  width:42px;
+  height:42px;
+  border-radius:13px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(15,22,30,.95);
+  border:2px solid white;
+  font-size:21px;
+  box-shadow:0 6px 15px rgba(0,0,0,.3);
+}
+
+.poiLabel{
+  margin-top:4px;
+  white-space:nowrap;
+  background:rgba(8,12,17,.86);
+  color:white;
+  padding:3px 6px;
+  border-radius:6px;
+  font-size:9px;
+  font-weight:700;
+}
+
+/* =========================
+   BOTTOM CONTROLS
+========================= */
+
+#bottomControls{
+  position:absolute;
+  left:10px;
+  right:10px;
+  bottom:12px;
+  z-index:500;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  pointer-events:none;
+}
+
+.controlGroup{
+  pointer-events:auto;
+  display:flex;
+  gap:8px;
+}
+
+.actionBtn{
+  min-width:62px;
+  height:50px;
+  border:0;
+  border-radius:15px;
+  background:rgba(10,15,21,.91);
+  color:white;
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 8px 20px rgba(0,0,0,.3);
+  font-weight:800;
+}
+
+.actionBtn:active{
+  transform:scale(.95);
+}
+
+/* =========================
+   SIDE PANELS
+========================= */
+
+.panel{
+  position:absolute;
+  top:0;
+  right:0;
+  width:min(380px,92%);
+  height:100%;
+  z-index:800;
+  background:rgba(13,18,25,.97);
+  border-left:1px solid #2b3745;
+  transform:translateX(105%);
+  transition:.25s ease;
+  padding:18px;
+  overflow-y:auto;
+}
+
+.panel.open{
+  transform:translateX(0);
+}
+
+.panelHeader{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:18px;
+}
+
+.panelHeader h2{
+  margin:0;
+}
+
+.closeBtn{
+  width:38px;
+  height:38px;
+  border-radius:11px;
+  border:0;
+  background:#232d39;
+  color:white;
+}
+
+.panelSection{
+  background:#18212c;
+  border:1px solid #273341;
+  border-radius:15px;
+  padding:13px;
+  margin-bottom:11px;
+}
+
+.panelSection h3{
+  margin:0 0 8px;
+  font-size:14px;
+}
+
+.statRow{
+  display:flex;
+  justify-content:space-between;
+  padding:7px 0;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  font-size:13px;
+}
+
+.statRow:last-child{
+  border-bottom:0;
+}
+
+/* =========================
+   CHAT
+========================= */
+
+#chatMessages{
+  height:calc(100vh - 230px);
+  overflow-y:auto;
+  padding:5px;
+}
+
+.chatMessage{
+  background:#1b2632;
+  border-radius:13px;
+  padding:9px 10px;
+  margin-bottom:8px;
+}
+
+.chatMessage .who{
+  color:#72e47b;
+  font-weight:800;
+  font-size:11px;
+}
+
+.chatMessage .text{
+  margin-top:3px;
+  font-size:13px;
+  line-height:1.35;
+  word-break:break-word;
+}
+
+.chatInputRow{
+  position:absolute;
+  left:18px;
+  right:18px;
+  bottom:18px;
+  display:flex;
+  gap:8px;
+}
+
+.chatInput{
+  flex:1;
+  min-width:0;
+  border-radius:13px;
+  border:1px solid #354250;
+  background:#0d131b;
+  color:white;
+  padding:12px;
+  outline:none;
+}
+
+.chatSend{
+  width:50px;
+  border:0;
+  border-radius:13px;
+  background:#56d364;
+  color:#061008;
+  font-weight:900;
+}
+
+/* =========================
+   NEARBY
+========================= */
+
+.nearPlayer{
+  background:#18212c;
+  border:1px solid #273341;
+  padding:12px;
+  border-radius:14px;
+  margin-bottom:9px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.nearName{
+  font-weight:800;
+}
+
+.nearDistance{
+  color:#9ca8b5;
+  font-size:11px;
+}
+
+.nearAction{
+  border:0;
+  background:#263547;
+  color:white;
+  padding:7px 10px;
+  border-radius:9px;
+}
+
+/* =========================
+   MODALS
+========================= */
+
+.modalBack{
+  position:absolute;
+  inset:0;
+  z-index:1200;
+  background:rgba(0,0,0,.62);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+.modalBack.show{
+  display:flex;
+}
+
+.modal{
+  width:min(430px,100%);
+  background:#141d27;
+  border:1px solid #2e3a48;
+  border-radius:21px;
+  padding:20px;
+  box-shadow:0 20px 70px rgba(0,0,0,.5);
+}
+
+.modal h2{
+  margin-top:0;
+}
+
+.modalButtons{
+  display:flex;
+  gap:8px;
+  margin-top:17px;
+}
+
+.modalButtons button{
+  flex:1;
+  padding:12px;
+  border:0;
+  border-radius:12px;
+}
+
+.cancelBtn{
+  background:#293441;
+  color:white;
+}
+
+.confirmBtn{
+  background:#56d364;
+  color:#071008;
+  font-weight:900;
+}
+
+/* =========================
+   TOAST
+========================= */
+
+#toast{
+  position:absolute;
+  left:50%;
+  top:120px;
+  transform:translateX(-50%) translateY(-15px);
+  z-index:1500;
+  background:#101820;
+  border:1px solid rgba(255,255,255,.14);
+  padding:11px 16px;
+  border-radius:13px;
+  box-shadow:0 10px 25px rgba(0,0,0,.35);
+  opacity:0;
+  pointer-events:none;
+  transition:.25s;
+  font-size:13px;
+  text-align:center;
+  max-width:90%;
+}
+
+#toast.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+
+/* =========================
+   BONUS
+========================= */
+
+.bonusIcon{
+  font-size:45px;
+  text-align:center;
+  margin:5px 0 10px;
+}
+
+.bonusAmount{
+  text-align:center;
+  color:#67e875;
+  font-size:28px;
+  font-weight:900;
+}
+
+.bonusText{
+  text-align:center;
+  color:#adb8c4;
+  font-size:13px;
+  line-height:1.5;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(min-width:700px){
+  #topHud{
+    left:18px;
+    right:18px;
+  }
+
+  #onlineBadge{
+    left:18px;
+  }
+}
+
+@media(max-height:650px){
+  .playerCard{
+    padding:7px 10px;
+  }
+
+  #locationBadge{
+    top:58px;
+  }
+
+  #onlineBadge{
+    top:58px;
+  }
+
+  #tapHint{
+    bottom:10px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="app">
+
+  <!-- =========================
+       AUTH SCREEN
+  ========================== -->
+
+  <div id="authScreen">
+
+    <div class="authCard">
+
+      <div class="logo">
+        Kaduna <span>Life</span>
+      </div>
+
+      <div class="authSub">
+        Your Kaduna. Your story. Your life. 🇳🇬
+      </div>
+
+      <div class="authTabs">
+        <button id="loginTab" class="active">
+          Sign In
+        </button>
+
+        <button id="signupTab">
+          Create Account
+        </button>
+      </div>
+
+      <div class="field">
+        <label>Email</label>
+        <input
+          id="emailInput"
+          type="email"
+          autocomplete="email"
+          placeholder="you@example.com"
+        >
+      </div>
+
+      <div class="field">
+        <label>Password</label>
+        <input
+          id="passwordInput"
+          type="password"
+          autocomplete="current-password"
+          placeholder="Password"
+        >
+      </div>
+
+      <button
+        id="authButton"
+        class="primaryBtn"
+      >
+        Sign In
+      </button>
+
+      <div
+        id="authMessage"
+        class="authMessage"
+      ></div>
+
+    </div>
+
+  </div>
+
+  <!-- =========================
+       CHARACTER CREATION
+  ========================== -->
+
+  <div id="characterScreen">
+
+    <div class="characterCard">
+
+      <h1>Create Your Character 👤</h1>
+
+      <p style="color:#9da7b3;">
+        Start your Kaduna Life.
+      </p>
+
+      <div class="preview">
+        <div
+          id="avatarPreview"
+          class="avatarBig"
+        >
+          👤
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Character name</label>
+
+        <input
+          id="characterName"
+          maxlength="24"
+          placeholder="Enter your name"
+        >
+      </div>
+
+      <div class="field">
+        <label>Age</label>
+
+        <input
+          id="characterAge"
+          type="number"
+          min="18"
+          max="50"
+          placeholder="18–50"
+        >
+      </div>
+
+      <button
+        id="createCharacterBtn"
+        class="primaryBtn"
+      >
+        Enter Kaduna 🚀
+      </button>
+
+      <div
+        id="characterMessage"
+        class="authMessage"
+      ></div>
+
+    </div>
+
+  </div>
+
+  <!-- =========================
+       GAME SCREEN
+  ========================== -->
+
+  <div id="gameScreen">
+
+    <div id="map"></div>
+
+    <!-- HUD -->
+
+    <div id="topHud">
+
+      <div class="hudLeft">
+
+        <div class="playerCard">
+
+          <div
+            id="hudName"
+            class="playerName"
+          >
+            Player
+          </div>
+
+          <div class="playerMeta">
+            💰 <span
+              id="hudCash"
+              class="money"
+            >
+              ₦0
+            </span>
+            &nbsp; • &nbsp;
+            ❤️ <span id="hudHealth">100</span>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="hudRight">
+
+        <div class="hudButtons">
+
+          <button
+            id="chatButton"
+            class="hudBtn"
+            title="Chat"
+          >
+            💬
+          </button>
+
+          <button
+            id="nearbyButton"
+            class="hudBtn"
+            title="Nearby players"
+          >
+            👥
+          </button>
+
+          <button
+            id="profileButton"
+            class="hudBtn"
+            title="Profile"
+          >
+            👤
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div id="onlineBadge">
+      🟢 <span id="onlineCount">1</span> online
+    </div>
+
+    <div id="locationBadge">
+      📍 Kaduna
+    </div>
+
+    <div id="tapHint">
+      👆 Tap somewhere on the map to move
+    </div>
+
+    <!-- Bottom buttons -->
+
+    <div id="bottomControls">
+
+      <div class="controlGroup">
+
+        <button
+          id="myLocationButton"
+          class="actionBtn"
+        >
+          📍 Me
+        </button>
+
+        <button
+          id="placesButton"
+          class="actionBtn"
+        >
+          🏙️ Places
+        </button>
+
+      </div>
+
+      <div class="controlGroup">
+
+        <button
+          id="logoutButton"
+          class="actionBtn"
+        >
+          🚪
+        </button>
+
+      </div>
+
+    </div>
+
+    <!-- CHAT PANEL -->
+
+    <div
+      id="chatPanel"
+      class="panel"
+    >
+
+      <div class="panelHeader">
+
+        <h2>💬 City Chat</h2>
+
+        <button
+          class="closeBtn"
+          data-close="chatPanel"
+        >
+          ✕
+        </button>
+
+      </div>
+
+      <div id="chatMessages"></div>
+
+      <div class="chatInputRow">
+
+        <input
+          id="chatInput"
+          class="chatInput"
+          maxlength="120"
+          placeholder="Say something..."
+        >
+
+        <button
+          id="chatSend"
+          class="chatSend"
+        >
+          ➤
+        </button>
+
+      </div>
+
+    </div>
+
+    <!-- NEARBY PANEL -->
+
+    <div
+      id="nearbyPanel"
+      class="panel"
+    >
+
+      <div class="panelHeader">
+
+        <h2>👥 Nearby</h2>
+
+        <button
+          class="closeBtn"
+          data-close="nearbyPanel"
+        >
+          ✕
+        </button>
+
+      </div>
+
+      <div
+        id="nearbyList"
+      ></div>
+
+    </div>
+
+    <!-- PROFILE PANEL -->
+
+    <div
+      id="profilePanel"
+      class="panel"
+    >
+
+      <div class="panelHeader">
+
+        <h2>👤 Profile</h2>
+
+        <button
+          class="closeBtn"
+          data-close="profilePanel"
+        >
+          ✕
+        </button>
+
+      </div>
+
+      <div class="panelSection">
+
+        <div class="statRow">
+          <span>Name</span>
+          <strong id="profileName">—</strong>
+        </div>
+
+        <div class="statRow">
+          <span>Age</span>
+          <strong id="profileAge">—</strong>
+        </div>
+
+        <div class="statRow">
+          <span>Cash</span>
+          <strong id="profileCash">₦0</strong>
+        </div>
+
+        <div class="statRow">
+          <span>Bank</span>
+          <strong id="profileBank">₦0</strong>
+        </div>
+
+        <div class="statRow">
+          <span>Career</span>
+          <strong id="profileCareer">Unemployed</strong>
+        </div>
+
+        <div class="statRow">
+          <span>Day</span>
+          <strong id="profileDay">1</strong>
+        </div>
+
+      </div>
+
+      <div class="panelSection">
+
+        <h3>🎮 Controls</h3>
+
+        <p style="color:#aab5c1;font-size:13px;line-height:1.5;">
+          Tap anywhere on the map and your character will automatically
+          walk toward that destination.
+        </p>
+
+        <p style="color:#aab5c1;font-size:13px;line-height:1.5;">
+          Tap a marked location to visit or enter it.
+        </p>
+
+      </div>
+
+    </div>
+
+    <!-- PLACES PANEL -->
+
+    <div
+      id="placesPanel"
+      class="panel"
+    >
+
+      <div class="panelHeader">
+
+        <h2>🏙️ Kaduna Places</h2>
+
+        <button
+          class="closeBtn"
+          data-close="placesPanel"
+        >
+          ✕
+        </button>
+
+      </div>
+
+      <div id="placesList"></div>
+
+    </div>
+
+    <!-- MODAL -->
+
+    <div
+      id="modalBack"
+      class="modalBack"
+    >
+
+      <div class="modal">
+
+        <h2 id="modalTitle">
+          Location
+        </h2>
+
+        <div
+          id="modalBody"
+          style="color:#aeb8c4;line-height:1.5;"
+        ></div>
+
+        <div class="modalButtons">
+
+          <button
+            id="modalCancel"
+            class="cancelBtn"
+          >
+            Close
+          </button>
+
+          <button
+            id="modalConfirm"
+            class="confirmBtn"
+          >
+            Enter
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- SIGN IN BONUS -->
+
+    <div
+      id="bonusModal"
+      class="modalBack"
+    >
+
+      <div class="modal">
+
+        <div class="bonusIcon">
+          🎁
+        </div>
+
+        <h2 style="text-align:center;">
+          Daily Sign-In Bonus
+        </h2>
+
+        <div class="bonusAmount">
+          +₦2,000
+        </div>
+
+        <p class="bonusText">
+          Welcome back to Kaduna Life!<br>
+          Your daily bonus has been added to your cash.
+        </p>
+
+        <div class="modalButtons">
+
+          <button
+            id="bonusOkay"
+            class="confirmBtn"
+            style="flex:1;"
+          >
+            Claim 🎉
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div id="toast"></div>
+
+  </div>
+
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+
+/* ============================================================
+   KADUNA LIFE V37
+   ============================================================ */
+
+/* =========================
+   SUPABASE
+========================= */
+
+const SUPABASE_URL =
+  "https://mdcwdfwrgxqtcafsyldt.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_3asep2gSU5Z_Gx9bxXtw7Q_FhY-0ETp";
+
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+
+/* =========================
+   ELEMENTS
+========================= */
+
+const authScreen =
+  document.getElementById("authScreen");
+
+const characterScreen =
+  document.getElementById("characterScreen");
+
+const gameScreen =
+  document.getElementById("gameScreen");
+
+const loginTab =
+  document.getElementById("loginTab");
+
+const signupTab =
+  document.getElementById("signupTab");
+
+const emailInput =
+  document.getElementById("emailInput");
+
+const passwordInput =
+  document.getElementById("passwordInput");
+
+const authButton =
+  document.getElementById("authButton");
+
+const authMessage =
+  document.getElementById("authMessage");
+
+const characterName =
+  document.getElementById("characterName");
+
+const characterAge =
+  document.getElementById("characterAge");
+
+const characterMessage =
+  document.getElementById("characterMessage");
+
+const createCharacterBtn =
+  document.getElementById("createCharacterBtn");
+
+const toast =
+  document.getElementById("toast");
+
+
+/* =========================
+   AUTH MODE
+========================= */
+
+let authMode = "login";
+
+
+loginTab.addEventListener(
+  "click",
+  () => {
+
+    authMode = "login";
+
+    loginTab.classList.add("active");
+    signupTab.classList.remove("active");
+
+    authButton.textContent =
+      "Sign In";
+
+    authMessage.textContent = "";
+  }
+);
+
+
+signupTab.addEventListener(
+  "click",
+  () => {
+
+    authMode = "signup";
+
+    signupTab.classList.add("active");
+    loginTab.classList.remove("active");
+
+    authButton.textContent =
+      "Create Account";
+
+    authMessage.textContent = "";
+  }
+);
+
+
+/* =========================
+   GAME STATE
+========================= */
+
+let currentUser = null;
+
+let map = null;
+
+let playerMarker = null;
+
+let destinationMarker = null;
+
+let moveTimer = null;
+
+let realtimeChannel = null;
+
+let remotePlayers = {};
+
+let poiMarkers = {};
+
+let activePOI = null;
+
+let lastChatTime = 0;
+
+let lastSaveTime = 0;
+
+let mapReady = false;
+
+let gameStarted = false;
+
+
+/* =========================
+   DEFAULT GAME
+========================= */
+
+let game = {
+
+  character: {
+    name:"",
+    age:18
+  },
+
+  cash:10000,
+
+  bank:0,
+
+  health:100,
+
+  energy:100,
+
+  mood:100,
+
+  reputation:0,
+
+  day:1,
+
+  career:"Unemployed",
+
+  home:"Starter Apartment",
+
+  transport:"Walking",
+
+  inventory:[],
+
+  friendship:{},
+
+  achievements:[],
+
+  latitude:10.5105,
+
+  longitude:7.4165,
+
+  destination:null,
+
+  lastLoginDate:null
+
+};
+
+
+/* =========================
+   KADUNA MAP
+========================= */
+
+/*
+  Kaduna Life uses a real-world map foundation.
+
+  Starting area:
+  Kaduna, Nigeria
+
+  The locations below are gameplay landmarks.
+*/
+
+const KADUNA_CENTER = [
+  10.5105,
+  7.4165
+];
+
+
+/* =========================
+   GAME LOCATIONS
+========================= */
+
+const locations = [
+
+  {
+    id:"kaduna-centre",
+    name:"Kaduna City Centre",
+    lat:10.5105,
+    lng:7.4165,
+    icon:"🏙️",
+    type:"district",
+    enterable:false,
+    description:
+      "The heart of Kaduna Life."
+  },
+
+  {
+    id:"kaduna-market",
+    name:"Central Market Area",
+    lat:10.5184,
+    lng:7.4387,
+    icon:"🛒",
+    type:"market",
+    enterable:true,
+    description:
+      "A busy shopping area where you can buy everyday items."
+  },
+
+  {
+    id:"kaduna-rail",
+    name:"Kaduna Railway Area",
+    lat:10.5278,
+    lng:7.4338,
+    icon:"🚆",
+    type:"transport",
+    enterable:true,
+    description:
+      "A major transport area in the city."
+  },
+
+  {
+    id:"kaduna-park",
+    name:"Kaduna Park",
+    lat:10.5052,
+    lng:7.4234,
+    icon:"🌳",
+    type:"park",
+    enterable:true,
+    description:
+      "Relax, improve your mood and meet other players."
+  },
+
+  {
+    id:"kaduna-hospital",
+    name:"Hospital",
+    lat:10.4949,
+    lng:7.4142,
+    icon:"🏥",
+    type:"hospital",
+    enterable:true,
+    description:
+      "Take care of your character's health."
+  },
+
+  {
+    id:"kaduna-bank",
+    name:"Bank",
+    lat:10.5162,
+    lng:7.4117,
+    icon:"🏦",
+    type:"bank",
+    enterable:true,
+    description:
+      "Manage your game finances."
+  },
+
+  {
+    id:"kaduna-university",
+    name:"University Area",
+    lat:10.5327,
+    lng:7.4381,
+    icon:"🎓",
+    type:"education",
+    enterable:true,
+    description:
+      "Study and improve your education path."
+  },
+
+  {
+    id:"kaduna-restaurant",
+    name:"Restaurant",
+    lat:10.5074,
+    lng:7.4341,
+    icon:"🍽️",
+    type:"restaurant",
+    enterable:true,
+    description:
+      "Eat something and improve your energy and mood."
+  },
+
+  {
+    id:"kaduna-supermarket",
+    name:"Supermarket",
+    lat:10.5019,
+    lng:7.4414,
+    icon:"🛍️",
+    type:"shop",
+    enterable:true,
+    description:
+      "Purchase useful everyday items."
+  },
+
+  {
+    id:"kaduna-work",
+    name:"Work District",
+    lat:10.5188,
+    lng:7.4052,
+    icon:"💼",
+    type:"work",
+    enterable:true,
+    description:
+      "Find opportunities and earn money."
+  },
+
+  {
+    id:"kaduna-mechanic",
+    name:"Mechanic Area",
+    lat:10.4902,
+    lng:7.4306,
+    icon:"🔧",
+    type:"mechanic",
+    enterable:true,
+    description:
+      "Vehicle services will be available here."
+  },
+
+  {
+    id:"kaduna-home",
+    name:"Your Home",
+    lat:10.5121,
+    lng:7.4202,
+    icon:"🏠",
+    type:"home",
+    enterable:true,
+    description:
+      "Your personal home in Kaduna Life."
+  }
+
+];
+
+
+/* =========================
+   AUTH
+========================= */
+
+authButton.addEventListener(
+  "click",
+  async () => {
+
+    const email =
+      emailInput.value.trim();
+
+    const password =
+      passwordInput.value;
+
+    if(!email || !password){
+
+      authMessage.textContent =
+        "Enter your email and password.";
+
+      return;
+    }
+
+    authButton.disabled = true;
+
+    authMessage.textContent =
+      "Please wait...";
+
+    try{
+
+      if(authMode === "signup"){
+
+        const {
+          data,
+          error
+        } =
+          await supabaseClient.auth.signUp({
+            email,
+            password
+          });
+
+        if(error)
+          throw error;
+
+        if(data.user){
+
+          authMessage.textContent =
+            "Account created. Check your email if confirmation is required.";
+
+          setTimeout(
+            () => {
+              loadAuthenticatedUser(data.user);
+            },
+            1000
+          );
+
+        }
+
+      }else{
+
+        const {
+          data,
+          error
+        } =
+          await supabaseClient.auth.signInWithPassword({
+            email,
+            password
+          });
+
+        if(error)
+          throw error;
+
+        await loadAuthenticatedUser(
+          data.user
+        );
+      }
+
+    }catch(error){
+
+      console.error(error);
+
+      authMessage.textContent =
+        error.message ||
+        "Authentication failed.";
+
+    }
+
+    authButton.disabled = false;
+  }
+);
+
+
+/* =========================
+   AUTH SESSION
+========================= */
+
+async function checkSession(){
+
+  try{
+
+    const {
+      data
+    } =
+      await supabaseClient.auth.getSession();
+
+    if(data &&
+       data.session &&
+       data.session.user){
+
+      await loadAuthenticatedUser(
+        data.session.user
+      );
+
+    }
+
+  }catch(error){
+
+    console.error(
+      "Session error:",
+      error
+    );
+
+  }
+
+}
+
+
+supabaseClient.auth.onAuthStateChange(
+  async (event, session) => {
+
+    if(
+      session &&
+      session.user &&
+      !currentUser
+    ){
+
+      await loadAuthenticatedUser(
+        session.user
+      );
+
+    }
+
+  }
+);
+
+
+/* =========================
+   LOAD USER
+========================= */
+
+async function loadAuthenticatedUser(user){
+
+  currentUser = user;
+
+  const loaded =
+    await loadCloudGame();
+
+  if(loaded){
+
+    showGame();
+
+  }else{
+
+    authScreen.style.display =
+      "none";
+
+    characterScreen.style.display =
+      "flex";
+
+  }
+
+}
+
+
+/* =========================
+   LOAD CLOUD GAME
+========================= */
+
+async function loadCloudGame(){
+
+  if(!currentUser)
+    return false;
+
+  try{
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient
+      .from("profiles")
+      .select("*")
+      .eq("id", currentUser.id)
+      .maybeSingle();
+
+    if(error){
+
+      console.warn(
+        "Profile load:",
+        error
+      );
+
+      return false;
+    }
+
+    if(
+      data &&
+      data.game_state
+    ){
+
+      try{
+
+        const cloudState =
+          typeof data.game_state ===
+          "string"
+            ? JSON.parse(data.game_state)
+            : data.game_state;
+
+        game = normalizeGame(
+          cloudState
+        );
+
+        return true;
+
+      }catch(error){
+
+        console.warn(
+          "Game state parse failed:",
+          error
+        );
+
+      }
+
+    }
+
+  }catch(error){
+
+    console.warn(
+      "Cloud game unavailable:",
+      error
+    );
+
+  }
+
+  return false;
+}
+
+
+/* =========================
+   NORMALIZE
+========================= */
+
+function normalizeGame(state){
+
+  const defaults =
+    JSON.parse(
+      JSON.stringify(game)
+    );
+
+  const result =
+    Object.assign(
+      defaults,
+      state || {}
+    );
+
+  result.character =
+    Object.assign(
+      defaults.character,
+      state?.character || {}
+    );
+
+  if(!Array.isArray(result.inventory))
+    result.inventory = [];
+
+  if(!Array.isArray(result.achievements))
+    result.achievements = [];
+
+  if(
+    typeof result.friendship !==
+    "object" ||
+    result.friendship === null
+  ){
+
+    result.friendship = {};
+  }
+
+  if(
+    typeof result.latitude !==
+    "number"
+  ){
+
+    result.latitude =
+      KADUNA_CENTER[0];
+  }
+
+  if(
+    typeof result.longitude !==
+    "number"
+  ){
+
+    result.longitude =
+      KADUNA_CENTER[1];
+  }
+
+  return result;
+}
+
+
+/* =========================
+   CREATE CHARACTER
+========================= */
+
+createCharacterBtn.addEventListener(
+  "click",
+  async () => {
+
+    const name =
+      characterName.value.trim();
+
+    const age =
+      Number(
+        characterAge.value
+      );
+
+    if(!name){
+
+      characterMessage.textContent =
+        "Enter a character name.";
+
+      return;
+    }
+
+    if(age < 18 || age > 50){
+
+      characterMessage.textContent =
+        "Character age must be between 18 and 50.";
+
+      return;
+    }
+
+    game.character.name =
+      name;
+
+    game.character.age =
+      age;
+
+    game.cash = 10000;
+
+    game.bank = 0;
+
+    game.health = 100;
+
+    game.energy = 100;
+
+    game.mood = 100;
+
+    game.day = 1;
+
+    game.latitude =
+      KADUNA_CENTER[0];
+
+    game.longitude =
+      KADUNA_CENTER[1];
+
+    await saveGame();
+
+    showGame();
+
+  }
+);
+
+
+/* =========================
+   SHOW GAME
+========================= */
+
+function showGame(){
+
+  authScreen.style.display =
+    "none";
+
+  characterScreen.style.display =
+    "none";
+
+  gameScreen.style.display =
+    "block";
+
+  gameStarted = true;
+
+  updateHUD();
+
+  initMap();
+
+  setupRealtime();
+
+  setTimeout(
+    checkDailyBonus,
+    700
+  );
+
+}
+
+
+/* =========================
+   INIT MAP
+========================= */
+
+function initMap(){
+
+  if(mapReady){
+
+    updatePlayerMarker();
+
+    map.invalidateSize();
+
+    return;
+  }
+
+  map =
+    L.map(
+      "map",
+      {
+        zoomControl:false,
+        attributionControl:true,
+        minZoom:12,
+        maxZoom:18
+      }
+    )
+    .setView(
+      [
+        game.latitude,
+        game.longitude
+      ],
+      15
+    );
+
+
+  /*
+    OpenStreetMap standard tiles.
+    Attribution is displayed by Leaflet.
+  */
+
+  L.tileLayer(
+    "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+    {
+      maxZoom:19,
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap contributors</a>'
+    }
+  ).addTo(map);
+
+
+  createPOIs();
+
+  createPlayerMarker();
+
+  setupMapTap();
+
+  mapReady = true;
+
+  setTimeout(
+    () => map.invalidateSize(),
+    300
+  );
+
+}
+
+
+/* =========================
+   CREATE POIS
+========================= */
+
+function createPOIs(){
+
+  locations.forEach(
+    location => {
+
+      const icon =
+        L.divIcon({
+
+          className:"",
+
+          html:`
+            <div style="
+              display:flex;
+              flex-direction:column;
+              align-items:center;
+            ">
+              <div class="poiMarker">
+                ${location.icon}
+              </div>
+              <div class="poiLabel">
+                ${location.name}
+              </div>
+            </div>
+          `,
+
+          iconSize:[100,70],
+
+          iconAnchor:[50,35]
+
+        });
+
+
+      const marker =
+        L.marker(
+          [
+            location.lat,
+            location.lng
+          ],
+          {
+            icon,
+            interactive:true
+          }
+        )
+        .addTo(map);
+
+
+      marker.on(
+        "click",
+        event => {
+
+          /*
+            Prevent normal map click
+            from creating a random
+            destination.
+          */
+
+          if(event.originalEvent){
+
+            L.DomEvent.stopPropagation(
+              event.originalEvent
+            );
+
+          }
+
+          moveToLocation(
+            location
+          );
+
+        }
+      );
+
+
+      poiMarkers[
+        location.id
+      ] = marker;
+
+    }
+  );
+
+}
+
+
+/* =========================
+   PLAYER MARKER
+========================= */
+
+function createPlayerMarker(){
+
+  const icon =
+    L.divIcon({
+
+      className:"",
+
+      html:`
+        <div class="playerMarkerWrap">
+          <div
+            class="playerAvatar"
+            id="localAvatar"
+          >
+            🧑🏽
+          </div>
+
+          <div class="playerLabel">
+            ${escapeHTML(
+              game.character.name
+            )}
+          </div>
+        </div>
+      `,
+
+      iconSize:[55,75],
+
+      iconAnchor:[27,65]
+
+    });
+
+
+  playerMarker =
+    L.marker(
+      [
+        game.latitude,
+        game.longitude
+      ],
+      {
+        icon,
+        zIndexOffset:1000,
+        interactive:false
+      }
+    )
+    .addTo(map);
+
+}
+
+
+/* =========================
+   UPDATE PLAYER
+========================= */
+
+function updatePlayerMarker(){
+
+  if(!playerMarker)
+    return;
+
+  playerMarker.setLatLng(
+    [
+      game.latitude,
+      game.longitude
+    ]
+  );
+
+}
+
+
+/* =========================
+   TAP TO MOVE
+========================= */
+
+function setupMapTap(){
+
+  map.on(
+    "click",
+    event => {
+
+      const lat =
+        event.latlng.lat;
+
+      const lng =
+        event.latlng.lng;
+
+      moveToCoordinates(
+        lat,
+        lng
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================
+   MOVE TO COORDINATES
+========================= */
+
+function moveToCoordinates(
+  targetLat,
+  targetLng
+){
+
+  if(!map)
+    return;
+
+  game.destination = {
+    latitude:targetLat,
+    longitude:targetLng
+  };
+
+  createDestinationMarker(
+    targetLat,
+    targetLng
+  );
+
+  startWalking();
+
+}
+
+
+/* =========================
+   MOVE TO POI
+========================= */
+
+function moveToLocation(
+  location
+){
+
+  game.destination = {
+
+    latitude:location.lat,
+
+    longitude:location.lng,
+
+    locationId:location.id
+
+  };
+
+  activePOI =
+    location;
+
+  createDestinationMarker(
+    location.lat,
+    location.lng
+  );
+
+  startWalking();
+
+}
+
+
+/* =========================
+   DESTINATION MARKER
+========================= */
+
+function createDestinationMarker(
+  lat,
+  lng
+){
+
+  if(destinationMarker){
+
+    map.removeLayer(
+      destinationMarker
+    );
+
+  }
+
+  const icon =
+    L.divIcon({
+
+      className:"",
+
+      html:`
+        <div class="destinationMarker destinationPulse"></div>
+      `,
+
+      iconSize:[30,30],
+
+      iconAnchor:[15,15]
+
+    });
+
+
+  destinationMarker =
+    L.marker(
+      [lat,lng],
+      {
+        icon,
+        interactive:false,
+        zIndexOffset:500
+      }
+    ).addTo(map);
+
+}
+
+
+/* =========================
+   WALKING ENGINE
+========================= */
+
+function startWalking(){
+
+  if(moveTimer){
+
+    clearInterval(
+      moveTimer
+    );
+
+  }
+
+  if(!game.destination)
+    return;
+
+
+  const destination =
+    game.destination;
+
+
+  moveTimer =
+    setInterval(
+      async () => {
+
+        const currentLat =
+          game.latitude;
+
+        const currentLng =
+          game.longitude;
+
+        const targetLat =
+          destination.latitude;
+
+        const targetLng =
+          destination.longitude;
+
+
+        const dLat =
+          targetLat -
+          currentLat;
+
+        const dLng =
+          targetLng -
+          currentLng;
+
+
+        const distance =
+          Math.sqrt(
+            dLat*dLat +
+            dLng*dLng
+          );
+
+
+        /*
+          This is a game movement
+          scale rather than real walking
+          speed.
+        */
+
+        const step =
+          0.000085;
+
+
+        if(distance <= step){
+
+          game.latitude =
+            targetLat;
+
+          game.longitude =
+            targetLng;
+
+          stopWalking();
+
+          await handleArrival();
+
+          return;
+
+        }
+
+
+        game.latitude +=
+          (dLat / distance) *
+          step;
+
+        game.longitude +=
+          (dLng / distance) *
+          step;
+
+
+        updatePlayerMarker();
+
+        broadcastMovement();
+
+        updateLocation();
+
+        updateNearbyPlayers();
+
+
+      },
+      80
+    );
+
+}
+
+
+/* =========================
+   STOP WALKING
+========================= */
+
+function stopWalking(){
+
+  if(moveTimer){
+
+    clearInterval(
+      moveTimer
+    );
+
+    moveTimer = null;
+
+  }
+
+  if(destinationMarker){
+
+    map.removeLayer(
+      destinationMarker
+    );
+
+    destinationMarker = null;
+
+  }
+
+  game.destination =
+    null;
+
+  saveGameThrottled();
+
+}
+
+
+/* =========================
+   ARRIVAL
+========================= */
+
+async function handleArrival(){
+
+  updatePlayerMarker();
+
+  updateLocation();
+
+  updateNearbyPlayers();
+
+  if(!activePOI)
+    return;
+
+
+  const poi =
+    activePOI;
+
+  activePOI = null;
+
+
+  if(poi.enterable){
+
+    openLocationModal(
+      poi
+    );
+
+  }else{
+
+    showToast(
+      `📍 You arrived at ${poi.name}`
+    );
+
+  }
+
+}
+
+
+/* =========================
+   LOCATION MODAL
+========================= */
+
+function openLocationModal(
+  poi
+){
+
+  const modalBack =
+    document.getElementById(
+      "modalBack"
+    );
+
+  const modalTitle =
+    document.getElementById(
+      "modalTitle"
+    );
+
+  const modalBody =
+    document.getElementById(
+      "modalBody"
+    );
+
+  const modalConfirm =
+    document.getElementById(
+      "modalConfirm"
+    );
+
+
+  modalTitle.textContent =
+    poi.icon + " " + poi.name;
+
+  modalBody.textContent =
+    poi.description;
+
+
+  modalConfirm.textContent =
+    "Enter";
+
+
+  modalConfirm.onclick =
+    () => {
+
+      modalBack.classList.remove(
+        "show"
+      );
+
+      enterLocation(
+        poi
+      );
+
+    };
+
+
+  modalBack.classList.add(
+    "show"
+  );
+
+}
+
+
+document
+  .getElementById("modalCancel")
+  .addEventListener(
+    "click",
+    () => {
+
+      document
+        .getElementById("modalBack")
+        .classList.remove(
+          "show"
+        );
+
+    }
+  );
+
+
+/* =========================
+   ENTER LOCATION
+========================= */
+
+function enterLocation(
+  poi
+){
+
+  showToast(
+    `🚪 Entered ${poi.name}`
+  );
+
+
+  switch(poi.type){
+
+    case "bank":
+
+      game.bank += 0;
+
+      openProfilePanel();
+
+      break;
+
+
+    case "hospital":
+
+      game.health =
+        Math.min(
+          100,
+          game.health + 20
+        );
+
+      showToast(
+        "🏥 Health restored +20"
+      );
+
+      break;
+
+
+    case "restaurant":
+
+      game.energy =
+        Math.min(
+          100,
+          game.energy + 20
+        );
+
+      game.mood =
+        Math.min(
+          100,
+          game.mood + 15
+        );
+
+      showToast(
+        "🍽️ You had a meal. Energy +20"
+      );
+
+      break;
+
+
+    case "park":
+
+      game.mood =
+        Math.min(
+          100,
+          game.mood + 15
+        );
+
+      showToast(
+        "🌳 You relaxed at the park. Mood +15"
+      );
+
+      break;
+
+
+    case "market":
+
+      showToast(
+        "🛒 Welcome to the market."
+      );
+
+      break;
+
+
+    case "shop":
+
+      showToast(
+        "🛍️ Welcome to the supermarket."
+      );
+
+      break;
+
+
+    case "education":
+
+      showToast(
+        "🎓 Education activities coming next."
+      );
+
+      break;
+
+
+    case "work":
+
+      showToast(
+        "💼 Work activities coming next."
+      );
+
+      break;
+
+
+    case "home":
+
+      game.energy =
+        Math.min(
+          100,
+          game.energy + 10
+        );
+
+      showToast(
+        "🏠 You are home. Energy +10"
+      );
+
+      break;
+
+
+    default:
+
+      showToast(
+        `📍 Welcome to ${poi.name}`
+      );
+
+  }
+
+
+  saveGame();
+
+  updateHUD();
+
+}
+
+
+/* =========================
+   LOCATION LABEL
+========================= */
+
+function updateLocation(){
+
+  const badge =
+    document.getElementById(
+      "locationBadge"
+    );
+
+  let closest = null;
+
+  let closestDistance =
+    Infinity;
+
+
+  locations.forEach(
+    location => {
+
+      const distance =
+        distanceMeters(
+          game.latitude,
+          game.longitude,
+          location.lat,
+          location.lng
+        );
+
+      if(
+        distance <
+        closestDistance
+      ){
+
+        closestDistance =
+          distance;
+
+        closest =
+          location;
+
+      }
+
+    }
+  );
+
+
+  if(
+    closest &&
+    closestDistance < 350
+  ){
+
+    badge.textContent =
+      "📍 " +
+      closest.name;
+
+  }else{
+
+    badge.textContent =
+      "📍 Kaduna";
+
+  }
+
+}
+
+
+/* =========================
+   DISTANCE
+========================= */
+
+function distanceMeters(
+  lat1,
+  lon1,
+  lat2,
+  lon2
+){
+
+  const R = 6371000;
+
+  const p1 =
+    lat1 * Math.PI / 180;
+
+  const p2 =
+    lat2 * Math.PI / 180;
+
+  const dp =
+    (lat2-lat1) *
+    Math.PI / 180;
+
+  const dl =
+    (lon2-lon1) *
+    Math.PI / 180;
+
+
+  const a =
+    Math.sin(dp/2) *
+    Math.sin(dp/2) +
+    Math.cos(p1) *
+    Math.cos(p2) *
+    Math.sin(dl/2) *
+    Math.sin(dl/2);
+
+
+  const c =
+    2 *
+    Math.atan2(
+      Math.sqrt(a),
+      Math.sqrt(1-a)
+    );
+
+
+  return R*c;
+}
+
+
+/* =========================
+   REALTIME
+========================= */
+
+async function setupRealtime(){
+
+  if(!currentUser)
+    return;
+
+
+  if(realtimeChannel){
+
+    try{
+
+      await supabaseClient
+        .removeChannel(
+          realtimeChannel
+        );
+
+    }catch(error){
+
+      console.warn(error);
+
+    }
+
+  }
+
+
+  /*
+    Same channel/topic for everyone.
+  */
+
+  realtimeChannel =
+    supabaseClient.channel(
+      "kaduna-world",
+      {
+        config:{
+          broadcast:{
+            ack:true
+          },
+
+          presence:{
+            key:
+              currentUser.id
+          }
+        }
+      }
+    );
+
+
+  /* =========================
+     PLAYER MOVEMENT
+  ========================== */
+
+  realtimeChannel.on(
+    "broadcast",
+    {
+      event:"player-move"
+    },
+    payload => {
+
+      const data =
+        payload.payload;
+
+      if(!data)
+        return;
+
+      if(
+        data.userId ===
+        currentUser.id
+      )
+        return;
+
+
+      remotePlayers[
+        data.userId
+      ] = {
+
+        userId:data.userId,
+
+        name:data.name,
+
+        age:data.age,
+
+        latitude:data.latitude,
+
+        longitude:data.longitude,
+
+        color:data.color ||
+          "#4f8cff",
+
+        lastSeen:
+          Date.now()
+
+      };
+
+
+      renderRemotePlayers();
+
+      updateNearbyPlayers();
+
+    }
+  );
+
+
+  /* =========================
+     CHAT
+  ========================== */
+
+  realtimeChannel.on(
+    "broadcast",
+    {
+      event:"chat-message"
+    },
+    payload => {
+
+      const data =
+        payload.payload;
+
+      if(!data)
+        return;
+
+
+      addChatMessage(
+        data.name,
+        data.message,
+        false
+      );
+
+    }
+  );
+
+
+  /* =========================
+     PLAYER ACTION
+  ========================== */
+
+  realtimeChannel.on(
+    "broadcast",
+    {
+      event:"player-action"
+    },
+    payload => {
+
+      const data =
+        payload.payload;
+
+      if(!data)
+        return;
+
+
+      if(
+        data.userId ===
+        currentUser.id
+      )
+        return;
+
+
+      const target =
+        remotePlayers[
+          data.userId
+        ];
+
+
+      if(target){
+
+        showToast(
+          `${data.name} ${data.action}`
+        );
+
+      }
+
+    }
+  );
+
+
+  /* =========================
+     PRESENCE
+  ========================== */
+
+  realtimeChannel.on(
+    "presence",
+    {
+      event:"sync"
+    },
+    () => {
+
+      updateOnlineCount();
+
+    }
+  );
+
+
+  realtimeChannel.on(
+    "presence",
+    {
+      event:"join"
+    },
+    () => {
+
+      updateOnlineCount();
+
+    }
+  );
+
+
+  realtimeChannel.on(
+    "presence",
+    {
+      event:"leave"
+    },
+    () => {
+
+      updateOnlineCount();
+
+    }
+  );
+
+
+  realtimeChannel.subscribe(
+    async status => {
+
+      console.log(
+        "Realtime:",
+        status
+      );
+
+
+      if(
+        status ===
+        "SUBSCRIBED"
+      ){
+
+        try{
+
+          await realtimeChannel.track({
+
+            userId:
+              currentUser.id,
+
+            name:
+              game.character.name,
+
+            age:
+              game.character.age,
+
+            onlineAt:
+              new Date().toISOString()
+
+          });
+
+          broadcastMovement();
+
+          showToast(
+            "🟢 Multiplayer connected"
+          );
+
+        }catch(error){
+
+          console.error(
+            "Presence error:",
+            error
+          );
+
+        }
+
+      }
+
+    }
+  );
+
+}
+
+
+/* =========================
+   BROADCAST MOVEMENT
+========================= */
+
+let lastMovementBroadcast =
+  0;
+
+
+async function broadcastMovement(){
+
+  if(
+    !realtimeChannel ||
+    !currentUser
+  )
+    return;
+
+
+  const now =
+    Date.now();
+
+
+  if(
+    now -
+    lastMovementBroadcast <
+    180
+  ){
+
+    return;
+
+  }
+
+
+  lastMovementBroadcast =
+    now;
+
+
+  try{
+
+    const result =
+      await realtimeChannel.send({
+
+        type:"broadcast",
+
+        event:"player-move",
+
+        payload:{
+
+          userId:
+            currentUser.id,
+
+          name:
+            game.character.name,
+
+          age:
+            game.character.age,
+
+          latitude:
+            game.latitude,
+
+          longitude:
+            game.longitude,
+
+          color:
+            "#4f8cff"
+
+        }
+
+      });
+
+
+    if(result !== "ok"){
+
+      console.warn(
+        "Movement broadcast:",
+        result
+      );
+
+    }
+
+  }catch(error){
+
+    console.warn(
+      "Movement send error:",
+      error
+    );
+
+  }
+
+}
+
+
+/* =========================
+   CHAT SEND
+========================= */
+
+async function sendChat(){
+
+  if(!realtimeChannel){
+
+    showToast(
+      "Chat is not connected yet."
+    );
+
+    return;
+
+  }
+
+
+  const input =
+    document.getElementById(
+      "chatInput"
+    );
+
+
+  const message =
+    input.value.trim();
+
+
+  if(!message)
+    return;
+
+
+  const now =
+    Date.now();
+
+
+  if(
+    now -
+    lastChatTime <
+    800
+  ){
+
+    showToast(
+      "Slow down a little 😅"
+    );
+
+    return;
+
+  }
+
+
+  lastChatTime =
+    now;
+
+
+  const clean =
+    message.slice(
+      0,
+      120
+    );
+
+
+  try{
+
+    const result =
+      await realtimeChannel.send({
+
+        type:"broadcast",
+
+        event:"chat-message",
+
+        payload:{
+
+          userId:
+            currentUser.id,
+
+          name:
+            game.character.name,
+
+          message:
+            clean,
+
+          time:
+            new Date().toISOString()
+
+        }
+
+      });
+
+
+    /*
+      Because ack=true, Supabase
+      confirms receipt before
+      the promise resolves.
+    */
+
+    if(result !== "ok"){
+
+      showToast(
+        "Message could not be sent."
+      );
+
+      console.warn(
+        "Chat broadcast:",
+        result
+      );
+
+      return;
+
+    }
+
+
+    /*
+      Broadcast is normally received
+      by other clients. We display
+      our own message locally.
+    */
+
+    addChatMessage(
+      game.character.name,
+      clean,
+      true
+    );
+
+
+    input.value = "";
+
+
+  }catch(error){
+
+    console.error(
+      "Chat error:",
+      error
+    );
+
+    showToast(
+      "Chat connection error."
+    );
+
+  }
+
+}
+
+
+/* =========================
+   CHAT UI
+========================= */
+
+function addChatMessage(
+  name,
+  message,
+  mine
+){
+
+  const container =
+    document.getElementById(
+      "chatMessages"
+    );
+
+
+  const row =
+    document.createElement(
+      "div"
+    );
+
+  row.className =
+    "chatMessage";
+
+
+  const who =
+    document.createElement(
+      "div"
+    );
+
+  who.className =
+    "who";
+
+  who.textContent =
+    mine
+      ? "You"
+      : name;
+
+
+  const text =
+    document.createElement(
+      "div"
+    );
+
+  text.className =
+    "text";
+
+  text.textContent =
+    message;
+
+
+  row.appendChild(
+    who
+  );
+
+  row.appendChild(
+    text
+  );
+
+
+  container.appendChild(
+    row
+  );
+
+
+  while(
+    container.children.length >
+    50
+  ){
+
+    container.removeChild(
+      container.firstChild
+    );
+
+  }
+
+
+  container.scrollTop =
+    container.scrollHeight;
+
+}
+
+
+/* =========================
+   REMOTE PLAYERS
+========================= */
+
+function renderRemotePlayers(){
+
+  Object.keys(
+    remotePlayers
+  ).forEach(
+    userId => {
+
+      const player =
+        remotePlayers[userId];
+
+
+      if(!player)
+        return;
+
+
+      const existing =
+        player._marker;
+
+
+      const icon =
+        L.divIcon({
+
+          className:"",
+
+          html:`
+            <div class="playerMarkerWrap">
+
+              <div
+                class="playerAvatar"
+                style="
+                  background:${player.color};
+                "
+              >
+                🧑🏽
+              </div>
+
+              <div class="playerLabel">
+                ${escapeHTML(
+                  player.name
+                )}
+              </div>
+
+            </div>
+          `,
+
+          iconSize:[55,75],
+
+          iconAnchor:[27,65]
+
+        });
+
+
+      if(existing){
+
+        existing.setLatLng([
+          player.latitude,
+          player.longitude
+        ]);
+
+        existing.setIcon(
+          icon
+        );
+
+      }else{
+
+        player._marker =
+          L.marker(
+            [
+              player.latitude,
+              player.longitude
+            ],
+            {
+              icon,
+              zIndexOffset:500
+            }
+          ).addTo(map);
+
+      }
+
+    }
+  );
+
+
+  /*
+    Remove players that have not
+    sent movement for a while.
+  */
+
+  Object.keys(
+    remotePlayers
+  ).forEach(
+    userId => {
+
+      const player =
+        remotePlayers[userId];
+
+
+      if(
+        Date.now() -
+        player.lastSeen >
+        30000
+      ){
+
+        if(player._marker){
+
+          map.removeLayer(
+            player._marker
+          );
+
+        }
+
+        delete remotePlayers[
+          userId
+        ];
+
+      }
+
+    }
+  );
+
+}
+
+
+/* =========================
+   ONLINE COUNT
+========================= */
+
+function updateOnlineCount(){
+
+  if(!realtimeChannel){
+
+    document.getElementById(
+      "onlineCount"
+    ).textContent = "1";
+
+    return;
+
+  }
+
+
+  try{
+
+    const state =
+      realtimeChannel.presenceState();
+
+
+    let count = 0;
+
+
+    Object.keys(
+      state
+    ).forEach(
+      key => {
+
+        const entries =
+          state[key];
+
+
+        if(
+          Array.isArray(entries)
+        ){
+
+          count +=
+            entries.length;
+
+        }
+
+      }
+    );
+
+
+    document.getElementById(
+      "onlineCount"
+    ).textContent =
+      Math.max(
+        1,
+        count
+      );
+
+
+  }catch(error){
+
+    document.getElementById(
+      "onlineCount"
+    ).textContent = "1";
+
+  }
+
+}
+
+
+/* =========================
+   NEARBY
+========================= */
+
+function updateNearbyPlayers(){
+
+  const list =
+    document.getElementById(
+      "nearbyList"
+    );
+
+
+  const players =
+    Object.values(
+      remotePlayers
+    );
+
+
+  players.sort(
+    (a,b) => {
+
+      const da =
+        distanceMeters(
+          game.latitude,
+          game.longitude,
+          a.latitude,
+          a.longitude
+        );
+
+      const db =
+        distanceMeters(
+          game.latitude,
+          game.longitude,
+          b.latitude,
+          b.longitude
+        );
+
+      return da - db;
+
+    }
+  );
+
+
+  if(!players.length){
+
+    list.innerHTML = `
+      <div class="panelSection">
+        <strong>No other players nearby.</strong>
+        <div style="
+          color:#9da7b3;
+          font-size:12px;
+          margin-top:5px;
+        ">
+          Invite someone into Kaduna Life
+          and meet them around the city.
+        </div>
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  list.innerHTML = "";
+
+
+  players.forEach(
+    player => {
+
+      const distance =
+        distanceMeters(
+          game.latitude,
+          game.longitude,
+          player.latitude,
+          player.longitude
+        );
+
+
+      const item =
+        document.createElement(
+          "div"
+        );
+
+      item.className =
+        "nearPlayer";
+
+
+      const info =
+        document.createElement(
+          "div"
+        );
+
+
+      const name =
+        document.createElement(
+          "div"
+        );
+
+      name.className =
+        "nearName";
+
+      name.textContent =
+        player.name;
+
+
+      const dist =
+        document.createElement(
+          "div"
+        );
+
+      dist.className =
+        "nearDistance";
+
+      dist.textContent =
+        formatDistance(
+          distance
+        );
+
+
+      info.appendChild(
+        name
+      );
+
+      info.appendChild(
+        dist
+      );
+
+
+      const button =
+        document.createElement(
+          "button"
+        );
+
+      button.className =
+        "nearAction";
+
+      button.textContent =
+        "Go";
+
+      button.onclick =
+        () => {
+
+          moveToCoordinates(
+            player.latitude,
+            player.longitude
+          );
+
+          closePanel(
+            "nearbyPanel"
+          );
+
+        };
+
+
+      item.appendChild(
+        info
+      );
+
+      item.appendChild(
+        button
+      );
+
+
+      list.appendChild(
+        item
+      );
+
+    }
+  );
+
+}
+
+
+function formatDistance(
+  meters
+){
+
+  if(meters < 1000){
+
+    return Math.round(
+      meters
+    ) + " m away";
+
+  }
+
+  return (
+    meters / 1000
+  ).toFixed(1) +
+  " km away";
+
+}
+
+
+/* =========================
+   PLACES LIST
+========================= */
+
+function buildPlacesList(){
+
+  const list =
+    document.getElementById(
+      "placesList"
+    );
+
+
+  list.innerHTML = "";
+
+
+  locations.forEach(
+    location => {
+
+      const item =
+        document.createElement(
+          "div"
+        );
+
+      item.className =
+        "nearPlayer";
+
+
+      const info =
+        document.createElement(
+          "div"
+        );
+
+
+      const name =
+        document.createElement(
+          "div"
+        );
+
+      name.className =
+        "nearName";
+
+      name.textContent =
+        location.icon +
+        " " +
+        location.name;
+
+
+      const type =
+        document.createElement(
+          "div"
+        );
+
+      type.className =
+        "nearDistance";
+
+      type.textContent =
+        location.enterable
+          ? "Tap to enter"
+          : "Landmark";
+
+
+      info.appendChild(
+        name
+      );
+
+      info.appendChild(
+        type
+      );
+
+
+      const button =
+        document.createElement(
+          "button"
+        );
+
+      button.className =
+        "nearAction";
+
+      button.textContent =
+        "Go";
+
+
+      button.onclick =
+        () => {
+
+          moveToLocation(
+            location
+          );
+
+          closePanel(
+            "placesPanel"
+          );
+
+        };
+
+
+      item.appendChild(
+        info
+      );
+
+      item.appendChild(
+        button
+      );
+
+
+      list.appendChild(
+        item
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================
+   DAILY SIGN-IN BONUS
+========================= */
+
+function getTodayKey(){
+
+  const now =
+    new Date();
+
+
+  return (
+    now.getFullYear() +
+    "-" +
+    String(
+      now.getMonth()+1
+    ).padStart(2,"0") +
+    "-" +
+    String(
+      now.getDate()
+    ).padStart(2,"0")
+  );
+
+}
+
+
+function checkDailyBonus(){
+
+  const today =
+    getTodayKey();
+
+
+  if(
+    game.lastLoginDate ===
+    today
+  ){
+
+    return;
+
+  }
+
+
+  /*
+    First login of a new day.
+  */
+
+  game.lastLoginDate =
+    today;
+
+  game.cash +=
+    2000;
+
+
+  saveGame();
+
+
+  document
+    .getElementById(
+      "bonusModal"
+    )
+    .classList.add(
+      "show"
+    );
+
+
+  updateHUD();
+
+}
+
+
+document
+  .getElementById(
+    "bonusOkay"
+  )
+  .addEventListener(
+    "click",
+    () => {
+
+      document
+        .getElementById(
+          "bonusModal"
+        )
+        .classList.remove(
+          "show"
+        );
+
+
+      showToast(
+        "🎁 +₦2,000 added to your cash!"
+      );
+
+    }
+  );
+
+
+/* =========================
+   HUD
+========================= */
+
+function updateHUD(){
+
+  document.getElementById(
+    "hudName"
+  ).textContent =
+    game.character.name ||
+    "Player";
+
+
+  document.getElementById(
+    "hudCash"
+  ).textContent =
+    "₦" +
+    Number(
+      game.cash || 0
+    ).toLocaleString();
+
+
+  document.getElementById(
+    "hudHealth"
+  ).textContent =
+    Math.round(
+      game.health || 0
+    );
+
+
+  document.getElementById(
+    "profileName"
+  ).textContent =
+    game.character.name ||
+    "—";
+
+
+  document.getElementById(
+    "profileAge"
+  ).textContent =
+    game.character.age ||
+    "—";
+
+
+  document.getElementById(
+    "profileCash"
+  ).textContent =
+    "₦" +
+    Number(
+      game.cash || 0
+    ).toLocaleString();
+
+
+  document.getElementById(
+    "profileBank"
+  ).textContent =
+    "₦" +
+    Number(
+      game.bank || 0
+    ).toLocaleString();
+
+
+  document.getElementById(
+    "profileCareer"
+  ).textContent =
+    game.career ||
+    "Unemployed";
+
+
+  document.getElementById(
+    "profileDay"
+  ).textContent =
+    game.day ||
+    1;
+
+}
+
+
+/* =========================
+   PANELS
+========================= */
+
+function openPanel(
+  id
+){
+
+  document
+    .getElementById(id)
+    .classList.add(
+      "open"
+    );
+
+}
+
+
+function closePanel(
+  id
+){
+
+  document
+    .getElementById(id)
+    .classList.remove(
+      "open"
+    );
+
+}
+
+
+function closeAllPanels(){
+
+  document
+    .querySelectorAll(".panel")
+    .forEach(
+      panel => {
+
+        panel.classList.remove(
+          "open"
+        );
+
+      }
+    );
+
+}
+
+
+document
+  .querySelectorAll("[data-close]")
+  .forEach(
+    button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          closePanel(
+            button.dataset.close
+          );
+
+        }
+      );
+
+    }
+  );
+
+
+document
+  .getElementById(
+    "chatButton"
+  )
+  .addEventListener(
+    "click",
+    () => {
+
+      closeAllPanels();
+
+      openPanel(
+        "chatPanel"
+      );
+
+      document
+        .getElementById(
+          "chatInput"
+        )
+        .focus();
+
+    }
+  );
+
+
+document
+  .getElementById(
+    "nearbyButton"
+  )
+  .addEventListener(
+    "click",
+    () => {
+
+      closeAllPanels();
+
+      updateNearbyPlayers();
+
+      openPanel(
+        "nearbyPanel"
+      );
+
+    }
+  );
+
+
+document
+  .getElementById(
+    "profileButton"
+  )
+  .addEventListener(
+    "click",
+    () => {
+
+      closeAllPanels();
+
+      updateHUD();
+
+      openPanel(
+        "profilePanel"
+      );
+
+    }
+  );
+
+
+document
+  .getElementById(
+    "placesButton"
+  )
+  .addEventListener(
+    "click",
+    () => {
+
+      closeAllPanels();
+
+      buildPlacesList();
+
+      openPanel(
+        "placesPanel"
+      );
+
+    }
+  );
+
+
+document
+  .getElementById(
+    "myLocationButton"
+  )
+  .addEventListener(
+    "click",
+    () => {
+
+      if(!map)
+        return;
+
+
+      map.flyTo(
+        [
+          game.latitude,
+          game.longitude
+        ],
+        16,
+        {
+          duration:.7
+        }
+      );
+
+    }
+  );
+
+
+/* =========================
+   CHAT BUTTON
+========================= */
+
+document
+  .getElementById(
+    "chatSend"
+  )
+  .addEventListener(
+    "click",
+    sendChat
+  );
+
+
+document
+  .getElementById(
+    "chatInput"
+  )
+  .addEventListener(
+    "keydown",
+    event => {
+
+      if(
+        event.key ===
+        "Enter"
+      ){
+
+        event.preventDefault();
+
+        sendChat();
+
+      }
+
+    }
+  );
+
+
+/* =========================
+   LOGOUT
+========================= */
+
+document
+  .getElementById(
+    "logoutButton"
+  )
+  .addEventListener(
+    "click",
+    async () => {
+
+      try{
+
+        if(realtimeChannel){
+
+          await supabaseClient
+            .removeChannel(
+              realtimeChannel
+            );
+
+          realtimeChannel =
+            null;
+
+        }
+
+      }catch(error){
+
+        console.warn(error);
+
+      }
+
+
+      await supabaseClient
+        .auth
+        .signOut();
+
+
+      location.reload();
+
+    }
+  );
+
+
+/* =========================
+   SAVE GAME
+========================= */
+
+async function saveGame(){
+
+  if(!currentUser)
+    return;
+
+
+  try{
+
+    const {
+      error
+    } =
+      await supabaseClient
+      .from("profiles")
+      .upsert({
+
+        id:
+          currentUser.id,
+
+        name:
+          game.character.name,
+
+        age:
+          game.character.age,
+
+        game_state:
+          game
+
+      });
+
+
+    if(error){
+
+      console.warn(
+        "Save error:",
+        error
+      );
+
+    }
+
+    localStorage.setItem(
+      "kadunaLife_v37_" +
+      currentUser.id,
+      JSON.stringify(game)
+    );
+
+
+  }catch(error){
+
+    console.warn(
+      "Cloud save unavailable:",
+      error
+    );
+
+    try{
+
+      localStorage.setItem(
+        "kadunaLife_v37_" +
+        currentUser.id,
+        JSON.stringify(game)
+      );
+
+    }catch(e){}
+
+  }
+
+}
+
+
+/* =========================
+   SAVE THROTTLE
+========================= */
+
+function saveGameThrottled(){
+
+  const now =
+    Date.now();
+
+
+  if(
+    now -
+    lastSaveTime <
+    2500
+  ){
+
+    return;
+
+  }
+
+
+  lastSaveTime =
+    now;
+
+
+  saveGame();
+
+}
+
+
+/* =========================
+   TOAST
+========================= */
+
+let toastTimer = null;
+
+
+function showToast(
+  message
+){
+
+  toast.textContent =
+    message;
+
+  toast.classList.add(
+    "show"
+  );
+
+
+  clearTimeout(
+    toastTimer
+  );
+
+
+  toastTimer =
+    setTimeout(
+      () => {
+
+        toast.classList.remove(
+          "show"
+        );
+
+      },
+      2500
+    );
+
+}
+
+
+/* =========================
+   ESCAPE
+========================= */
+
+function escapeHTML(
+  value
+){
+
+  const div =
+    document.createElement(
+      "div"
+    );
+
+  div.textContent =
+    value == null
+      ? ""
+      : String(value);
+
+  return div.innerHTML;
+
+}
+
+
+/* =========================
+   KEYBOARD FALLBACK
+========================= */
+
+/*
+  Arrow keys are no longer the
+  primary controls.
+
+  Desktop users can still click
+  the map normally.
+*/
+
+
+document.addEventListener(
+  "keydown",
+  event => {
+
+    if(
+      event.key ===
+      "Escape"
+    ){
+
+      closeAllPanels();
+
+      document
+        .getElementById(
+          "modalBack"
+        )
+        .classList.remove(
+          "show"
+        );
+
+      document
+        .getElementById(
+          "bonusModal"
+        )
+        .classList.remove(
+          "show"
+        );
+
+    }
+
+  }
+);
+
+
+/* =========================
+   PERIODIC CLEANUP
+========================= */
+
+setInterval(
+  () => {
+
+    renderRemotePlayers();
+
+    updateNearbyPlayers();
+
+    updateOnlineCount();
+
+  },
+  5000
+);
+
+
+/* =========================
+   INITIAL SESSION
+========================= */
+
+checkSession();
+
+</script>
+
+</body>
+</html>
