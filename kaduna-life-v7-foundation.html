@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b7a4b">
+<title>Kaduna Life — V7</title>
+<style>
+:root{--g:#0b7a4b;--g2:#075c39;--bg:#f4f7f5;--card:#fff;--text:#17211b;--muted:#6d776f;--line:#dfe7e1;--warn:#b7791f;--danger:#b83232;--shadow:0 8px 28px rgba(12,45,27,.08)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
+button,input,select{font:inherit}button{border:0;border-radius:12px;padding:11px 14px;cursor:pointer;background:var(--g);color:#fff;font-weight:700}button.secondary{background:#e9f1ec;color:var(--g2)}button.danger{background:#b83232}
+#intro{min-height:100vh;display:grid;place-items:center;padding:24px;background:linear-gradient(145deg,#063d27,#0b7a4b)}
+.intro-card{max-width:620px;background:#fff;border-radius:28px;padding:34px;box-shadow:0 25px 70px #001d1029}.logo{font-size:44px;font-weight:900;color:var(--g)}.tag{color:var(--muted)}
+.hidden{display:none!important}.app{min-height:100vh}.top{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--line);padding:10px 14px;display:flex;justify-content:space-between;gap:10px;align-items:center}.stats{display:flex;gap:8px;flex-wrap:wrap}.pill{padding:7px 10px;border:1px solid var(--line);border-radius:999px;background:#f8fbf9;font-size:12px}.layout{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 60px)}aside{background:#fff;border-right:1px solid var(--line);padding:14px;position:sticky;top:60px;height:calc(100vh - 60px)}nav{display:grid;gap:7px}nav button{background:transparent;color:var(--text);text-align:left}nav button.active,nav button:hover{background:#e9f5ee;color:var(--g2)}main{padding:22px;max-width:1180px;width:100%;margin:auto}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:var(--shadow)}.wide{grid-column:1/-1}.two{grid-template-columns:repeat(2,minmax(0,1fr))}.muted{color:var(--muted)}.money{font-weight:900;color:var(--g2)}.row{display:flex;gap:9px;align-items:center;justify-content:space-between;flex-wrap:wrap}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.bar{height:9px;background:#e8eee9;border-radius:99px;overflow:hidden}.bar>i{display:block;height:100%;background:var(--g)}.item{padding:12px 0;border-bottom:1px solid var(--line)}.item:last-child{border-bottom:0}.tag2{display:inline-block;background:#edf7f1;color:var(--g2);padding:4px 8px;border-radius:999px;font-size:12px;font-weight:700}input,select{width:100%;padding:12px;border:1px solid var(--line);border-radius:12px;background:#fff}.form{display:grid;gap:12px}.modal{position:fixed;inset:0;background:#0007;display:grid;place-items:center;padding:18px;z-index:20}.modalbox{background:#fff;max-width:560px;width:100%;border-radius:20px;padding:20px;max-height:85vh;overflow:auto}.toast{position:fixed;right:16px;bottom:78px;background:#15231b;color:#fff;padding:12px 15px;border-radius:12px;z-index:30}.mobile-nav{display:none}.log{max-height:300px;overflow:auto}.small{font-size:12px}.good{color:#167447}.bad{color:#b83232}
+@media(max-width:850px){.layout{display:block}aside{display:none}main{padding:14px;padding-bottom:86px}.grid,.two{grid-template-columns:1fr 1fr}.mobile-nav{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);z-index:10}.mobile-nav button{border-radius:0;background:#fff;color:var(--text);font-size:11px;padding:10px 3px}.mobile-nav button.active{color:var(--g2);background:#edf7f1}.stats{gap:5px}.pill{font-size:11px;padding:6px 8px}}
+@media(max-width:560px){.grid,.two{grid-template-columns:1fr}.logo{font-size:36px}.top{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<section id="intro">
+  <div class="intro-card">
+    <div class="logo">Kaduna Life</div>
+    <h1>Build your life. Make your moves.</h1>
+    <p class="tag">A Kaduna-based life simulation where your choices shape your money, skills, reputation, home, work and story.</p>
+    <div id="continueBox"></div>
+    <button onclick="showCreate()">Start New Life</button>
+  </div>
+</section>
+
+<section id="create" class="hidden">
+  <div style="max-width:680px;margin:30px auto;padding:18px">
+    <div class="card">
+      <h1>Create your character</h1>
+      <div class="form">
+        <label>Name<input id="name" maxlength="24" placeholder="Your name"></label>
+        <label>Age<select id="age"><option>18</option><option>19</option><option>20</option><option>21</option><option>22</option><option>23</option><option>24</option><option>25</option><option>26</option><option>27</option><option>28</option><option>29</option><option>30</option></select></label>
+        <label>Starting area<select id="district"><option>Kawo</option><option>Malali</option><option>Barnawa</option><option>Mando</option><option>Rigasa</option><option>Sabon Tasha</option><option>Ungwan Rimi</option><option>Kaduna Central</option><option>Television</option></select></label>
+        <label>Background<select id="background">
+          <option value="hustler">Hustler — street sense + energy</option>
+          <option value="student">Student — learning + skills</option>
+          <option value="connected">Connected One — money + reputation</option>
+        </select></label>
+        <button onclick="startGame()">Enter Kaduna Life</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="app" class="app hidden">
+<header class="top">
+  <strong>KADUNA LIFE <span class="small muted">V7</span></strong>
+  <div class="stats">
+    <span class="pill">₦<b id="cash">0</b></span><span class="pill">⚡ <b id="energy">0</b></span>
+    <span class="pill">❤️ <b id="health">0</b></span><span class="pill">⭐ Lv <b id="level">1</b></span>
+    <span class="pill">📅 Day <b id="day">1</b></span>
+  </div>
+</header>
+<div class="layout">
+<aside><nav id="sideNav"></nav></aside>
+<main id="screen"></main>
+</div>
+<div class="mobile-nav" id="mobileNav"></div>
+</section>
+
+<div id="modal" class="modal hidden"><div class="modalbox" id="modalBox"></div></div>
+<div id="toast" class="toast hidden"></div>
+
+<script>
+const KEY="kadunaLifeV7";
+const VERSION=7;
+const districts={
+"Kawo":{desc:"Transport, roadside commerce and constant movement.",cost:900,reward:5200,xp:10},
+"Kaduna Central":{desc:"The city core: offices, networks and opportunities.",cost:700,reward:3600,xp:14},
+"Malali":{desc:"Residential, calmer, good for social connections.",cost:500,reward:0,xp:8},
+"Barnawa":{desc:"Busy neighbourhood with customers and small businesses.",cost:850,reward:6500,xp:12},
+"Mando":{desc:"Students, campuses and skill-building opportunities.",cost:750,reward:3000,xp:12},
+"Rigasa":{desc:"High-energy hustle zone with bigger risk and reward.",cost:1100,reward:7500,xp:16},
+"Sabon Tasha":{desc:"Trading, food and customer-hunting territory.",cost:900,reward:6000,xp:13},
+"Ungwan Rimi":{desc:"Connections, professionals and relationship-building.",cost:650,reward:2500,xp:15},
+"Television":{desc:"Creative work, shopping and social activity.",cost:800,reward:4500,xp:13}
+};
+const jobs=[
+{id:"dispatch",name:"Dispatch Rider",pay:8500,energy:28,skill:"street",req:1},
+{id:"designer",name:"Freelance Designer",pay:12000,energy:22,skill:"tech",req:2},
+{id:"tutor",name:"Private Tutor",pay:9500,energy:25,skill:"career",req:1},
+{id:"trader",name:"Market Trader",pay:10500,energy:30,skill:"business",req:2},
+{id:"creator",name:"Content Creator",pay:6500,energy:20,skill:"social",req:1},
+{id:"assistant",name:"Office Assistant",pay:11500,energy:27,skill:"career",req:2}
+];
+const people=[
+{id:"amina",name:"Amina",trait:"ambitious",rel:20},
+{id:"musa",name:"Musa",trait:"streetwise",rel:15},
+{id:"daniel",name:"Daniel",trait:"creative",rel:10},
+{id:"zainab",name:"Zainab",trait:"social",rel:5}
+];
+const properties=[
+{id:"room",name:"Shared Room",price:0,level:0,comfort:0,rent:500},
+{id:"self",name:"Self-Contained",price:180000,level:1,comfort:10,rent:2500},
+{id:"flat",name:"Modern Flat",price:650000,level:2,comfort:20,rent:6500}
+];
+const businesses=[
+{id:"food",name:"Food Stall",price:250000,profit:7500,req:2},
+{id:"fashion",name:"Fashion Resale",price:450000,profit:11000,req:3},
+{id:"tech",name:"Phone/Tech Desk",price:800000,profit:18000,req:4}
+];
+const vehicles=[
+{id:"none",name:"On Foot",price:0,speed:1},
+{id:"bike",name:"Bicycle",price:35000,speed:1.15},
+{id:"scooter",name:"Scooter",price:160000,speed:1.35},
+{id:"car",name:"Used Car",price:2500000,speed:1.65}
+];
+const items=[
+{id:"phone",name:"Better Smartphone",price:45000,desc:"+2 social, +3 reputation"},
+{id:"outfit",name:"Fresh Outfit",price:18000,desc:"+5 happiness, +2 reputation"},
+{id:"laptop",name:"Used Laptop",price:95000,desc:"+2 tech"},
+{id:"generator",name:"Small Generator",price:85000,desc:"+5 home comfort"},
+{id:"tv",name:"Smart TV",price:120000,desc:"+8 happiness"}
+];
+const quotes=["Every day is another move.","Start small. Move smart.","Kaduna rewards consistency.","Your choices become your story.","One good decision can change the week."];
+
+function basePlayer(){
+ return {version:VERSION,name:"",age:18,gender:"",district:"Kawo",background:"hustler",
+ money:5000,bank:0,debt:0,energy:80,hunger:75,health:85,happiness:65,reputation:10,
+ level:1,xp:0,day:1,slot:0,job:null,home:"room",homeLevel:0,business:null,vehicle:"none",
+ skills:{business:1,tech:1,social:1,street:1,career:1},inventory:[],relationships:{},
+ achievements:[],visited:[],missions:[],log:[],weather:"Clear",quoteIndex:0,stats:{earned:0,spent:0}}
+}
+let p=basePlayer(), screen="home", currentEvent=null;
+
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));}
+function money(n){return Math.max(0,Math.round(n)).toLocaleString("en-NG")}
+function clamp(n,a=0,b=100){return Math.max(a,Math.min(b,n))}
+function toast(t){const x=document.getElementById("toast");x.textContent=t;x.classList.remove("hidden");setTimeout(()=>x.classList.add("hidden"),1800)}
+function addLog(t){p.log.unshift({day:p.day,text:t});p.log=p.log.slice(0,60)}
+function changeMoney(n){p.money=Math.max(0,p.money+n);if(n>0)p.stats.earned+=n;else p.stats.spent+=Math.abs(n)}
+function xp(n){p.xp+=n;while(p.xp>=needXP()){p.xp-=needXP();p.level++;p.energy=clamp(p.energy+10);p.health=clamp(p.health+5);p.happiness=clamp(p.happiness+5);addLog("⭐ Level up! You reached level "+p.level);}}
+function needXP(){return 100+(p.level-1)*50}
+function spendEnergy(n){if(p.energy<n){toast("Not enough energy. Sleep to reset the day.");return false}p.energy-=n;return true}
+function skillBonus(job){return 1+(p.skills[job.skill]-1)*.07}
+function timeLabel(){let h=6+p.slot*3; if(h>=24)h-=24; return String(h).padStart(2,"0")+":00"}
+function weather(){let w=["Clear","Cloudy","Hot","Rainy"];p.weather=w[(p.day+p.level)%w.length]}
+function nav(){let tabs=[["home","🏠 Home"],["work","💼 Work"],["city","📍 Kaduna"],["shop","🛍️ Shop"],["people","👥 People"],["life","🏦 Life"],["profile","👤 Profile"]];document.getElementById("sideNav").innerHTML=tabs.map(x=>`<button class="${screen===x[0]?"active":""}" onclick="go('${x[0]}')">${x[1]}</button>`).join("");document.getElementById("mobileNav").innerHTML=tabs.slice(0,5).map(x=>`<button class="${screen===x[0]?"active":""}" onclick="go('${x[0]}')">${x[1]}</button>`).join("")}
+function header(){document.getElementById("cash").textContent=money(p.money);document.getElementById("energy").textContent=p.energy;document.getElementById("health").textContent=p.health;document.getElementById("level").textContent=p.level;document.getElementById("day").textContent=p.day}
+function go(s){screen=s;render()}
+function render(){header();nav();const out={home:home,work:work,city:city,shop:shop,people:peopleView,life:life,profile:profile}[screen]||home;document.getElementById("screen").innerHTML=out();wireQuote()}
+function home(){let q=quotes[p.quoteIndex%quotes.length];return `<div class="row"><div><h1>Good ${p.slot<2?"morning":"evening"}, ${esc(p.name)} 👋</h1><p class="muted">${p.district} · ${p.weather} · ${timeLabel()}</p></div><span class="tag2">${p.background}</span></div>
+<div class="grid"><div class="card"><h3>Daily needs</h3>${bar("Energy",p.energy)}${bar("Hunger",p.hunger)}${bar("Health",p.health)}${bar("Happiness",p.happiness)}<div class="actions"><button onclick="eat()">🍲 Eat ₦1,500</button><button class="secondary" onclick="chill()">😌 Chill</button><button class="secondary" onclick="sleep()">🌙 Sleep / Next Day</button></div></div>
+<div class="card"><h3>Today</h3><p><b>${p.slot}/5</b> time blocks used</p><p>XP ${p.xp}/${needXP()}</p><p>Reputation <b>${p.reputation}</b></p><div class="actions"><button onclick="save()">💾 Save</button></div></div>
+<div class="card"><h3>Quote</h3><p id="quote">${q}</p><button class="secondary" onclick="newQuote()">New quote</button></div>
+<div class="card wide"><h3>Life log</h3><div class="log">${p.log.length?p.log.map(x=>`<div class="item"><span class="tag2">Day ${x.day}</span> ${esc(x.text)}</div>`).join(""):"<p class='muted'>Your story starts here.</p>"}</div></div></div>`}
+function bar(n,v){return `<div class="small muted">${n} ${Math.round(v)}</div><div class="bar"><i style="width:${clamp(v)}%"></i></div>`}
+function wireQuote(){}
+function newQuote(){p.quoteIndex++;render()}
+function action(cost,fn){if(!spendEnergy(cost))return; p.slot++;fn();if(p.slot>=5){toast("You're out of time for today.");}checkAchievements();save(false);render();maybeEvent()}
+function eat(){if(p.money<1500){toast("Not enough cash.");return}changeMoney(-1500);p.hunger=clamp(p.hunger+25);p.health=clamp(p.health+3);addLog("Bought food and recovered.")}
+function chill(){action(10,()=>{p.happiness=clamp(p.happiness+12);p.hunger=clamp(p.hunger-5);addLog("Took some time to relax.");})}
+function work(){return `<h1>Work 💼</h1><p class="muted">Choose a job. Higher skills increase your earnings.</p><div class="grid">${jobs.map(j=>{let s=p.skills[j.skill],locked=s<j.req;return `<div class="card"><span class="tag2">${j.skill} Lv ${s.toFixed(1)}</span><h3>${j.name}</h3><p class="money">₦${money(j.pay)}</p><p class="muted">Energy ${j.energy} · Requirement ${j.req}</p><button ${locked?"disabled":""} onclick="doJob('${j.id}')">${locked?"🔒 Need skill":"Take shift"}</button></div>`}).join("")}</div>`}
+function doJob(id){let j=jobs.find(x=>x.id===id);if(!j||p.skills[j.skill]<j.req)return toast("Skill requirement not met.");action(j.energy,()=>{let pay=Math.round(j.pay*skillBonus(j));changeMoney(pay);p.skills[j.skill]=+(p.skills[j.skill]+.15).toFixed(2);p.hunger=clamp(p.hunger-10);p.happiness=clamp(p.happiness-2);p.reputation++;xp(18);addLog(`Worked as ${j.name} and earned ₦${money(pay)}.`);});}
+function city(){return `<h1>Kaduna 📍</h1><p class="muted">Travel takes a time block. Your vehicle improves travel efficiency.</p><div class="grid">${Object.entries(districts).map(([n,d])=>`<div class="card"><span class="tag2">${n===p.district?"You are here":"District"}</span><h3>${n}</h3><p>${d.desc}</p><p>Travel ₦${money(Math.round(d.cost/(p.vehicle==="none"?1:vehicles.find(v=>v.id===p.vehicle).speed)))}</p><button ${n===p.district?"disabled":""} onclick="visit('${n}')">${n===p.district?"Current area":"Travel"}</button></div>`).join("")}</div>`}
+function visit(n){let d=districts[n];action(Math.max(6,Math.round(12/(p.vehicle==="none"?1:vehicles.find(v=>v.id===p.vehicle).speed))),()=>{if(p.money<d.cost){toast("You don't have enough for the trip.");p.energy+=Math.max(6,Math.round(12/(p.vehicle==="none"?1:vehicles.find(v=>v.id===p.vehicle).speed)));p.slot--;return}changeMoney(-d.cost);p.district=n;if(!p.visited.includes(n))p.visited.push(n);changeMoney(d.reward);xp(d.xp);p.happiness=clamp(p.happiness+3);addLog(`Visited ${n}${d.reward?` and found ₦${money(d.reward)}.`:"."}`);});}
+function shop(){return `<h1>Shop 🛍️</h1><div class="grid">${items.map(i=>`<div class="card"><h3>${i.name}</h3><p>${i.desc}</p><p class="money">₦${money(i.price)}</p><button onclick="buy('${i.id}')">Buy</button></div>`).join("")}<div class="card wide"><h2>Vehicles</h2>${vehicles.filter(v=>v.id!=="none").map(v=>`<div class="item row"><span><b>${v.name}</b><br><span class="muted">Travel speed ×${v.speed}</span></span><span><b>₦${money(v.price)}</b> <button onclick="buyVehicle('${v.id}')">Buy</button></span></div>`).join("")}</div></div>`}
+function buy(id){let i=items.find(x=>x.id===id);if(!i)return;if(p.money<i.price)return toast("Not enough cash.");changeMoney(-i.price);p.inventory.push(id);if(id==="phone"){p.skills.social+=2;p.reputation+=3}else if(id==="outfit"){p.happiness=clamp(p.happiness+5);p.reputation+=2}else if(id==="laptop")p.skills.tech+=2;else if(id==="generator")p.happiness=clamp(p.happiness+5);else if(id==="tv")p.happiness=clamp(p.happiness+8);addLog(`Bought ${i.name}.`);save(false);render()}
+function buyVehicle(id){let v=vehicles.find(x=>x.id===id);if(!v||p.vehicle!=="none")return toast("You already own a vehicle.");if(p.money<v.price)return toast("Not enough cash.");changeMoney(-v.price);p.vehicle=id;addLog(`Bought ${v.name}.`);save(false);render()}
+function peopleView(){return `<h1>People 👥</h1><div class="grid">${people.map(base=>{let r=p.relationships[base.id]??base.rel;return `<div class="card"><h3>${base.name}</h3><span class="tag2">${base.trait}</span><p>Relationship: <b>${r}</b>/100</p>${bar("Connection",r)}<button onclick="meet('${base.id}')">Spend time</button></div>`}).join("")}</div>`}
+function meet(id){let n=people.find(x=>x.id===id);action(12,()=>{let gain=5+Math.floor(Math.random()*6);p.relationships[id]=clamp((p.relationships[id]??n.rel)+gain,0,100);p.happiness=clamp(p.happiness+7);p.reputation+=p.relationships[id]>=50?2:0;xp(10);addLog(`Spent time with ${n.name}. Connection +${gain}.`);});}
+function life(){let prop=properties.find(x=>x.id===p.home);let biz=businesses.find(x=>x.id===p.business);return `<h1>Life Systems 🏦</h1><div class="grid">
+<div class="card"><h2>Bank</h2><p>Cash: <b>₦${money(p.money)}</b></p><p>Savings: <b>₦${money(p.bank)}</b></p><div class="actions"><button onclick="bankMove(5000)">Deposit ₦5k</button><button class="secondary" onclick="bankMove(-5000)">Withdraw ₦5k</button></div></div>
+<div class="card"><h2>Home</h2><p><b>${prop.name}</b> · Comfort ${prop.comfort}</p><p>Daily upkeep: ₦${money(prop.rent)}</p><div class="actions">${properties.filter(x=>x.level>prop.level).map(x=>`<button onclick="upgradeHome('${x.id}')">Upgrade to ${x.name} — ₦${money(x.price)}</button>`).join("")||"<span class='muted'>Highest home tier reached.</span>"}</div></div>
+<div class="card"><h2>Business</h2>${biz?`<p><b>${biz.name}</b></p><p>Daily projected profit: <span class="money">₦${money(biz.profit)}</span></p><button onclick="runBusiness()">Run today's business</button>`:`<p class="muted">Start a business when your business skill is high enough.</p>${businesses.map(x=>`<button class="secondary" onclick="buyBusiness('${x.id}')">${x.name} — ₦${money(x.price)} · Skill ${x.req}</button>`).join("<br><br>")}`}</div>
+<div class="card wide"><h2>Progress</h2><p>Total earned: ₦${money(p.stats.earned)} · Total spent: ₦${money(p.stats.spent)} · Areas visited: ${p.visited.length}</p></div></div>`}
+function bankMove(n){if(n>0){if(p.money<n)return toast("Not enough cash.");p.money-=n;p.bank+=n}else{let a=Math.min(p.bank,-n);p.bank-=a;p.money+=a}addLog(n>0?`Deposited ₦${money(n)}.`:`Withdrew savings.`);save(false);render()}
+function upgradeHome(id){let x=properties.find(v=>v.id===id);if(!x||x.level<=p.homeLevel)return;if(p.money<x.price)return toast("Not enough cash.");changeMoney(-x.price);p.home=x.id;p.homeLevel=x.level;p.happiness=clamp(p.happiness+x.comfort/2);addLog(`Moved into a ${x.name}.`);save(false);render()}
+function buyBusiness(id){let b=businesses.find(x=>x.id===id);if(p.business)return toast("You already own a business.");if(p.skills.business<b.req)return toast("Business skill too low.");if(p.money<b.price)return toast("Not enough cash.");changeMoney(-b.price);p.business=id;addLog(`Started ${b.name}.`);save(false);render()}
+function runBusiness(){let b=businesses.find(x=>x.id===p.business);action(18,()=>{let profit=Math.round(b.profit*(.8+Math.random()*.5));changeMoney(profit);p.skills.business=+(p.skills.business+.1).toFixed(2);p.reputation++;xp(15);addLog(`Ran ${b.name} and made ₦${money(profit)}.`);});}
+function profile(){return `<h1>${esc(p.name)} 👤</h1><div class="grid"><div class="card"><h2>Character</h2><p>Age ${p.age} · ${esc(p.district)}</p><p>Background: ${esc(p.background)}</p><p>Reputation: ${p.reputation}</p><p>XP: ${p.xp}/${needXP()}</p></div><div class="card"><h2>Skills</h2>${Object.entries(p.skills).map(([k,v])=>`<div class="item row"><span>${k}</span><b>Lv ${v.toFixed(1)}</b></div>`).join("")}</div><div class="card"><h2>Achievements</h2>${p.achievements.length?p.achievements.map(x=>`<span class="tag2" style="margin:3px">${esc(x)}</span>`).join(""):"<p class='muted'>Keep playing to unlock achievements.</p>"}</div><div class="card wide"><h2>Save / Reset</h2><button onclick="save()">Save Game</button> <button class="danger" onclick="newLife()">New Life</button></div></div>`}
+function sleep(){if(p.slot===0){toast("You haven't done anything today.");return}nextDay()}
+function nextDay(){p.day++;p.slot=0;p.energy=85;p.hunger=clamp(p.hunger-12);p.health=clamp(p.health-2);p.happiness=clamp(p.happiness+(p.hunger<30?-8:0));weather();let prop=properties.find(x=>x.id===p.home);let bill=prop.rent;if(p.money>=bill)changeMoney(-bill);else{p.health=clamp(p.health-5);addLog(`Couldn't fully cover the day's ₦${money(bill)} housing upkeep.`)}if(p.day%365===1)p.age++;xp(5);addLog(`Started Day ${p.day}.`);checkAchievements();save(false);render();maybeEvent()}
+function maybeEvent(){if(Math.random()>.42||currentEvent)return;const events=[
+{title:"A local opportunity",text:"Someone offers you a small paid task.",opts:[["Take it",{money:5000,xp:10,energy:-8}],["Pass",{happiness:1}],["Negotiate",{money:7000,rep:1,energy:-12}]]},
+{title:"Transport wahala",text:"Your plans are slowed by an unexpected transport problem.",opts:[["Pay for another route",{money:-1200,energy:-4}],["Walk and save",{energy:-14,happiness:-2}],["Wait it out",{energy:-7}]]},
+{title:"Friend needs help",text:"A friend asks for a little support.",opts:[["Help",{money:-1000,rel:6,happiness:5}],["Can't today",{rep:-1}],["Help with advice",{rel:3,xp:8}]]},
+{title:"A post gets attention",text:"Something you made starts getting noticed.",opts:[["Share it",{rep:2,xp:15,happiness:4}],["Keep it low-key",{rep:1}],["Ignore it",{happiness:-1}]]}
+];currentEvent=events[Math.floor(Math.random()*events.length)];showEvent()}
+function showEvent(){if(!currentEvent)return;document.getElementById("modalBox").innerHTML=`<h2>${currentEvent.title}</h2><p>${currentEvent.text}</p>${currentEvent.opts.map((o,i)=>`<button style="width:100%;margin:5px 0" onclick="resolveEvent(${i})">${o[0]}</button>`).join("")}`;document.getElementById("modal").classList.remove("hidden")}
+function resolveEvent(i){let o=currentEvent.opts[i][1];Object.entries(o).forEach(([k,v])=>{if(typeof v!=="number")return;if(k==="money")changeMoney(v);else if(k==="xp")xp(v);else if(k==="rep")p.reputation=Math.max(0,p.reputation+v);else if(k==="energy")p.energy=clamp(p.energy+v);else if(k==="health")p.health=clamp(p.health+v);else if(k==="happiness")p.happiness=clamp(p.happiness+v);else if(k==="rel"){let id=people[Math.floor(Math.random()*people.length)].id;p.relationships[id]=clamp((p.relationships[id]??0)+v,0,100)}});addLog(`${currentEvent.title}: ${currentEvent.opts[i][0]}.`);currentEvent=null;document.getElementById("modal").classList.add("hidden");checkAchievements();save(false);render()}
+function checkAchievements(){const a=[["First Day",p.day>=1],["First Hustle",p.stats.earned>0],["Ten Grand",p.money+p.bank>=10000],["Fifty Grand",p.money+p.bank>=50000],["Rising Star",p.level>=5],["Explorer",p.visited.length>=5],["People Person",Object.values(p.relationships).some(x=>x>=50)],["Big Player",p.money+p.bank>=1000000]];a.forEach(([n,ok])=>{if(ok&&!p.achievements.includes(n)){p.achievements.push(n);addLog(`🏆 Achievement unlocked: ${n}`);toast("🏆 "+n)}})}
+function save(show=true){try{p.version=VERSION;localStorage.setItem(KEY,JSON.stringify(p));if(show)toast("Game saved.");}catch(e){toast("Could not save this game.")}}
+function migrate(raw){let x={...basePlayer(),...raw};x.version=VERSION;x.skills={...basePlayer().skills,...(raw.skills||{})};x.relationships=raw.relationships||{};x.achievements=raw.achievements||[];x.visited=raw.visited||[];x.inventory=raw.inventory||[];x.log=raw.log||[];x.stats={...basePlayer().stats,...(raw.stats||{})};return x}
+function load(){try{let raw=JSON.parse(localStorage.getItem(KEY)||"null");if(!raw||!raw.name)return false;p=migrate(raw);document.getElementById("intro").classList.add("hidden");document.getElementById("create").classList.add("hidden");document.getElementById("app").classList.remove("hidden");screen="home";render();return true}catch(e){localStorage.removeItem(KEY);return false}}
+function showCreate(){document.getElementById("intro").classList.add("hidden");document.getElementById("create").classList.remove("hidden")}
+function startGame(){let name=document.getElementById("name").value.trim();if(!name)return toast("Enter a name.");p=basePlayer();p.name=name;p.age=+document.getElementById("age").value;p.district=document.getElementById("district").value;p.background=document.getElementById("background").value;
+if(p.background==="hustler"){p.money=8000;p.energy=90;p.skills.street=2}else if(p.background==="student"){p.money=3000;p.skills.tech=2;p.skills.career=2}else{p.money=15000;p.reputation=20;p.skills.social=2}
+weather();addLog(`Started a new life in ${p.district}.`);document.getElementById("create").classList.add("hidden");document.getElementById("app").classList.remove("hidden");screen="home";checkAchievements();save(false);render()}
+function newLife(){if(confirm("Start a completely new life? Your current local save will be replaced.")){localStorage.removeItem(KEY);location.reload()}}
+(function init(){let raw=null;try{raw=JSON.parse(localStorage.getItem(KEY)||"null")}catch{}if(raw?.name){document.getElementById("continueBox").innerHTML=`<p>You have a saved life for <b>${esc(raw.name)}</b>.</p><button class="secondary" onclick="load()">Continue</button>`}})();
+</script>
+</body>
+</html>
