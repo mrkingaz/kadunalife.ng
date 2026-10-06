@@ -1,0 +1,2046 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kaduna Life — V17</title>
+
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+
+body{
+margin:0;
+font-family:Arial,Helvetica,sans-serif;
+background:#06110c;
+color:#f4fff8;
+}
+
+header{
+padding:22px 15px;
+text-align:center;
+background:linear-gradient(135deg,#0b4028,#081b12);
+border-bottom:1px solid #286044;
+}
+
+header h1{margin:0;font-size:29px}
+header p{margin:7px 0 0;color:#a8cbbb}
+
+.container{
+max-width:900px;
+margin:auto;
+padding:12px;
+}
+
+button{
+width:100%;
+padding:13px;
+margin:5px 0;
+border:0;
+border-radius:11px;
+background:#16a36a;
+color:white;
+font-size:15px;
+font-weight:bold;
+}
+
+button:active{transform:scale(.98)}
+button.blue{background:#2878d7}
+button.gold{background:#b78613}
+button.purple{background:#7650c8}
+button.red{background:#b9362b}
+
+.stats{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:8px;
+}
+
+.stat{
+background:#10231a;
+border:1px solid #1c4935;
+border-radius:13px;
+padding:12px;
+}
+
+.stat small{color:#9ab4a6}
+.stat strong{
+display:block;
+font-size:18px;
+margin-top:4px;
+}
+
+.money{color:#71e5a8}
+
+.section{
+margin-top:13px;
+padding:15px;
+background:#0c1d15;
+border:1px solid #1b3d2d;
+border-radius:15px;
+}
+
+.section h2{
+margin:0 0 11px;
+font-size:19px;
+}
+
+.card{
+background:#13281e;
+padding:12px;
+border-radius:11px;
+margin:8px 0;
+}
+
+.card-title{
+font-weight:bold;
+font-size:16px;
+}
+
+.muted{
+color:#9db5a8;
+font-size:13px;
+line-height:1.5;
+}
+
+.row{
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:10px;
+}
+
+.row button{
+width:auto;
+min-width:100px;
+}
+
+.map{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:8px;
+}
+
+.place{
+background:#12291f;
+border:1px solid #27583f;
+border-radius:12px;
+padding:14px 8px;
+text-align:center;
+font-weight:bold;
+}
+
+.place.current{
+border:2px solid #25c67c;
+background:#16422d;
+}
+
+.place small{
+display:block;
+color:#9db8a9;
+margin-top:4px;
+font-weight:normal;
+}
+
+.log{
+max-height:260px;
+overflow-y:auto;
+}
+
+.log-item{
+padding:8px 0;
+border-bottom:1px solid #20382c;
+font-size:13px;
+}
+
+.modal{
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.8);
+z-index:1000;
+padding:15px;
+overflow:auto;
+}
+
+.modal-box{
+max-width:620px;
+margin:25px auto;
+background:#0c2117;
+border:1px solid #286447;
+border-radius:17px;
+padding:17px;
+}
+
+.modal-box h2{margin-top:0}
+
+.tag{
+display:inline-block;
+padding:4px 7px;
+border-radius:7px;
+background:#1b4431;
+font-size:11px;
+margin:2px;
+}
+
+footer{
+text-align:center;
+padding:25px 10px;
+color:#6e8b7c;
+font-size:12px;
+}
+
+@media(min-width:650px){
+.stats{grid-template-columns:repeat(4,1fr)}
+.map{grid-template-columns:repeat(3,1fr)}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>🏙️ Kaduna Life</h1>
+<p>V17 — Expanded Kaduna World</p>
+</header>
+
+<div class="container">
+
+<div class="stats">
+<div class="stat"><small>💰 Money</small><strong class="money" id="money"></strong></div>
+<div class="stat"><small>❤️ Health</small><strong id="health"></strong></div>
+<div class="stat"><small>😊 Mood</small><strong id="mood"></strong></div>
+<div class="stat"><small>⚡ Energy</small><strong id="energy"></strong></div>
+<div class="stat"><small>📚 Education</small><strong id="education"></strong></div>
+<div class="stat"><small>⭐ Reputation</small><strong id="reputation"></strong></div>
+<div class="stat"><small>📅 Day</small><strong id="day"></strong></div>
+<div class="stat"><small>📍 Location</small><strong id="location"></strong></div>
+</div>
+
+
+<!-- LOCATION -->
+<div class="section">
+<h2>📍 Current Location</h2>
+
+<div class="card">
+<div class="card-title" id="currentPlace"></div>
+<div class="muted" id="placeDescription"></div>
+</div>
+
+<button onclick="openLocationActions()">📍 Explore This Area</button>
+</div>
+
+
+<!-- CAREER -->
+<div class="section">
+<h2>💼 Career</h2>
+
+<div class="card">
+<div class="card-title" id="careerName">Unemployed</div>
+<div class="muted">
+Level <span id="careerLevel">1</span> ·
+XP <span id="careerXP">0</span>
+</div>
+</div>
+
+<button onclick="openJobs()">💼 Find a Job</button>
+<button onclick="work()">🧑‍💼 Work</button>
+</div>
+
+
+<!-- CITY MAP -->
+<div class="section">
+<h2>🗺️ Kaduna City Map</h2>
+<div class="muted">Choose where you want to go.</div>
+
+<div class="map" id="map"></div>
+</div>
+
+
+<!-- QUICK ACTIONS -->
+<div class="section">
+<h2>⚡ Quick Actions</h2>
+
+<button onclick="eat()">🍲 Eat — ₦500</button>
+<button onclick="study()">📚 Study</button>
+<button onclick="hangout()">😎 Hangout — ₦300</button>
+<button onclick="rest()">😴 Rest</button>
+<button onclick="explore()">🔎 Explore</button>
+<button class="gold" onclick="endDay()">🌙 End Day</button>
+</div>
+
+
+<!-- SERVICES -->
+<div class="section">
+<h2>🏙️ City Services</h2>
+
+<button onclick="useBank()">🏦 Bank</button>
+<button onclick="useATM()">💳 ATM</button>
+<button onclick="openMarket()">🛒 Market</button>
+<button onclick="visitClinic()">🏥 Clinic</button>
+<button onclick="visitSchool()">🏫 School</button>
+<button onclick="visitPark()">🌳 Park</button>
+<button onclick="visitTransport()">🚌 Transport Hub</button>
+</div>
+
+
+<!-- HOME -->
+<div class="section">
+<h2>🏠 Home</h2>
+
+<div class="card">
+<div class="card-title" id="homeName">No Home</div>
+<div class="muted" id="homeInfo">
+You don't own a home yet.
+</div>
+</div>
+
+<button onclick="openHomes()">🏠 Homes</button>
+<button onclick="homeRest()">🛏️ Rest At Home</button>
+</div>
+
+
+<!-- VEHICLES -->
+<div class="section">
+<h2>🚗 Transportation</h2>
+
+<div class="card">
+<div class="card-title" id="vehicleName">Walking</div>
+<div class="muted" id="vehicleInfo">
+You don't have a vehicle.
+</div>
+</div>
+
+<button onclick="openVehicles()">🚗 Vehicle Market</button>
+<button onclick="refuel()">⛽ Refuel — ₦1,000</button>
+</div>
+
+
+<!-- INVENTORY -->
+<div class="section">
+<h2>🎒 Inventory</h2>
+
+<div class="card">
+<div class="muted">
+Items: <span id="inventoryCount">0</span> / 20
+</div>
+
+<div id="inventoryList"></div>
+</div>
+
+<button onclick="openItems()">🛒 Item Market</button>
+</div>
+
+
+<!-- BUSINESS -->
+<div class="section">
+<h2>🏪 Businesses</h2>
+
+<div id="businessList"></div>
+
+<button onclick="openBusinesses()">🏪 Business Centre</button>
+</div>
+
+
+<!-- PEOPLE -->
+<div class="section">
+<h2>👥 People Nearby</h2>
+
+<div id="peopleList"></div>
+</div>
+
+
+<!-- NET WORTH -->
+<div class="section">
+<h2>💎 Financial Overview</h2>
+
+<div class="card">
+<div>Cash: <strong id="cashValue"></strong></div>
+<div>Property: <strong id="propertyValue"></strong></div>
+<div>Vehicles: <strong id="vehicleValue"></strong></div>
+<div>Businesses: <strong id="businessValue"></strong></div>
+<div>Inventory: <strong id="inventoryValue"></strong></div>
+<hr>
+<div>Net Worth: <strong id="netWorth"></strong></div>
+</div>
+</div>
+
+
+<!-- LOG -->
+<div class="section">
+<h2>📜 Life Log</h2>
+<div id="log" class="log"></div>
+</div>
+
+
+<!-- CONTROLS -->
+<div class="section">
+<h2>🎮 Game Controls</h2>
+
+<button class="blue" onclick="saveGame()">💾 Save Game</button>
+<button onclick="loadGame()">📂 Load Game</button>
+<button class="red" onclick="newGame()">🔄 Start New Game</button>
+</div>
+
+</div>
+
+<footer>
+Kaduna Life V17 — Expanded Kaduna World
+</footer>
+
+
+<!-- JOB MODAL -->
+<div class="modal" id="jobsModal">
+<div class="modal-box">
+<h2>💼 Jobs</h2>
+<div id="jobsList"></div>
+<button class="red" onclick="closeModal('jobsModal')">Close</button>
+</div>
+</div>
+
+
+<!-- HOME MODAL -->
+<div class="modal" id="homesModal">
+<div class="modal-box">
+<h2>🏠 Homes</h2>
+<div id="homesList"></div>
+<button class="red" onclick="closeModal('homesModal')">Close</button>
+</div>
+</div>
+
+
+<!-- VEHICLE MODAL -->
+<div class="modal" id="vehiclesModal">
+<div class="modal-box">
+<h2>🚗 Vehicles</h2>
+<div id="vehiclesList"></div>
+<button class="red" onclick="closeModal('vehiclesModal')">Close</button>
+</div>
+</div>
+
+
+<!-- ITEM MODAL -->
+<div class="modal" id="itemsModal">
+<div class="modal-box">
+<h2>🛒 Items</h2>
+<div id="itemsList"></div>
+<button class="red" onclick="closeModal('itemsModal')">Close</button>
+</div>
+</div>
+
+
+<!-- BUSINESS MODAL -->
+<div class="modal" id="businessModal">
+<div class="modal-box">
+<h2>🏪 Businesses</h2>
+<div id="businessChoices"></div>
+<button class="red" onclick="closeModal('businessModal')">Close</button>
+</div>
+</div>
+
+
+<!-- LOCATION ACTION MODAL -->
+<div class="modal" id="locationModal">
+<div class="modal-box">
+<h2 id="locationActionTitle">📍 Area</h2>
+<div id="locationActions"></div>
+<button class="red" onclick="closeModal('locationModal')">Close</button>
+</div>
+</div>
+
+
+<script>
+
+"use strict";
+
+const SAVE_KEY="kadunaLifeV17";
+
+
+/* =========================
+   CITY
+========================= */
+
+const LOCATIONS={
+
+"Barnawa":{
+icon:"🏘️",
+description:"A lively residential area with shops, food spots and everyday activities.",
+actions:["shop","food","hangout","walk"]
+},
+
+"Kaduna Central":{
+icon:"🏙️",
+description:"The busy heart of the city with businesses, banks and opportunities.",
+actions:["bank","market","food","jobs"]
+},
+
+"Kawo":{
+icon:"🛍️",
+description:"A busy commercial area with markets, shops and transport activity.",
+actions:["market","food","business","transport"]
+},
+
+"Sabon Tasha":{
+icon:"🏘️",
+description:"A growing neighbourhood with homes, shops and local services.",
+actions:["shop","food","home","walk"]
+},
+
+"Unguwan Rimi":{
+icon:"🌆",
+description:"A developed area with businesses, offices and useful services.",
+actions:["business","food","jobs","walk"]
+},
+
+"Malali":{
+icon:"🌳",
+description:"A quieter part of Kaduna with residential areas and relaxing spaces.",
+actions:["park","food","walk","hangout"]
+},
+
+"Kaduna North":{
+icon:"🏙️",
+description:"A large urban district with local businesses and city activity.",
+actions:["market","food","jobs","walk"]
+},
+
+"Rigasa":{
+icon:"🏘️",
+description:"A busy neighbourhood with transport and local markets.",
+actions:["market","transport","food","walk"]
+},
+
+"Kasuwan Magani":{
+icon:"🛒",
+description:"A market-focused area where you can explore local commerce.",
+actions:["market","shop","food","business"]
+},
+
+"Television":{
+icon:"📺",
+description:"A popular residential and commercial area.",
+actions:["food","shop","hangout","walk"]
+},
+
+"GRA":{
+icon:"🌆",
+description:"A quieter, developed district with homes and services.",
+actions:["home","food","park","walk"]
+},
+
+"Mando":{
+icon:"🚌",
+description:"A major movement area with transport and commercial activity.",
+actions:["transport","market","food","jobs"]
+},
+
+"Trikania":{
+icon:"🏘️",
+description:"A growing neighbourhood with everyday city activities.",
+actions:["shop","food","walk","hangout"]
+},
+
+"Tudun Wada":{
+icon:"🏙️",
+description:"A busy urban area with shops, markets and food spots.",
+actions:["market","food","shop","walk"]
+},
+
+"Kakuri":{
+icon:"🏭",
+description:"An active area with work opportunities and local businesses.",
+actions:["jobs","business","market","food"]
+}
+
+};
+
+
+/* =========================
+   DATA
+========================= */
+
+const JOBS=[
+{name:"Shop Assistant",salary:2500,education:0,xp:15},
+{name:"Driver",salary:4000,education:10,xp:20},
+{name:"Computer Assistant",salary:5500,education:25,xp:25},
+{name:"Office Assistant",salary:7000,education:35,xp:30},
+{name:"Junior Developer",salary:10000,education:50,xp:40},
+{name:"Business Assistant",salary:12000,education:60,xp:45}
+];
+
+const HOMES=[
+{name:"Single Room",price:20000,maintenance:150},
+{name:"Shared Apartment",price:35000,maintenance:220},
+{name:"2-Bedroom House",price:70000,maintenance:350},
+{name:"3-Bedroom House",price:120000,maintenance:500},
+{name:"Duplex",price:250000,maintenance:900}
+];
+
+const VEHICLES=[
+{name:"Personal Bike",price:12000,travel:100},
+{name:"Small Car",price:45000,travel:180},
+{name:"Sedan",price:75000,travel:160},
+{name:"SUV",price:120000,travel:200}
+];
+
+const ITEMS=[
+{name:"Basic Phone",price:5000},
+{name:"Smartphone",price:25000},
+{name:"Laptop",price:65000},
+{name:"Tablet",price:40000},
+{name:"Headphones",price:8000},
+{name:"School Books",price:4000},
+{name:"Backpack",price:6000},
+{name:"Meal Pack",price:1200},
+{name:"Groceries",price:3000},
+{name:"Notebook",price:1500}
+];
+
+const BUSINESSES=[
+{name:"Food Spot",price:10000,income:1800,expense:500,location:"Kawo"},
+{name:"Clothing Shop",price:25000,income:3500,expense:900,location:"Kaduna Central"},
+{name:"Phone Shop",price:40000,income:5000,expense:1300,location:"Kawo"},
+{name:"Tech Hub",price:75000,income:8500,expense:2200,location:"Unguwan Rimi"}
+];
+
+const PEOPLE=[
+{name:"Aisha",role:"Student"},
+{name:"Musa",role:"Shopkeeper"},
+{name:"Zara",role:"Neighbour"},
+{name:"Sadiq",role:"Mechanic"},
+{name:"Maryam",role:"Student"},
+{name:"Daniel",role:"Recruiter"},
+{name:"Fatima",role:"Shop Assistant"},
+{name:"Ibrahim",role:"Driver"},
+{name:"Hassan",role:"Business Owner"},
+{name:"Sarah",role:"Teacher"}
+];
+
+
+/* =========================
+   GAME
+========================= */
+
+function freshGame(){
+
+return{
+money:15000,
+health:100,
+mood:70,
+energy:80,
+education:50,
+reputation:0,
+
+day:1,
+location:"Barnawa",
+
+career:null,
+careerXP:0,
+careerLevel:1,
+
+home:null,
+
+vehicles:[],
+activeVehicle:null,
+
+inventory:[],
+businesses:[],
+
+people:PEOPLE.map(p=>({
+...p,
+trust:0
+})),
+
+log:[
+"Welcome to Kaduna Life V17.",
+"You arrived in Barnawa with ₦15,000.",
+"Explore Kaduna and build your life."
+]
+};
+
+}
+
+let game=freshGame();
+
+
+/* =========================
+   HELPERS
+========================= */
+
+function money(n){
+return"₦"+Math.max(0,Math.round(n)).toLocaleString("en-NG");
+}
+
+function clamp(n,min,max){
+return Math.max(min,Math.min(max,n));
+}
+
+function addLog(text){
+game.log.unshift("Day "+game.day+": "+text);
+
+if(game.log.length>100)
+game.log.length=100;
+}
+
+function spend(amount){
+
+if(game.money<amount){
+alert("You don't have enough money.");
+return false;
+}
+
+game.money-=amount;
+return true;
+}
+
+function earn(amount){
+game.money+=amount;
+}
+
+function closeModal(id){
+document.getElementById(id).style.display="none";
+}
+
+function openModal(id){
+document.getElementById(id).style.display="block";
+}
+
+
+/* =========================
+   SAVE
+========================= */
+
+function saveGame(){
+
+try{
+
+localStorage.setItem(
+SAVE_KEY,
+JSON.stringify(game)
+);
+
+addLog("Game saved.");
+render();
+
+alert("Game saved successfully.");
+
+}catch(e){
+
+alert("Could not save the game.");
+
+}
+
+}
+
+function loadGame(){
+
+try{
+
+const data=localStorage.getItem(SAVE_KEY);
+
+if(!data){
+alert("No V17 save found.");
+return;
+}
+
+game={
+...freshGame(),
+...JSON.parse(data)
+};
+
+render();
+
+alert("V17 save loaded.");
+
+}catch(e){
+
+alert("Save data could not be loaded.");
+
+}
+
+}
+
+function newGame(){
+
+if(!confirm("Start a new Kaduna Life game?"))return;
+
+game=freshGame();
+
+localStorage.removeItem(SAVE_KEY);
+
+saveSilent();
+
+render();
+
+alert("New game started.");
+
+}
+
+function saveSilent(){
+
+localStorage.setItem(
+SAVE_KEY,
+JSON.stringify(game)
+);
+
+}
+
+
+/* =========================
+   JOBS
+========================= */
+
+function openJobs(){
+
+const box=document.getElementById("jobsList");
+
+box.innerHTML="";
+
+JOBS.forEach((job,i)=>{
+
+const available=
+game.education>=job.education;
+
+box.innerHTML+=`
+
+<div class="card">
+
+<div class="card-title">${job.name}</div>
+
+<div class="muted">
+Salary: ${money(job.salary)}<br>
+Education needed: ${job.education}<br>
+XP: ${job.xp}
+</div>
+
+<button onclick="applyJob(${i})">
+${available?"Apply For Job":"Education Required"}
+</button>
+
+</div>
+
+`;
+
+});
+
+openModal("jobsModal");
+
+}
+
+function applyJob(i){
+
+const job=JOBS[i];
+
+if(game.education<job.education){
+
+alert("You need "+job.education+" education.");
+
+return;
+
+}
+
+game.career={
+name:job.name,
+salary:job.salary,
+xp:job.xp
+};
+
+game.careerXP=0;
+game.careerLevel=1;
+game.reputation+=2;
+
+addLog("You started working as a "+job.name+".");
+
+closeModal("jobsModal");
+
+render();
+
+}
+
+function work(){
+
+if(!game.career){
+
+alert("Find a job first.");
+
+openJobs();
+
+return;
+
+}
+
+if(game.energy<15){
+
+alert("You're too tired to work.");
+
+return;
+
+}
+
+game.energy-=15;
+
+const pay=
+game.career.salary+
+((game.careerLevel-1)*500);
+
+earn(pay);
+
+game.careerXP+=game.career.xp;
+
+game.reputation+=1;
+
+const needed=
+game.careerLevel*100;
+
+if(game.careerXP>=needed){
+
+game.careerXP-=needed;
+
+game.careerLevel++;
+
+game.reputation+=3;
+
+earn(game.careerLevel*500);
+
+addLog(
+"🎉 Promotion! You reached career level "+
+game.careerLevel+"."
+);
+
+}
+
+addLog(
+"You worked and earned "+money(pay)+"."
+);
+
+render();
+
+}
+
+
+/* =========================
+   DAILY
+========================= */
+
+function eat(){
+
+if(!spend(500))return;
+
+game.health=clamp(game.health+10,0,100);
+game.energy=clamp(game.energy+8,0,100);
+
+addLog("You ate a meal.");
+
+render();
+
+}
+
+function study(){
+
+if(game.energy<10){
+
+alert("You need more energy.");
+
+return;
+
+}
+
+game.energy-=10;
+game.education+=4;
+
+addLog("You studied.");
+
+render();
+
+}
+
+function hangout(){
+
+if(game.energy<5){
+
+alert("You're too tired.");
+
+return;
+
+}
+
+if(!spend(300))return;
+
+game.energy-=5;
+game.mood=clamp(game.mood+12,0,100);
+game.reputation++;
+
+addLog("You hung out with people.");
+
+render();
+
+}
+
+function rest(){
+
+game.energy=clamp(game.energy+25,0,100);
+game.mood=clamp(game.mood+4,0,100);
+
+addLog("You rested.");
+
+render();
+
+}
+
+function explore(){
+
+if(game.energy<10){
+
+alert("You need at least 10 energy.");
+
+return;
+
+}
+
+game.energy-=10;
+
+const events=[
+"You discovered a new opportunity.",
+"You met someone useful.",
+"You found a quiet place to relax.",
+"You learned something interesting.",
+"You discovered a new part of the city.",
+"You had a surprisingly good day.",
+"Someone gave you useful advice."
+];
+
+const event=
+events[Math.floor(Math.random()*events.length)];
+
+game.mood=clamp(game.mood+3,0,100);
+
+addLog(event);
+
+render();
+
+}
+
+
+/* =========================
+   MAP
+========================= */
+
+function renderMap(){
+
+const map=document.getElementById("map");
+
+map.innerHTML="";
+
+Object.entries(LOCATIONS).forEach(
+([name,data])=>{
+
+const div=document.createElement("div");
+
+div.className=
+"place "+
+(name===game.location?"current":"");
+
+div.innerHTML=`
+${data.icon} ${name}
+<small>${name===game.location?"You are here":"Travel here"}</small>
+`;
+
+div.onclick=()=>travel(name);
+
+map.appendChild(div);
+
+});
+
+}
+
+function travel(destination){
+
+if(destination===game.location){
+
+alert("You're already in "+destination+".");
+
+return;
+
+}
+
+if(game.energy<5){
+
+alert("You need at least 5 energy.");
+
+return;
+
+}
+
+let cost=500;
+
+if(game.activeVehicle){
+
+const vehicle=
+game.vehicles.find(
+v=>v.name===game.activeVehicle
+);
+
+if(vehicle){
+
+cost=vehicle.travel;
+
+if(vehicle.fuel<10){
+
+alert("Your vehicle needs fuel.");
+
+return;
+
+}
+
+vehicle.fuel-=10;
+
+}
+
+}
+
+if(!spend(cost))return;
+
+game.energy-=5;
+
+game.location=destination;
+
+addLog(
+"You travelled to "+destination+
+" for "+money(cost)+"."
+);
+
+render();
+
+}
+
+
+/* =========================
+   LOCATION ACTIONS
+========================= */
+
+function openLocationActions(){
+
+const place=LOCATIONS[game.location];
+
+document.getElementById("locationActionTitle").textContent=
+place.icon+" "+game.location;
+
+const box=
+document.getElementById("locationActions");
+
+box.innerHTML=`
+
+<div class="card">
+
+<div class="card-title">
+${game.location}
+</div>
+
+<div class="muted">
+${place.description}
+</div>
+
+</div>
+
+`;
+
+place.actions.forEach(action=>{
+
+const labels={
+shop:"🛍️ Visit Shops",
+food:"🍛 Find Food",
+hangout:"😎 Socialise",
+walk:"🚶 Walk Around",
+bank:"🏦 Visit Bank",
+market:"🛒 Visit Market",
+jobs:"💼 Look For Work",
+business:"🏪 Explore Business",
+transport:"🚌 Transport Hub",
+park:"🌳 Visit Park",
+home:"🏠 Look At Homes"
+};
+
+const fn={
+shop:()=>shopAction(),
+food:()=>foodAction(),
+hangout:()=>hangoutAction(),
+walk:()=>walkAction(),
+bank:()=>useBank(),
+market:()=>openMarket(),
+jobs:()=>openJobs(),
+business:()=>openBusinesses(),
+transport:()=>visitTransport(),
+park:()=>visitPark(),
+home:()=>openHomes()
+};
+
+box.innerHTML+=`
+<button onclick="(${fn[action].toString()})()">
+${labels[action]}
+</button>
+`;
+
+});
+
+openModal("locationModal");
+
+}
+
+
+/* =========================
+   CITY ACTIONS
+========================= */
+
+function shopAction(){
+
+if(!spend(200))return;
+
+game.mood=clamp(game.mood+4,0,100);
+
+addLog("You browsed the shops in "+game.location+".");
+
+closeModal("locationModal");
+
+render();
+
+}
+
+function foodAction(){
+
+if(!spend(700))return;
+
+game.health=clamp(game.health+15,0,100);
+game.energy=clamp(game.energy+10,0,100);
+
+addLog("You ate at a food spot in "+game.location+".");
+
+closeModal("locationModal");
+
+render();
+
+}
+
+function hangoutAction(){
+
+if(game.energy<5){
+
+alert("You're too tired.");
+
+return;
+
+}
+
+game.energy-=5;
+game.mood=clamp(game.mood+15,0,100);
+game.reputation++;
+
+addLog("You socialised around "+game.location+".");
+
+closeModal("locationModal");
+
+render();
+
+}
+
+function walkAction(){
+
+if(game.energy<5){
+
+alert("You need more energy.");
+
+return;
+
+}
+
+game.energy-=5;
+game.mood=clamp(game.mood+5,0,100);
+
+addLog("You walked around "+game.location+".");
+
+closeModal("locationModal");
+
+render();
+
+}
+
+
+/* =========================
+   BANK / SERVICES
+========================= */
+
+function useBank(){
+
+alert(
+"🏦 Bank\n\n"+
+"Your current cash balance is "+money(game.money)+
+".\n\nYour bank system will expand in a future update."
+);
+
+}
+
+function useATM(){
+
+if(!spend(100))return;
+
+addLog("You used an ATM.");
+
+render();
+
+}
+
+function openMarket(){
+
+alert(
+"🛒 Market\n\n"+
+"Visit the Item Market below to purchase items."
+);
+
+openItems();
+
+}
+
+function visitClinic(){
+
+if(!spend(500))return;
+
+game.health=100;
+
+addLog("You visited the clinic and restored your health.");
+
+render();
+
+}
+
+function visitSchool(){
+
+if(game.energy<10){
+
+alert("You need more energy.");
+
+return;
+
+}
+
+game.energy-=10;
+game.education+=6;
+
+addLog("You attended a study session.");
+
+render();
+
+}
+
+function visitPark(){
+
+if(game.energy<5){
+
+alert("You're too tired.");
+
+return;
+
+}
+
+game.energy-=5;
+game.mood=clamp(game.mood+15,0,100);
+
+addLog("You relaxed at the park.");
+
+render();
+
+}
+
+function visitTransport(){
+
+alert(
+"🚌 Transport Hub\n\n"+
+"From here you can travel around Kaduna using the city map."
+);
+
+}
+
+
+/* =========================
+   HOMES
+========================= */
+
+function openHomes(){
+
+const box=document.getElementById("homesList");
+
+box.innerHTML="";
+
+HOMES.forEach((home,i)=>{
+
+const owned=
+game.home &&
+game.home.name===home.name;
+
+box.innerHTML+=`
+
+<div class="card">
+
+<div class="card-title">${home.name}</div>
+
+<div class="muted">
+Price: ${money(home.price)}<br>
+Maintenance: ${money(home.maintenance)} / day
+</div>
+
+<button onclick="buyHome(${i})">
+${owned?"Current Home":"Buy Home"}
+</button>
+
+</div>
+
+`;
+
+});
+
+openModal("homesModal");
+
+}
+
+function buyHome(i){
+
+const home=HOMES[i];
+
+if(!spend(home.price))return;
+
+game.home={
+...home
+};
+
+addLog("You bought a "+home.name+".");
+
+closeModal("homesModal");
+
+render();
+
+}
+
+function homeRest(){
+
+if(!game.home){
+
+alert("You don't own a home yet.");
+
+openHomes();
+
+return;
+
+}
+
+game.energy=clamp(game.energy+35,0,100);
+game.health=clamp(game.health+5,0,100);
+
+addLog("You rested at home.");
+
+render();
+
+}
+
+
+/* =========================
+   VEHICLES
+========================= */
+
+function openVehicles(){
+
+const box=document.getElementById("vehiclesList");
+
+box.innerHTML="";
+
+VEHICLES.forEach((v,i)=>{
+
+const owned=
+game.vehicles.some(
+vehicle=>vehicle.name===v.name
+);
+
+box.innerHTML+=`
+
+<div class="card">
+
+<div class="card-title">${v.name}</div>
+
+<div class="muted">
+Price: ${money(v.price)}<br>
+Travel cost: ${money(v.travel)}
+</div>
+
+<button onclick="buyVehicle(${i})">
+${owned?"Use Vehicle":"Buy Vehicle"}
+</button>
+
+</div>
+
+`;
+
+});
+
+openModal("vehiclesModal");
+
+}
+
+function buyVehicle(i){
+
+const v=VEHICLES[i];
+
+const existing=
+game.vehicles.find(
+vehicle=>vehicle.name===v.name
+);
+
+if(existing){
+
+game.activeVehicle=existing.name;
+
+addLog("You selected your "+existing.name+".");
+
+closeModal("vehiclesModal");
+
+render();
+
+return;
+
+}
+
+if(!spend(v.price))return;
+
+game.vehicles.push({
+...v,
+fuel:100
+});
+
+game.activeVehicle=v.name;
+
+addLog("You bought a "+v.name+".");
+
+closeModal("vehiclesModal");
+
+render();
+
+}
+
+function refuel(){
+
+if(!game.activeVehicle){
+
+alert("You don't have a vehicle.");
+
+return;
+
+}
+
+if(!spend(1000))return;
+
+const v=
+game.vehicles.find(
+vehicle=>vehicle.name===game.activeVehicle
+);
+
+if(v)v.fuel=100;
+
+addLog("You refueled your vehicle.");
+
+render();
+
+}
+
+
+/* =========================
+   ITEMS
+========================= */
+
+function openItems(){
+
+const box=document.getElementById("itemsList");
+
+box.innerHTML="";
+
+ITEMS.forEach((item,i)=>{
+
+box.innerHTML+=`
+
+<div class="card">
+
+<div class="card-title">${item.name}</div>
+
+<div class="muted">
+Price: ${money(item.price)}
+</div>
+
+<button onclick="buyItem(${i})">
+Buy
+</button>
+
+</div>
+
+`;
+
+});
+
+openModal("itemsModal");
+
+}
+
+function buyItem(i){
+
+if(game.inventory.length>=20){
+
+alert("Inventory full.");
+
+return;
+
+}
+
+const item=ITEMS[i];
+
+if(!spend(item.price))return;
+
+game.inventory.push({
+...item
+});
+
+addLog("You bought "+item.name+".");
+
+closeModal("itemsModal");
+
+render();
+
+}
+
+
+/* =========================
+   BUSINESS
+========================= */
+
+function openBusinesses(){
+
+const box=document.getElementById("businessChoices");
+
+box.innerHTML="";
+
+BUSINESSES.forEach((b,i)=>{
+
+const owned=
+game.businesses.some(
+business=>business.name===b.name
+);
+
+box.innerHTML+=`
+
+<div class="card">
+
+<div class="card-title">${b.name}</div>
+
+<div class="muted">
+Price: ${money(b.price)}<br>
+Income: ${money(b.income)} / day<br>
+Expenses: ${money(b.expense)} / day<br>
+Location: ${b.location}
+</div>
+
+<button onclick="buyBusiness(${i})">
+${owned?"Already Owned":"Start Business"}
+</button>
+
+</div>
+
+`;
+
+});
+
+openModal("businessModal");
+
+}
+
+function buyBusiness(i){
+
+const b=BUSINESSES[i];
+
+if(
+game.businesses.some(
+business=>business.name===b.name
+)
+){
+
+alert("You already own this business.");
+
+return;
+
+}
+
+if(!spend(b.price))return;
+
+game.businesses.push({
+...b
+});
+
+game.reputation+=2;
+
+addLog(
+"You started "+b.name+
+" in "+b.location+"."
+);
+
+closeModal("businessModal");
+
+render();
+
+}
+
+
+/* =========================
+   PEOPLE
+========================= */
+
+function talk(index){
+
+const person=game.people[index];
+
+if(game.energy<3){
+
+alert("You're too tired.");
+
+return;
+
+}
+
+game.energy-=3;
+person.trust++;
+game.mood=clamp(game.mood+3,0,100);
+
+addLog(
+"You talked with "+person.name+"."
+);
+
+render();
+
+}
+
+
+/* =========================
+   END DAY
+========================= */
+
+function endDay(){
+
+let income=0;
+let expenses=0;
+
+game.businesses.forEach(b=>{
+income+=b.income;
+expenses+=b.expense;
+});
+
+if(game.home)
+expenses+=game.home.maintenance;
+
+game.vehicles.forEach(()=>{
+expenses+=100;
+});
+
+game.money+=income;
+game.money-=expenses;
+
+if(income>0)
+addLog("Businesses earned "+money(income)+".");
+
+if(expenses>0)
+addLog("Daily expenses cost "+money(expenses)+".");
+
+game.day++;
+
+game.energy=clamp(game.energy+20,0,100);
+game.health=clamp(game.health+5,0,100);
+game.mood=clamp(game.mood+3,0,100);
+
+if(Math.random()<0.35){
+
+const events=[
+"🎲 You received useful advice from a stranger.",
+"🎲 You discovered a new opportunity.",
+"🎲 You met someone interesting.",
+"🎲 You found a great place in the city.",
+"🎲 You had a peaceful day.",
+"🎲 Someone recommended a job opportunity."
+];
+
+addLog(
+events[Math.floor(Math.random()*events.length)]
+);
+
+}
+
+addLog("A new day begins.");
+
+render();
+
+}
+
+
+/* =========================
+   RENDER
+========================= */
+
+function render(){
+
+document.getElementById("money").textContent=
+money(game.money);
+
+document.getElementById("health").textContent=
+game.health;
+
+document.getElementById("mood").textContent=
+game.mood;
+
+document.getElementById("energy").textContent=
+game.energy;
+
+document.getElementById("education").textContent=
+game.education;
+
+document.getElementById("reputation").textContent=
+game.reputation;
+
+document.getElementById("day").textContent=
+game.day;
+
+document.getElementById("location").textContent=
+game.location;
+
+
+/* PLACE */
+
+const place=LOCATIONS[game.location];
+
+document.getElementById("currentPlace").textContent=
+place.icon+" "+game.location;
+
+document.getElementById("placeDescription").textContent=
+place.description;
+
+
+/* CAREER */
+
+document.getElementById("careerName").textContent=
+game.career?
+game.career.name:
+"Unemployed";
+
+document.getElementById("careerLevel").textContent=
+game.careerLevel;
+
+document.getElementById("careerXP").textContent=
+game.careerXP;
+
+
+/* HOME */
+
+document.getElementById("homeName").textContent=
+game.home?
+game.home.name:
+"No Home";
+
+document.getElementById("homeInfo").textContent=
+game.home?
+"Maintenance: "+money(game.home.maintenance)+" / day":
+"You don't own a home yet.";
+
+
+/* VEHICLE */
+
+if(game.activeVehicle){
+
+const v=
+game.vehicles.find(
+vehicle=>vehicle.name===game.activeVehicle
+);
+
+if(v){
+
+document.getElementById("vehicleName").textContent=
+v.name;
+
+document.getElementById("vehicleInfo").textContent=
+"Fuel: "+v.fuel+"% · Travel: "+money(v.travel);
+
+}
+
+}else{
+
+document.getElementById("vehicleName").textContent=
+"Walking";
+
+document.getElementById("vehicleInfo").textContent=
+"You don't have a vehicle.";
+
+}
+
+
+/* INVENTORY */
+
+document.getElementById("inventoryCount").textContent=
+game.inventory.length;
+
+const inv=
+document.getElementById("inventoryList");
+
+if(game.inventory.length===0){
+
+inv.innerHTML=
+`<div class="muted">Inventory empty.</div>`;
+
+}else{
+
+inv.innerHTML=
+game.inventory
+.map(i=>`<span class="tag">${i.name}</span>`)
+.join("");
+
+}
+
+
+/* BUSINESSES */
+
+const businessBox=
+document.getElementById("businessList");
+
+if(game.businesses.length===0){
+
+businessBox.innerHTML=
+`<div class="card muted">
+You don't own a business yet.
+</div>`;
+
+}else{
+
+businessBox.innerHTML=
+game.businesses.map(b=>`
+
+<div class="card">
+
+<div class="card-title">${b.name}</div>
+
+<div class="muted">
+📍 ${b.location}<br>
+Income: ${money(b.income)} / day<br>
+Expenses: ${money(b.expense)} / day
+</div>
+
+</div>
+
+`).join("");
+
+}
+
+
+/* PEOPLE */
+
+document.getElementById("peopleList").innerHTML=
+game.people.map((p,i)=>`
+
+<div class="card">
+
+<div class="row">
+
+<div>
+<div class="card-title">${p.name}</div>
+<div class="muted">
+${p.role} · Trust ${p.trust}
+</div>
+</div>
+
+<button onclick="talk(${i})">
+Talk
+</button>
+
+</div>
+
+</div>
+
+`).join("");
+
+
+/* FINANCES */
+
+const property=
+game.home?
+game.home.price:
+0;
+
+const vehicles=
+game.vehicles.reduce(
+(sum,v)=>sum+v.price,0
+);
+
+const businesses=
+game.businesses.reduce(
+(sum,b)=>sum+b.price,0
+);
+
+const inventory=
+game.inventory.reduce(
+(sum,i)=>sum+i.price,0
+);
+
+const net=
+game.money+
+property+
+vehicles+
+businesses+
+inventory;
+
+document.getElementById("cashValue").textContent=
+money(game.money);
+
+document.getElementById("propertyValue").textContent=
+money(property);
+
+document.getElementById("vehicleValue").textContent=
+money(vehicles);
+
+document.getElementById("businessValue").textContent=
+money(businesses);
+
+document.getElementById("inventoryValue").textContent=
+money(inventory);
+
+document.getElementById("netWorth").textContent=
+money(net);
+
+
+/* MAP */
+
+renderMap();
+
+
+/* LOG */
+
+document.getElementById("log").innerHTML=
+game.log
+.map(x=>`<div class="log-item">${x}</div>`)
+.join("");
+
+saveSilent();
+
+}
+
+
+/* =========================
+   START
+========================= */
+
+document.addEventListener(
+"DOMContentLoaded",
+()=>{
+render();
+}
+);
+
+</script>
+
+</body>
+</html>
+```
