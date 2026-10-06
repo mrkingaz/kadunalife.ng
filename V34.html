@@ -1,0 +1,5325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Kaduna Life — V34</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+  margin:0;
+  padding:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#07111f;
+  color:#fff;
+}
+
+button,
+input,
+select{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+.hidden{
+  display:none !important;
+}
+
+/* =========================
+   AUTH SCREEN
+========================= */
+
+#authScreen{
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:
+    radial-gradient(circle at 20% 20%,rgba(37,99,235,.35),transparent 35%),
+    radial-gradient(circle at 80% 80%,rgba(16,185,129,.22),transparent 35%),
+    linear-gradient(135deg,#07111f,#0f1d32 55%,#06111c);
+}
+
+.authBox{
+  width:min(440px,100%);
+  max-height:92vh;
+  overflow:auto;
+  background:rgba(13,25,43,.95);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:24px;
+  padding:26px;
+  box-shadow:0 25px 80px rgba(0,0,0,.5);
+}
+
+.logo{
+  font-size:34px;
+  font-weight:900;
+  text-align:center;
+  margin-bottom:5px;
+}
+
+.logo span{
+  color:#4ade80;
+}
+
+.subtitle{
+  text-align:center;
+  color:#9fb0c7;
+  margin-bottom:24px;
+}
+
+.authTabs{
+  display:flex;
+  gap:8px;
+  margin-bottom:18px;
+}
+
+.authTabs button{
+  flex:1;
+  padding:12px;
+  border:0;
+  border-radius:12px;
+  background:#182940;
+  color:#aebdd0;
+}
+
+.authTabs button.active{
+  background:#2563eb;
+  color:#fff;
+}
+
+.field{
+  margin-bottom:13px;
+}
+
+.field label{
+  display:block;
+  font-size:13px;
+  color:#9fb0c7;
+  margin-bottom:6px;
+}
+
+.field input,
+.field select{
+  width:100%;
+  border:1px solid #30435d;
+  background:#0a1728;
+  color:#fff;
+  padding:13px;
+  border-radius:12px;
+  outline:none;
+}
+
+.field input:focus,
+.field select:focus{
+  border-color:#3b82f6;
+}
+
+.primaryBtn{
+  width:100%;
+  padding:14px;
+  border:0;
+  border-radius:13px;
+  background:linear-gradient(135deg,#2563eb,#1d4ed8);
+  color:#fff;
+  font-weight:800;
+  margin-top:5px;
+}
+
+.secondaryBtn{
+  width:100%;
+  padding:12px;
+  border:1px solid #30435d;
+  border-radius:12px;
+  background:#101f33;
+  color:#fff;
+  margin-top:9px;
+}
+
+.message{
+  min-height:20px;
+  margin:10px 0;
+  font-size:13px;
+  text-align:center;
+  color:#fbbf24;
+}
+
+/* =========================
+   GAME SHELL
+========================= */
+
+#gameScreen{
+  position:fixed;
+  inset:0;
+  background:#172a1c;
+}
+
+#gameCanvas{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  display:block;
+  touch-action:none;
+}
+
+/* =========================
+   HUD
+========================= */
+
+#hud{
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  z-index:30;
+  padding:
+    calc(8px + env(safe-area-inset-top))
+    10px
+    8px
+    10px;
+  pointer-events:none;
+}
+
+.hudTop{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+}
+
+.hudCard{
+  background:rgba(7,17,31,.86);
+  border:1px solid rgba(255,255,255,.12);
+  backdrop-filter:blur(10px);
+  border-radius:14px;
+  padding:8px 11px;
+  box-shadow:0 8px 25px rgba(0,0,0,.25);
+}
+
+.playerName{
+  font-weight:800;
+  font-size:14px;
+}
+
+.dayText{
+  color:#aebdd0;
+  font-size:11px;
+  margin-top:2px;
+}
+
+.money{
+  font-weight:900;
+  color:#4ade80;
+  font-size:14px;
+}
+
+.stats{
+  margin-top:7px;
+  display:flex;
+  gap:5px;
+  flex-wrap:wrap;
+}
+
+.stat{
+  font-size:10px;
+  padding:5px 7px;
+  border-radius:8px;
+  background:rgba(9,22,38,.88);
+  border:1px solid rgba(255,255,255,.08);
+}
+
+#menuBtn{
+  pointer-events:auto;
+  width:42px;
+  height:42px;
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:12px;
+  background:rgba(7,17,31,.9);
+  color:#fff;
+  font-size:20px;
+}
+
+/* =========================
+   LOCATION PROMPT
+========================= */
+
+#locationPrompt{
+  position:absolute;
+  left:50%;
+  bottom:135px;
+  transform:translateX(-50%);
+  z-index:40;
+  min-width:220px;
+  max-width:90%;
+  text-align:center;
+  background:rgba(7,17,31,.93);
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:16px;
+  padding:11px 14px;
+  box-shadow:0 15px 40px rgba(0,0,0,.35);
+  pointer-events:none;
+}
+
+#locationPrompt strong{
+  display:block;
+  font-size:14px;
+}
+
+#locationPrompt span{
+  display:block;
+  color:#aebdd0;
+  font-size:11px;
+  margin-top:3px;
+}
+
+/* =========================
+   CONTROLS
+========================= */
+
+#controls{
+  position:absolute;
+  inset:0;
+  z-index:35;
+  pointer-events:none;
+}
+
+.dpad{
+  position:absolute;
+  left:18px;
+  bottom:calc(20px + env(safe-area-inset-bottom));
+  width:150px;
+  height:150px;
+  pointer-events:auto;
+}
+
+.controlBtn{
+  position:absolute;
+  width:50px;
+  height:50px;
+  border-radius:15px;
+  border:1px solid rgba(255,255,255,.18);
+  background:rgba(7,17,31,.82);
+  color:#fff;
+  font-size:22px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  user-select:none;
+  touch-action:none;
+  box-shadow:0 8px 20px rgba(0,0,0,.28);
+}
+
+.controlBtn:active{
+  background:#2563eb;
+  transform:scale(.95);
+}
+
+.up{
+  left:50px;
+  top:0;
+}
+
+.down{
+  left:50px;
+  bottom:0;
+}
+
+.left{
+  left:0;
+  top:50px;
+}
+
+.right{
+  right:0;
+  top:50px;
+}
+
+.actionPad{
+  position:absolute;
+  right:18px;
+  bottom:calc(28px + env(safe-area-inset-bottom));
+  display:flex;
+  flex-direction:column;
+  gap:9px;
+  pointer-events:auto;
+}
+
+.actionBtn{
+  min-width:92px;
+  padding:12px 15px;
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:14px;
+  background:rgba(7,17,31,.85);
+  color:#fff;
+  font-weight:800;
+  box-shadow:0 8px 20px rgba(0,0,0,.28);
+}
+
+.actionBtn:active{
+  transform:scale(.96);
+  background:#2563eb;
+}
+
+/* =========================
+   DESKTOP HELP
+========================= */
+
+#keyboardHint{
+  position:absolute;
+  left:50%;
+  bottom:12px;
+  transform:translateX(-50%);
+  z-index:25;
+  background:rgba(7,17,31,.7);
+  border:1px solid rgba(255,255,255,.1);
+  padding:6px 10px;
+  border-radius:9px;
+  color:#aebdd0;
+  font-size:11px;
+  pointer-events:none;
+}
+
+/* =========================
+   PANELS
+========================= */
+
+#sidePanel{
+  position:absolute;
+  z-index:100;
+  top:0;
+  right:0;
+  width:min(390px,92vw);
+  height:100%;
+  background:#0b1727;
+  border-left:1px solid #263952;
+  transform:translateX(100%);
+  transition:transform .25s ease;
+  overflow:auto;
+  padding:
+    calc(18px + env(safe-area-inset-top))
+    18px
+    calc(18px + env(safe-area-inset-bottom))
+    18px;
+}
+
+#sidePanel.open{
+  transform:translateX(0);
+}
+
+.panelHeader{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:18px;
+}
+
+.panelHeader h2{
+  margin:0;
+}
+
+.closeBtn{
+  width:38px;
+  height:38px;
+  border:0;
+  border-radius:10px;
+  background:#192b42;
+  color:#fff;
+  font-size:20px;
+}
+
+.menuGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.menuItem{
+  min-height:90px;
+  border:1px solid #263952;
+  background:#101f33;
+  color:#fff;
+  border-radius:15px;
+  padding:13px;
+  text-align:left;
+}
+
+.menuItem .icon{
+  font-size:24px;
+}
+
+.menuItem strong{
+  display:block;
+  margin-top:6px;
+}
+
+.menuItem small{
+  color:#91a3b9;
+}
+
+/* =========================
+   MODAL
+========================= */
+
+#modal{
+  position:fixed;
+  inset:0;
+  z-index:200;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  background:rgba(0,0,0,.55);
+}
+
+#modal.show{
+  display:flex;
+}
+
+.modalBox{
+  width:min(500px,100%);
+  max-height:88vh;
+  overflow:auto;
+  background:#0c1a2c;
+  border:1px solid #2b405b;
+  border-radius:20px;
+  padding:20px;
+  box-shadow:0 30px 80px rgba(0,0,0,.55);
+}
+
+.modalHeader{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:15px;
+}
+
+.modalHeader h2{
+  margin:0;
+}
+
+.modalClose{
+  width:38px;
+  height:38px;
+  border:0;
+  border-radius:10px;
+  background:#1b2d45;
+  color:#fff;
+}
+
+.actionList{
+  display:flex;
+  flex-direction:column;
+  gap:9px;
+}
+
+.bigAction{
+  width:100%;
+  padding:14px;
+  text-align:left;
+  border:1px solid #2a3e59;
+  border-radius:13px;
+  background:#112238;
+  color:#fff;
+}
+
+.bigAction:hover{
+  background:#172d48;
+}
+
+.bigAction strong{
+  display:block;
+}
+
+.bigAction small{
+  color:#91a3b9;
+}
+
+.notice{
+  padding:12px;
+  border-radius:12px;
+  background:#10253b;
+  color:#b6c7da;
+  margin-bottom:12px;
+  line-height:1.5;
+}
+
+/* =========================
+   PROFILE
+========================= */
+
+.profileCard{
+  background:#102238;
+  border:1px solid #293e58;
+  border-radius:15px;
+  padding:14px;
+  margin-bottom:12px;
+}
+
+.profileRow{
+  display:flex;
+  justify-content:space-between;
+  padding:8px 0;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+
+.profileRow:last-child{
+  border-bottom:0;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (min-width:800px){
+  .dpad{
+    left:25px;
+    bottom:25px;
+  }
+
+  .actionPad{
+    right:25px;
+    bottom:25px;
+  }
+
+  #keyboardHint{
+    display:block;
+  }
+}
+
+@media (max-width:600px){
+  #keyboardHint{
+    display:none;
+  }
+
+  #locationPrompt{
+    bottom:170px;
+  }
+
+  .hudCard{
+    padding:7px 9px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- =========================
+     AUTH
+========================= -->
+
+<section id="authScreen">
+
+  <div class="authBox">
+
+    <div class="logo">Kaduna <span>Life</span></div>
+    <div class="subtitle">V34 • Free Roam</div>
+
+    <div class="authTabs">
+      <button id="loginTab" class="active">Login</button>
+      <button id="signupTab">Create Account</button>
+    </div>
+
+    <form id="authForm">
+
+      <div class="field">
+        <label>Email</label>
+        <input
+          id="email"
+          type="email"
+          placeholder="you@example.com"
+          autocomplete="email"
+          required
+        >
+      </div>
+
+      <div class="field">
+        <label>Password</label>
+        <input
+          id="password"
+          type="password"
+          placeholder="Password"
+          autocomplete="current-password"
+          required
+        >
+      </div>
+
+      <div id="signupFields" class="hidden">
+
+        <div class="field">
+          <label>Character name</label>
+          <input
+            id="charName"
+            type="text"
+            maxlength="24"
+            placeholder="Your character name"
+          >
+        </div>
+
+        <div class="field">
+          <label>Character age</label>
+          <input
+            id="charAge"
+            type="number"
+            min="18"
+            max="50"
+            placeholder="18–50"
+          >
+        </div>
+
+        <div class="field">
+          <label>Background</label>
+          <select id="charBackground">
+            <option value="student">Student</option>
+            <option value="working">Working Class</option>
+            <option value="entrepreneur">Entrepreneur</option>
+            <option value="freelancer">Freelancer</option>
+          </select>
+        </div>
+
+      </div>
+
+      <div id="authMessage" class="message"></div>
+
+      <button id="authButton" class="primaryBtn" type="submit">
+        Login
+      </button>
+
+    </form>
+
+  </div>
+
+</section>
+
+
+<!-- =========================
+     GAME
+========================= -->
+
+<section id="gameScreen" class="hidden">
+
+  <canvas id="gameCanvas"></canvas>
+
+  <!-- HUD -->
+  <div id="hud">
+
+    <div class="hudTop">
+
+      <div class="hudCard">
+        <div class="playerName" id="hudName">Player</div>
+        <div class="dayText" id="hudDay">Day 1</div>
+
+        <div class="stats">
+          <div class="stat">❤️ <span id="hudHealth">100</span></div>
+          <div class="stat">⚡ <span id="hudEnergy">100</span></div>
+          <div class="stat">🙂 <span id="hudMood">70</span></div>
+          <div class="stat">⭐ <span id="hudRep">0</span></div>
+        </div>
+      </div>
+
+      <div class="hudCard">
+        <div class="money">₦<span id="hudCash">0</span></div>
+        <div class="dayText">Bank: ₦<span id="hudBank">0</span></div>
+      </div>
+
+      <button id="menuBtn">☰</button>
+
+    </div>
+
+  </div>
+
+
+  <!-- LOCATION PROMPT -->
+  <div id="locationPrompt" class="hidden">
+    <strong id="promptTitle">Location</strong>
+    <span id="promptText">Press ENTER</span>
+  </div>
+
+
+  <!-- CONTROLS -->
+  <div id="controls">
+
+    <div class="dpad">
+
+      <button class="controlBtn up" data-key="ArrowUp">▲</button>
+      <button class="controlBtn left" data-key="ArrowLeft">◀</button>
+      <button class="controlBtn right" data-key="ArrowRight">▶</button>
+      <button class="controlBtn down" data-key="ArrowDown">▼</button>
+
+    </div>
+
+    <div class="actionPad">
+      <button class="actionBtn" id="interactBtn">ENTER</button>
+      <button class="actionBtn" id="runBtn">RUN</button>
+    </div>
+
+  </div>
+
+  <div id="keyboardHint">
+    WASD / Arrow Keys • ENTER to interact
+  </div>
+
+
+  <!-- SIDE MENU -->
+  <aside id="sidePanel">
+
+    <div class="panelHeader">
+      <h2>Kaduna Life</h2>
+      <button class="closeBtn" id="closePanel">×</button>
+    </div>
+
+    <div class="menuGrid">
+
+      <button class="menuItem" data-menu="profile">
+        <div class="icon">👤</div>
+        <strong>Profile</strong>
+        <small>Your character</small>
+      </button>
+
+      <button class="menuItem" data-menu="career">
+        <div class="icon">💼</div>
+        <strong>Career</strong>
+        <small>Work & salary</small>
+      </button>
+
+      <button class="menuItem" data-menu="inventory">
+        <div class="icon">🎒</div>
+        <strong>Inventory</strong>
+        <small>Your items</small>
+      </button>
+
+      <button class="menuItem" data-menu="social">
+        <div class="icon">👥</div>
+        <strong>Social</strong>
+        <small>Meet people</small>
+      </button>
+
+      <button class="menuItem" data-menu="map">
+        <div class="icon">🗺️</div>
+        <strong>Map</strong>
+        <small>Explore Kaduna</small>
+      </button>
+
+      <button class="menuItem" data-menu="help">
+        <div class="icon">❓</div>
+        <strong>How to Play</strong>
+        <small>Controls</small>
+      </button>
+
+    </div>
+
+    <button
+      id="saveBtn"
+      class="secondaryBtn"
+      style="margin-top:16px;"
+    >
+      💾 Save Game
+    </button>
+
+    <button
+      id="logoutBtn"
+      class="secondaryBtn"
+    >
+      🚪 Logout
+    </button>
+
+  </aside>
+
+
+  <!-- MODAL -->
+  <div id="modal">
+
+    <div class="modalBox">
+
+      <div class="modalHeader">
+        <h2 id="modalTitle">Kaduna Life</h2>
+        <button class="modalClose" id="modalClose">×</button>
+      </div>
+
+      <div id="modalContent"></div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<script>
+/* =========================================================
+   KADUNA LIFE V34
+   FREE ROAM ENGINE
+========================================================= */
+
+/* =========================
+   SUPABASE
+========================= */
+
+const SUPABASE_URL =
+  "https://mdcwdfwrgxqtcafsyldt.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+  "sb_publishable_3asep2gSU5Z_Gx9bxXtw7Q_FhY-0ETp";
+
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+  );
+
+
+/* =========================
+   DOM
+========================= */
+
+const authScreen =
+  document.getElementById("authScreen");
+
+const gameScreen =
+  document.getElementById("gameScreen");
+
+const authForm =
+  document.getElementById("authForm");
+
+const authMessage =
+  document.getElementById("authMessage");
+
+const loginTab =
+  document.getElementById("loginTab");
+
+const signupTab =
+  document.getElementById("signupTab");
+
+const signupFields =
+  document.getElementById("signupFields");
+
+const authButton =
+  document.getElementById("authButton");
+
+const emailInput =
+  document.getElementById("email");
+
+const passwordInput =
+  document.getElementById("password");
+
+const charNameInput =
+  document.getElementById("charName");
+
+const charAgeInput =
+  document.getElementById("charAge");
+
+const charBackgroundInput =
+  document.getElementById("charBackground");
+
+const canvas =
+  document.getElementById("gameCanvas");
+
+const ctx =
+  canvas.getContext("2d");
+
+const sidePanel =
+  document.getElementById("sidePanel");
+
+const modal =
+  document.getElementById("modal");
+
+const modalTitle =
+  document.getElementById("modalTitle");
+
+const modalContent =
+  document.getElementById("modalContent");
+
+const locationPrompt =
+  document.getElementById("locationPrompt");
+
+const promptTitle =
+  document.getElementById("promptTitle");
+
+const promptText =
+  document.getElementById("promptText");
+
+
+/* =========================
+   AUTH MODE
+========================= */
+
+let authMode = "login";
+
+loginTab.onclick = () => {
+  authMode = "login";
+
+  loginTab.classList.add("active");
+  signupTab.classList.remove("active");
+
+  signupFields.classList.add("hidden");
+
+  authButton.textContent = "Login";
+  authMessage.textContent = "";
+};
+
+signupTab.onclick = () => {
+  authMode = "signup";
+
+  signupTab.classList.add("active");
+  loginTab.classList.remove("active");
+
+  signupFields.classList.remove("hidden");
+
+  authButton.textContent = "Create Account";
+  authMessage.textContent = "";
+};
+
+
+/* =========================
+   DEFAULT GAME STATE
+========================= */
+
+const DEFAULT_GAME = {
+
+  version: 34,
+
+  character: {
+    name: "",
+    age: 18,
+    background: "student"
+  },
+
+  cash: 50000,
+  bank: 100000,
+
+  health: 100,
+  energy: 100,
+  mood: 75,
+  reputation: 0,
+
+  day: 1,
+
+  career: {
+    name: "Unemployed",
+    salary: 0
+  },
+
+  home: "Family Home",
+
+  transport: "Walking",
+
+  inventory: [],
+
+  friendship: {},
+
+  achievements: [],
+
+  player: {
+    x: 800,
+    y: 520
+  }
+
+};
+
+
+/* =========================
+   GAME STATE
+========================= */
+
+let game =
+  structuredClone(DEFAULT_GAME);
+
+let currentUser = null;
+
+let running = false;
+
+let lastFrame = 0;
+
+let nearbyLocation = null;
+
+let nearNPC = null;
+
+let currentMapTime = 0;
+
+
+/* =========================
+   INPUT
+========================= */
+
+const keys = {};
+
+let touchDirections = {
+  up:false,
+  down:false,
+  left:false,
+  right:false
+};
+
+let runningFast = false;
+
+document.addEventListener("keydown", e => {
+
+  const key =
+    e.key.length === 1
+      ? e.key.toLowerCase()
+      : e.key;
+
+  keys[key] = true;
+
+  if([
+    "ArrowUp",
+    "ArrowDown",
+    "ArrowLeft",
+    "ArrowRight",
+    " "
+  ].includes(e.key)){
+    e.preventDefault();
+  }
+
+  if(
+    (e.key === "Enter" || e.key === "e" || e.key === "E") &&
+    running
+  ){
+    interact();
+  }
+
+});
+
+document.addEventListener("keyup", e => {
+
+  const key =
+    e.key.length === 1
+      ? e.key.toLowerCase()
+      : e.key;
+
+  keys[key] = false;
+
+});
+
+
+/* =========================
+   MOBILE CONTROLS
+========================= */
+
+document
+  .querySelectorAll(".controlBtn")
+  .forEach(btn => {
+
+    const key = btn.dataset.key;
+
+    const directionMap = {
+      ArrowUp:"up",
+      ArrowDown:"down",
+      ArrowLeft:"left",
+      ArrowRight:"right"
+    };
+
+    const direction =
+      directionMap[key];
+
+    const start = e => {
+      e.preventDefault();
+      touchDirections[direction] = true;
+    };
+
+    const end = e => {
+      e.preventDefault();
+      touchDirections[direction] = false;
+    };
+
+    btn.addEventListener("pointerdown", start);
+    btn.addEventListener("pointerup", end);
+    btn.addEventListener("pointercancel", end);
+    btn.addEventListener("pointerleave", end);
+
+  });
+
+
+document
+  .getElementById("runBtn")
+  .addEventListener("pointerdown", e => {
+    e.preventDefault();
+    runningFast = true;
+  });
+
+document
+  .getElementById("runBtn")
+  .addEventListener("pointerup", e => {
+    e.preventDefault();
+    runningFast = false;
+  });
+
+document
+  .getElementById("runBtn")
+  .addEventListener("pointercancel", () => {
+    runningFast = false;
+  });
+
+
+document
+  .getElementById("interactBtn")
+  .onclick = () => interact();
+
+
+/* =========================
+   WORLD SIZE
+========================= */
+
+const WORLD = {
+  width: 2200,
+  height: 1500
+};
+
+
+/* =========================
+   LOCATIONS
+========================= */
+
+const locations = [
+
+  {
+    id:"home",
+    name:"Family Home",
+    emoji:"🏠",
+    x:220,
+    y:180,
+    w:250,
+    h:170,
+    color:"#b77946",
+    description:"A comfortable place to rest and recover.",
+    actions:["rest","sleep"]
+  },
+
+  {
+    id:"bank",
+    name:"Kaduna Bank",
+    emoji:"🏦",
+    x:730,
+    y:150,
+    w:280,
+    h:170,
+    color:"#285ea8",
+    description:"Manage your cash and bank account.",
+    actions:["bank"]
+  },
+
+  {
+    id:"university",
+    name:"Kaduna University",
+    emoji:"🎓",
+    x:1370,
+    y:160,
+    w:340,
+    h:190,
+    color:"#6b4da1",
+    description:"Study and improve your education.",
+    actions:["study"]
+  },
+
+  {
+    id:"hospital",
+    name:"General Hospital",
+    emoji:"🏥",
+    x:1840,
+    y:160,
+    w:270,
+    h:190,
+    color:"#c64e59",
+    description:"Restore your health.",
+    actions:["hospital"]
+  },
+
+  {
+    id:"restaurant",
+    name:"City Restaurant",
+    emoji:"🍛",
+    x:230,
+    y:640,
+    w:270,
+    h:170,
+    color:"#b45309",
+    description:"Grab a meal and improve your mood.",
+    actions:["eat"]
+  },
+
+  {
+    id:"supermarket",
+    name:"Supermarket",
+    emoji:"🛒",
+    x:700,
+    y:660,
+    w:300,
+    h:180,
+    color:"#24735b",
+    description:"Buy useful everyday items.",
+    actions:["shop"]
+  },
+
+  {
+    id:"park",
+    name:"Kaduna Central Park",
+    emoji:"🌳",
+    x:1190,
+    y:620,
+    w:380,
+    h:230,
+    color:"#27824d",
+    description:"Relax, walk around and meet people.",
+    actions:["park"]
+  },
+
+  {
+    id:"work",
+    name:"Business District",
+    emoji:"💼",
+    x:1750,
+    y:620,
+    w:330,
+    h:200,
+    color:"#3f5f88",
+    description:"Find work and manage your career.",
+    actions:["work"]
+  },
+
+  {
+    id:"market",
+    name:"Kaduna Market",
+    emoji:"🏪",
+    x:280,
+    y:1110,
+    w:340,
+    h:190,
+    color:"#8a633e",
+    description:"A busy marketplace.",
+    actions:["market"]
+  },
+
+  {
+    id:"mechanic",
+    name:"Mechanic Workshop",
+    emoji:"🔧",
+    x:820,
+    y:1110,
+    w:330,
+    h:190,
+    color:"#555b62",
+    description:"Maintain your vehicle.",
+    actions:["mechanic"]
+  },
+
+  {
+    id:"transport",
+    name:"Transport Hub",
+    emoji:"🚌",
+    x:1450,
+    y:1080,
+    w:350,
+    h:220,
+    color:"#305c74",
+    description:"Choose your transportation.",
+    actions:["transport"]
+  }
+
+];
+
+
+/* =========================
+   ROADS
+========================= */
+
+const roads = [
+
+  {
+    x:0,
+    y:440,
+    w:2200,
+    h:150
+  },
+
+  {
+    x:610,
+    y:0,
+    w:140,
+    h:1500
+  },
+
+  {
+    x:1080,
+    y:0,
+    w:140,
+    h:1500
+  },
+
+  {
+    x:1660,
+    y:0,
+    w:150,
+    h:1500
+  },
+
+  {
+    x:0,
+    y:950,
+    w:2200,
+    h:140
+  }
+
+];
+
+
+/* =========================
+   TREES
+========================= */
+
+const trees = [];
+
+function seedTrees(){
+
+  const positions = [
+
+    [70,80],
+    [540,100],
+    [1120,90],
+    [1770,90],
+    [2150,90],
+
+    [80,360],
+    [550,360],
+    [1120,360],
+    [1750,370],
+
+    [80,600],
+    [560,610],
+    [1060,600],
+    [1600,600],
+    [2140,610],
+
+    [80,870],
+    [560,860],
+    [1070,880],
+    [1610,870],
+    [2130,890],
+
+    [80,1150],
+    [690,1150],
+    [1220,1150],
+    [1870,1170],
+
+    [80,1370],
+    [700,1380],
+    [1240,1380],
+    [1880,1380]
+
+  ];
+
+  positions.forEach(([x,y]) => {
+
+    trees.push({
+      x,
+      y,
+      r:18 + Math.random()*8
+    });
+
+  });
+
+}
+
+seedTrees();
+
+
+/* =========================
+   NPCs
+========================= */
+
+const npcDefinitions = [
+
+  {
+    id:"amina",
+    name:"Amina",
+    emoji:"👩",
+    x:550,
+    y:500,
+    color:"#f59e0b"
+  },
+
+  {
+    id:"musa",
+    name:"Musa",
+    emoji:"👨",
+    x:1150,
+    y:520,
+    color:"#22c55e"
+  },
+
+  {
+    id:"fatima",
+    name:"Fatima",
+    emoji:"👩",
+    x:1610,
+    y:500,
+    color:"#a855f7"
+  },
+
+  {
+    id:"daniel",
+    name:"Daniel",
+    emoji:"👨",
+    x:1900,
+    y:500,
+    color:"#ef4444"
+  },
+
+  {
+    id:"zainab",
+    name:"Zainab",
+    emoji:"👩",
+    x:1050,
+    y:1020,
+    color:"#06b6d4"
+  },
+
+  {
+    id:"umar",
+    name:"Umar",
+    emoji:"👨",
+    x:1320,
+    y:1020,
+    color:"#f97316"
+  }
+
+];
+
+const npcs =
+  npcDefinitions.map(npc => ({
+    ...npc,
+    dx:Math.random() > .5 ? 1 : -1,
+    dy:Math.random() > .5 ? 1 : -1,
+    timer:Math.random()*4
+  }));
+
+
+/* =========================
+   CANVAS
+========================= */
+
+let viewport = {
+  width:window.innerWidth,
+  height:window.innerHeight
+};
+
+let camera = {
+  x:0,
+  y:0
+};
+
+
+function resizeCanvas(){
+
+  const dpr =
+    Math.min(window.devicePixelRatio || 1,2);
+
+  viewport.width = window.innerWidth;
+  viewport.height = window.innerHeight;
+
+  canvas.width =
+    Math.floor(viewport.width*dpr);
+
+  canvas.height =
+    Math.floor(viewport.height*dpr);
+
+  canvas.style.width =
+    viewport.width+"px";
+
+  canvas.style.height =
+    viewport.height+"px";
+
+  ctx.setTransform(
+    dpr,
+    0,
+    0,
+    dpr,
+    0,
+    0
+  );
+
+}
+
+window.addEventListener(
+  "resize",
+  resizeCanvas
+);
+
+resizeCanvas();
+
+
+/* =========================
+   DRAW HELPERS
+========================= */
+
+function roundedRect(
+  ctx,
+  x,
+  y,
+  w,
+  h,
+  r
+){
+
+  const radius =
+    Math.min(r,w/2,h/2);
+
+  ctx.beginPath();
+
+  ctx.moveTo(x+radius,y);
+
+  ctx.arcTo(
+    x+w,
+    y,
+    x+w,
+    y+h,
+    radius
+  );
+
+  ctx.arcTo(
+    x+w,
+    y+h,
+    x,
+    y+h,
+    radius
+  );
+
+  ctx.arcTo(
+    x,
+    y+h,
+    x,
+    y,
+    radius
+  );
+
+  ctx.arcTo(
+    x,
+    y,
+    x+w,
+    y,
+    radius
+  );
+
+  ctx.closePath();
+
+}
+
+
+/* =========================
+   DRAW WORLD
+========================= */
+
+function drawWorld(){
+
+  ctx.clearRect(
+    0,
+    0,
+    viewport.width,
+    viewport.height
+  );
+
+  ctx.save();
+
+  ctx.translate(
+    -camera.x,
+    -camera.y
+  );
+
+
+  /* GRASS */
+
+  ctx.fillStyle="#477b45";
+
+  ctx.fillRect(
+    0,
+    0,
+    WORLD.width,
+    WORLD.height
+  );
+
+
+  /* SUBTLE GRID */
+
+  ctx.strokeStyle="rgba(255,255,255,.025)";
+  ctx.lineWidth=1;
+
+  for(
+    let x=0;
+    x<WORLD.width;
+    x+=50
+  ){
+
+    ctx.beginPath();
+    ctx.moveTo(x,0);
+    ctx.lineTo(x,WORLD.height);
+    ctx.stroke();
+
+  }
+
+  for(
+    let y=0;
+    y<WORLD.height;
+    y+=50
+  ){
+
+    ctx.beginPath();
+    ctx.moveTo(0,y);
+    ctx.lineTo(WORLD.width,y);
+    ctx.stroke();
+
+  }
+
+
+  /* ROADS */
+
+  roads.forEach(road => {
+
+    ctx.fillStyle="#454c54";
+
+    ctx.fillRect(
+      road.x,
+      road.y,
+      road.w,
+      road.h
+    );
+
+    ctx.strokeStyle="rgba(255,255,255,.13)";
+    ctx.lineWidth=2;
+
+    if(road.w > road.h){
+
+      const mid =
+        road.y + road.h/2;
+
+      ctx.setLineDash([28,20]);
+
+      ctx.beginPath();
+      ctx.moveTo(
+        road.x,
+        mid
+      );
+      ctx.lineTo(
+        road.x+road.w,
+        mid
+      );
+      ctx.stroke();
+
+    }else{
+
+      const mid =
+        road.x + road.w/2;
+
+      ctx.setLineDash([28,20]);
+
+      ctx.beginPath();
+      ctx.moveTo(
+        mid,
+        road.y
+      );
+      ctx.lineTo(
+        mid,
+        road.y+road.h
+      );
+      ctx.stroke();
+
+    }
+
+    ctx.setLineDash([]);
+
+  });
+
+
+  /* BUILDINGS */
+
+  locations.forEach(location => {
+
+    ctx.fillStyle="rgba(0,0,0,.18)";
+
+    roundedRect(
+      ctx,
+      location.x+7,
+      location.y+9,
+      location.w,
+      location.h,
+      18
+    );
+
+    ctx.fill();
+
+    ctx.fillStyle =
+      location.color;
+
+    roundedRect(
+      ctx,
+      location.x,
+      location.y,
+      location.w,
+      location.h,
+      18
+    );
+
+    ctx.fill();
+
+    ctx.strokeStyle=
+      "rgba(255,255,255,.16)";
+
+    ctx.lineWidth=2;
+
+    roundedRect(
+      ctx,
+      location.x,
+      location.y,
+      location.w,
+      location.h,
+      18
+    );
+
+    ctx.stroke();
+
+
+    /* WINDOWS */
+
+    ctx.fillStyle=
+      "rgba(210,235,255,.8)";
+
+    const cols =
+      Math.max(
+        2,
+        Math.floor(location.w/80)
+      );
+
+    const rows =
+      Math.max(
+        2,
+        Math.floor(location.h/65)
+      );
+
+    for(let r=0;r<rows;r++){
+
+      for(let c=0;c<cols;c++){
+
+        const wx =
+          location.x+25+c*65;
+
+        const wy =
+          location.y+65+r*55;
+
+        if(
+          wx+22 < location.x+location.w-10 &&
+          wy+18 < location.y+location.h-15
+        ){
+
+          ctx.fillRect(
+            wx,
+            wy,
+            22,
+            18
+          );
+
+        }
+
+      }
+
+    }
+
+
+    /* BUILDING LABEL */
+
+    ctx.font=
+      "bold 16px Arial";
+
+    ctx.textAlign="center";
+
+    ctx.fillStyle="#fff";
+
+    ctx.fillText(
+      location.emoji,
+      location.x+location.w/2,
+      location.y+34
+    );
+
+    ctx.font=
+      "bold 13px Arial";
+
+    ctx.fillText(
+      location.name,
+      location.x+location.w/2,
+      location.y+54
+    );
+
+  });
+
+
+  /* TREES */
+
+  trees.forEach(tree => {
+
+    ctx.fillStyle="rgba(0,0,0,.16)";
+
+    ctx.beginPath();
+
+    ctx.arc(
+      tree.x+4,
+      tree.y+7,
+      tree.r,
+      0,
+      Math.PI*2
+    );
+
+    ctx.fill();
+
+    ctx.fillStyle="#245c31";
+
+    ctx.beginPath();
+
+    ctx.arc(
+      tree.x,
+      tree.y,
+      tree.r,
+      0,
+      Math.PI*2
+    );
+
+    ctx.fill();
+
+    ctx.fillStyle="#4e9a50";
+
+    ctx.beginPath();
+
+    ctx.arc(
+      tree.x-5,
+      tree.y-6,
+      tree.r*.55,
+      0,
+      Math.PI*2
+    );
+
+    ctx.fill();
+
+  });
+
+
+  /* NPCs */
+
+  npcs.forEach(npc => {
+
+    ctx.fillStyle="rgba(0,0,0,.2)";
+
+    ctx.beginPath();
+
+    ctx.ellipse(
+      npc.x+3,
+      npc.y+13,
+      12,
+      5,
+      0,
+      0,
+      Math.PI*2
+    );
+
+    ctx.fill();
+
+
+    ctx.fillStyle=npc.color;
+
+    ctx.beginPath();
+
+    ctx.arc(
+      npc.x,
+      npc.y,
+      12,
+      0,
+      Math.PI*2
+    );
+
+    ctx.fill();
+
+    ctx.strokeStyle=
+      "rgba(255,255,255,.65)";
+
+    ctx.lineWidth=2;
+
+    ctx.stroke();
+
+
+    ctx.font="15px Arial";
+
+    ctx.textAlign="center";
+
+    ctx.fillText(
+      npc.emoji,
+      npc.x,
+      npc.y+5
+    );
+
+    ctx.font="10px Arial";
+
+    ctx.fillStyle="#fff";
+
+    ctx.fillText(
+      npc.name,
+      npc.x,
+      npc.y-18
+    );
+
+  });
+
+
+  /* PLAYER */
+
+  drawPlayer();
+
+
+  ctx.restore();
+
+}
+
+
+/* =========================
+   PLAYER
+========================= */
+
+function drawPlayer(){
+
+  const p =
+    game.player;
+
+  /* Shadow */
+
+  ctx.fillStyle=
+    "rgba(0,0,0,.25)";
+
+  ctx.beginPath();
+
+  ctx.ellipse(
+    p.x,
+    p.y+17,
+    16,
+    7,
+    0,
+    0,
+    Math.PI*2
+  );
+
+  ctx.fill();
+
+
+  /* Body */
+
+  ctx.fillStyle="#2563eb";
+
+  ctx.beginPath();
+
+  ctx.arc(
+    p.x,
+    p.y,
+    15,
+    0,
+    Math.PI*2
+  );
+
+  ctx.fill();
+
+
+  /* Head */
+
+  ctx.fillStyle="#f1c27d";
+
+  ctx.beginPath();
+
+  ctx.arc(
+    p.x,
+    p.y-17,
+    10,
+    0,
+    Math.PI*2
+  );
+
+  ctx.fill();
+
+
+  /* Hair */
+
+  ctx.fillStyle="#21180f";
+
+  ctx.beginPath();
+
+  ctx.arc(
+    p.x,
+    p.y-20,
+    10,
+    Math.PI,
+    Math.PI*2
+  );
+
+  ctx.fill();
+
+
+  /* Direction indicator */
+
+  ctx.fillStyle="#fff";
+
+  ctx.beginPath();
+
+  ctx.arc(
+    p.x,
+    p.y+1,
+    3,
+    0,
+    Math.PI*2
+  );
+
+  ctx.fill();
+
+
+  /* Name */
+
+  ctx.font="bold 11px Arial";
+
+  ctx.textAlign="center";
+
+  ctx.fillStyle="#fff";
+
+  ctx.fillText(
+    game.character.name || "You",
+    p.x,
+    p.y+38
+  );
+
+}
+
+
+/* =========================
+   COLLISION
+========================= */
+
+function circleRectCollision(
+  cx,
+  cy,
+  radius,
+  rect
+){
+
+  const closestX =
+    Math.max(
+      rect.x,
+      Math.min(
+        cx,
+        rect.x+rect.w
+      )
+    );
+
+  const closestY =
+    Math.max(
+      rect.y,
+      Math.min(
+        cy,
+        rect.y+rect.h
+      )
+    );
+
+  const dx =
+    cx-closestX;
+
+  const dy =
+    cy-closestY;
+
+  return (
+    dx*dx+
+    dy*dy
+  ) <
+  radius*radius;
+
+}
+
+
+function canMoveTo(x,y){
+
+  const radius=16;
+
+  /* WORLD BORDER */
+
+  if(
+    x<radius ||
+    y<radius ||
+    x>WORLD.width-radius ||
+    y>WORLD.height-radius
+  ){
+
+    return false;
+
+  }
+
+
+  /* BUILDINGS */
+
+  for(
+    const location of locations
+  ){
+
+    if(
+      circleRectCollision(
+        x,
+        y,
+        radius,
+        {
+          x:location.x-8,
+          y:location.y-8,
+          w:location.w+16,
+          h:location.h+16
+        }
+      )
+    ){
+
+      return false;
+
+    }
+
+  }
+
+
+  return true;
+
+}
+
+
+/* =========================
+   MOVEMENT
+========================= */
+
+function getMovement(){
+
+  let dx=0;
+  let dy=0;
+
+  if(
+    keys["ArrowUp"] ||
+    keys["w"] ||
+    touchDirections.up
+  ){
+
+    dy-=1;
+
+  }
+
+  if(
+    keys["ArrowDown"] ||
+    keys["s"] ||
+    touchDirections.down
+  ){
+
+    dy+=1;
+
+  }
+
+  if(
+    keys["ArrowLeft"] ||
+    keys["a"] ||
+    touchDirections.left
+  ){
+
+    dx-=1;
+
+  }
+
+  if(
+    keys["ArrowRight"] ||
+    keys["d"] ||
+    touchDirections.right
+  ){
+
+    dx+=1;
+
+  }
+
+  if(dx!==0 || dy!==0){
+
+    const length =
+      Math.hypot(dx,dy);
+
+    dx/=length;
+    dy/=length;
+
+  }
+
+  return {
+    dx,
+    dy
+  };
+
+}
+
+
+function updatePlayer(dt){
+
+  const movement =
+    getMovement();
+
+  if(
+    movement.dx===0 &&
+    movement.dy===0
+  ){
+
+    return;
+
+  }
+
+  let speed =
+    runningFast
+      ? 240
+      : 155;
+
+  if(game.energy<=0){
+
+    speed=90;
+
+  }
+
+  const moveX =
+    movement.dx*speed*dt;
+
+  const moveY =
+    movement.dy*speed*dt;
+
+
+  const nextX =
+    game.player.x+moveX;
+
+  const nextY =
+    game.player.y+moveY;
+
+
+  /* Separate-axis collision */
+
+  if(
+    canMoveTo(
+      nextX,
+      game.player.y
+    )
+  ){
+
+    game.player.x=nextX;
+
+  }
+
+  if(
+    canMoveTo(
+      game.player.x,
+      nextY
+    )
+  ){
+
+    game.player.y=nextY;
+
+  }
+
+
+  /* Energy slowly drains while running */
+
+  if(runningFast){
+
+    game.energy =
+      Math.max(
+        0,
+        game.energy-dt*1.8
+      );
+
+  }else{
+
+    game.energy =
+      Math.min(
+        100,
+        game.energy+dt*.25
+      );
+
+  }
+
+}
+
+
+/* =========================
+   CAMERA
+========================= */
+
+function updateCamera(){
+
+  const targetX =
+    game.player.x -
+    viewport.width/2;
+
+  const targetY =
+    game.player.y -
+    viewport.height/2;
+
+
+  const maxX =
+    Math.max(
+      0,
+      WORLD.width-viewport.width
+    );
+
+  const maxY =
+    Math.max(
+      0,
+      WORLD.height-viewport.height
+    );
+
+
+  const clampedX =
+    Math.max(
+      0,
+      Math.min(
+        maxX,
+        targetX
+      )
+    );
+
+  const clampedY =
+    Math.max(
+      0,
+      Math.min(
+        maxY,
+        targetY
+      )
+    );
+
+
+  camera.x +=
+    (clampedX-camera.x)*.12;
+
+  camera.y +=
+    (clampedY-camera.y)*.12;
+
+}
+
+
+/* =========================
+   NPC MOVEMENT
+========================= */
+
+function updateNPCs(dt){
+
+  npcs.forEach(npc => {
+
+    npc.timer-=dt;
+
+    if(npc.timer<=0){
+
+      npc.timer =
+        1.5+
+        Math.random()*3;
+
+      const direction =
+        Math.floor(
+          Math.random()*5
+        );
+
+      if(direction===0){
+        npc.dx=1;
+        npc.dy=0;
+      }
+
+      if(direction===1){
+        npc.dx=-1;
+        npc.dy=0;
+      }
+
+      if(direction===2){
+        npc.dx=0;
+        npc.dy=1;
+      }
+
+      if(direction===3){
+        npc.dx=0;
+        npc.dy=-1;
+      }
+
+      if(direction===4){
+        npc.dx=0;
+        npc.dy=0;
+      }
+
+    }
+
+    const nx =
+      npc.x+npc.dx*dt*28;
+
+    const ny =
+      npc.y+npc.dy*dt*28;
+
+    if(
+      nx>20 &&
+      nx<WORLD.width-20
+    ){
+
+      npc.x=nx;
+
+    }else{
+
+      npc.dx*=-1;
+
+    }
+
+    if(
+      ny>20 &&
+      ny<WORLD.height-20
+    ){
+
+      npc.y=ny;
+
+    }else{
+
+      npc.dy*=-1;
+
+    }
+
+  });
+
+}
+
+
+/* =========================
+   NEARBY DETECTION
+========================= */
+
+function distance(
+  x1,
+  y1,
+  x2,
+  y2
+){
+
+  return Math.hypot(
+    x1-x2,
+    y1-y2
+  );
+
+}
+
+
+function updateNearby(){
+
+  nearbyLocation=null;
+  nearNPC=null;
+
+
+  /* LOCATIONS */
+
+  let closestLocationDistance=Infinity;
+
+  locations.forEach(location => {
+
+    const centerX =
+      location.x+location.w/2;
+
+    const centerY =
+      location.y+location.h/2;
+
+    const d =
+      distance(
+        game.player.x,
+        game.player.y,
+        centerX,
+        centerY
+      );
+
+    if(
+      d<115 &&
+      d<closestLocationDistance
+    ){
+
+      closestLocationDistance=d;
+      nearbyLocation=location;
+
+    }
+
+  });
+
+
+  /* NPC */
+
+  let closestNPCDistance=Infinity;
+
+  npcs.forEach(npc => {
+
+    const d =
+      distance(
+        game.player.x,
+        game.player.y,
+        npc.x,
+        npc.y
+      );
+
+    if(
+      d<75 &&
+      d<closestNPCDistance
+    ){
+
+      closestNPCDistance=d;
+      nearNPC=npc;
+
+    }
+
+  });
+
+
+  if(nearNPC){
+
+    locationPrompt.classList.remove(
+      "hidden"
+    );
+
+    promptTitle.textContent =
+      `${nearNPC.emoji} ${nearNPC.name}`;
+
+    promptText.textContent =
+      "Press ENTER to talk";
+
+    return;
+
+  }
+
+
+  if(nearbyLocation){
+
+    locationPrompt.classList.remove(
+      "hidden"
+    );
+
+    promptTitle.textContent =
+      `${nearbyLocation.emoji} ${nearbyLocation.name}`;
+
+    promptText.textContent =
+      "Press ENTER to enter";
+
+    return;
+
+  }
+
+
+  locationPrompt.classList.add(
+    "hidden"
+  );
+
+}
+
+
+/* =========================
+   GAME LOOP
+========================= */
+
+function gameLoop(timestamp){
+
+  if(!running){
+
+    return;
+
+  }
+
+  if(!lastFrame){
+
+    lastFrame=timestamp;
+
+  }
+
+  let dt =
+    (timestamp-lastFrame)/1000;
+
+  lastFrame=timestamp;
+
+  dt=Math.min(dt,.05);
+
+  updatePlayer(dt);
+  updateNPCs(dt);
+  updateNearby();
+  updateCamera();
+  drawWorld();
+  updateHUD();
+
+  requestAnimationFrame(
+    gameLoop
+  );
+
+}
+
+
+/* =========================
+   HUD
+========================= */
+
+function formatMoney(number){
+
+  return Math.floor(
+    Number(number)||0
+  ).toLocaleString(
+    "en-NG"
+  );
+
+}
+
+
+function updateHUD(){
+
+  document.getElementById(
+    "hudName"
+  ).textContent =
+    game.character.name ||
+    "Player";
+
+  document.getElementById(
+    "hudDay"
+  ).textContent =
+    "Day "+game.day;
+
+  document.getElementById(
+    "hudHealth"
+  ).textContent =
+    Math.round(game.health);
+
+  document.getElementById(
+    "hudEnergy"
+  ).textContent =
+    Math.round(game.energy);
+
+  document.getElementById(
+    "hudMood"
+  ).textContent =
+    Math.round(game.mood);
+
+  document.getElementById(
+    "hudRep"
+  ).textContent =
+    Math.round(game.reputation);
+
+  document.getElementById(
+    "hudCash"
+  ).textContent =
+    formatMoney(game.cash);
+
+  document.getElementById(
+    "hudBank"
+  ).textContent =
+    formatMoney(game.bank);
+
+}
+
+
+/* =========================
+   INTERACTION
+========================= */
+
+function interact(){
+
+  if(nearNPC){
+
+    openNPC(nearNPC);
+    return;
+
+  }
+
+  if(nearbyLocation){
+
+    openLocation(
+      nearbyLocation
+    );
+    return;
+
+  }
+
+}
+
+
+/* =========================
+   MODAL HELPERS
+========================= */
+
+function showModal(
+  title,
+  html
+){
+
+  modalTitle.textContent=title;
+  modalContent.innerHTML=html;
+  modal.classList.add("show");
+
+}
+
+
+function closeModal(){
+
+  modal.classList.remove(
+    "show"
+  );
+
+}
+
+document
+  .getElementById("modalClose")
+  .onclick=closeModal;
+
+modal.addEventListener(
+  "click",
+  e => {
+
+    if(e.target===modal){
+
+      closeModal();
+
+    }
+
+  }
+);
+
+
+/* =========================
+   LOCATION MENU
+========================= */
+
+function openLocation(location){
+
+  let html="";
+
+  html += `
+    <div class="notice">
+      ${location.description}
+    </div>
+  `;
+
+
+  if(location.id==="home"){
+
+    html += `
+      <div class="actionList">
+
+        <button class="bigAction"
+          data-action="rest">
+          🛋️ <strong>Rest</strong>
+          <small>Recover energy and improve mood.</small>
+        </button>
+
+        <button class="bigAction"
+          data-action="sleep">
+          😴 <strong>Sleep</strong>
+          <small>Advance to the next day.</small>
+        </button>
+
+      </div>
+    `;
+
+  }
+
+
+  if(location.id==="bank"){
+
+    html += `
+
+      <div class="profileCard">
+        <div class="profileRow">
+          <span>Cash</span>
+          <strong>₦${formatMoney(game.cash)}</strong>
+        </div>
+
+        <div class="profileRow">
+          <span>Bank</span>
+          <strong>₦${formatMoney(game.bank)}</strong>
+        </div>
+      </div>
+
+      <div class="actionList">
+
+        <button class="bigAction"
+          data-action="deposit">
+          💰 <strong>Deposit ₦10,000</strong>
+          <small>Move cash into your bank.</small>
+        </button>
+
+        <button class="bigAction"
+          data-action="withdraw">
+          💵 <strong>Withdraw ₦10,000</strong>
+          <small>Take money from your bank.</small>
+        </button>
+
+      </div>
+    `;
+
+  }
+
+
+  if(location.id==="hospital"){
+
+    html += `
+      <div class="actionList">
+
+        <button class="bigAction"
+          data-action="hospital">
+          🏥 <strong>Get Treatment</strong>
+          <small>Costs ₦5,000 and restores health.</small>
+        </button>
+
+      </div>
+    `;
+
+  }
+
+
+  if(location.id==="university"){
+
+    html += `
+      <div class="actionList">
+
+        <button class="bigAction"
+          data-action="study">
+          📚 <strong>Study</strong>
+          <small>Improve your skills and education.</small>
+        </button>
+
+      </div>
+    `;
+
+  }
+
+
+  if(location.id==="restaurant"){
+
+    html += `
+      <div class="actionList">
+
+        <button class="bigAction"
+          data-action="eat">
+          🍛 <strong>Buy a Meal — ₦3,000</strong>
+          <small>Restore energy and improve mood.</small>
+        </button>
+
+      </div>
+    `;
+
+  }
+
+
+  if(location.id==="supermarket"){
+
+    html += `
+      <div class="actionList">
+
+        <button class="bigAction"
+          data-buy="Water">
+          💧 <strong>Buy Water — ₦500</strong>
+          <small>Add water to your inventory.</small>
+        </button>
+
+        <button class="bigAction"
+          data-buy="Snack">
+          🍪 <strong>Buy Snack — ₦1,000</strong>
+          <small>Add a snack to your inventory.</small>
+        </button>
+
+        <button class="bigAction"
+          data-buy="Phone">
+          📱 <strong>Buy Phone — ₦80,000</strong>
+          <small>A useful everyday item.</small>
+        </button>
+
+      </div>
+    `;
+
+  }
+
+
+  if(location.id==="park"){
+
+    html += `
+      <div class="actionList">
+
+        <button class="bigAction"
+          data-action="park">
+          🌳 <strong>Relax</strong>
+          <small>Improve mood and reputation.</small>
+        </button>
+
+      </div>
+    `;
+
+  }
+
+
+  if(location.id==="work"){
+
+    html += `
+      <div class="actionList">
+
+        <button class="bigAction"
+          data-action="career">
+          💼 <strong>Career Center</strong>
+          <small>Choose or change your career.</small>
+        </button>
+
+        <button class="bigAction"
+          data-action="work">
+          💵 <strong>Work</strong>
+          <small>Earn money from your current career.</small>
+        </button>
+
+      </div>
+    `;
+
+  }
+
+
+  if(location.id==="market"){
+
+    html += `
+      <div class="actionList">
+
+        <button class="bigAction"
+          data-action="market">
+          🏪 <strong>Explore Market</strong>
+          <small>Visit Kaduna's busy market.</small>
+        </button>
+
+      </div>
+    `;
+
+  }
+
+
+  if(location.id==="mechanic"){
+
+    html += `
+      <div class="actionList">
+
+        <button class="bigAction"
+          data-action="mechanic">
+          🔧 <strong>Service Vehicle</strong>
+          <small>Maintain your transport.</small>
+        </button>
+
+      </div>
+    `;
+
+  }
+
+
+  if(location.id==="transport"){
+
+    html += `
+      <div class="actionList">
+
+        <button class="bigAction"
+          data-transport="Walking">
+          🚶 <strong>Walking</strong>
+          <small>Free but slower.</small>
+        </button>
+
+        <button class="bigAction"
+          data-transport="Bike">
+          🏍️ <strong>Bike — ₦100,000</strong>
+          <small>Move around faster.</small>
+        </button>
+
+        <button class="bigAction"
+          data-transport="Car">
+          🚗 <strong>Car — ₦3,000,000</strong>
+          <small>Fast personal transportation.</small>
+        </button>
+
+      </div>
+    `;
+
+  }
+
+
+  showModal(
+    `${location.emoji} ${location.name}`,
+    html
+  );
+
+}
+
+
+/* =========================
+   NPC INTERACTION
+========================= */
+
+function openNPC(npc){
+
+  if(
+    typeof game.friendship[npc.id] !== "number"
+  ){
+
+    game.friendship[npc.id]=0;
+
+  }
+
+  const friendship =
+    game.friendship[npc.id];
+
+  showModal(
+    `${npc.emoji} ${npc.name}`,
+    `
+
+      <div class="notice">
+        ${npc.name} is hanging around Kaduna.
+        <br><br>
+        Friendship: <strong>${friendship}</strong>
+      </div>
+
+      <div class="actionList">
+
+        <button class="bigAction"
+          data-npcAction="talk"
+          data-npc-id="${npc.id}">
+          💬 <strong>Talk</strong>
+          <small>Have a friendly conversation.</small>
+        </button>
+
+        <button class="bigAction"
+          data-npcAction="hangout"
+          data-npc-id="${npc.id}">
+          🌳 <strong>Hang Out</strong>
+          <small>Spend some time together.</small>
+        </button>
+
+      </div>
+
+    `
+  );
+
+}
+
+
+/* =========================
+   LOCATION ACTIONS
+========================= */
+
+document.addEventListener(
+  "click",
+  async e => {
+
+    const actionBtn =
+      e.target.closest(
+        "[data-action]"
+      );
+
+    if(actionBtn){
+
+      const action =
+        actionBtn.dataset.action;
+
+      await performAction(
+        action
+      );
+
+      return;
+
+    }
+
+
+    const buyBtn =
+      e.target.closest(
+        "[data-buy]"
+      );
+
+    if(buyBtn){
+
+      buyItem(
+        buyBtn.dataset.buy
+      );
+
+      return;
+
+    }
+
+
+    const transportBtn =
+      e.target.closest(
+        "[data-transport]"
+      );
+
+    if(transportBtn){
+
+      chooseTransport(
+        transportBtn.dataset.transport
+      );
+
+      return;
+
+    }
+
+
+    const npcAction =
+      e.target.closest(
+        "[data-npcAction]"
+      );
+
+    if(npcAction){
+
+      npcInteraction(
+        npcAction.dataset.npcAction,
+        npcAction.dataset.npcId
+      );
+
+      return;
+
+    }
+
+  }
+);
+
+
+/* =========================
+   ACTIONS
+========================= */
+
+async function performAction(
+  action
+){
+
+  if(action==="rest"){
+
+    game.energy =
+      Math.min(
+        100,
+        game.energy+35
+      );
+
+    game.mood =
+      Math.min(
+        100,
+        game.mood+5
+      );
+
+    notify(
+      "You rested and recovered some energy."
+    );
+
+  }
+
+
+  if(action==="sleep"){
+
+    advanceDay();
+
+    notify(
+      "You slept. A new day begins."
+    );
+
+  }
+
+
+  if(action==="deposit"){
+
+    const amount=10000;
+
+    if(game.cash<amount){
+
+      notify(
+        "You don't have enough cash."
+      );
+      return;
+
+    }
+
+    game.cash-=amount;
+    game.bank+=amount;
+
+    notify(
+      "₦10,000 deposited."
+    );
+
+  }
+
+
+  if(action==="withdraw"){
+
+    const amount=10000;
+
+    if(game.bank<amount){
+
+      notify(
+        "You don't have enough money in the bank."
+      );
+      return;
+
+    }
+
+    game.bank-=amount;
+    game.cash+=amount;
+
+    notify(
+      "₦10,000 withdrawn."
+    );
+
+  }
+
+
+  if(action==="hospital"){
+
+    const cost=5000;
+
+    if(game.cash<cost){
+
+      notify(
+        "You need ₦5,000 for treatment."
+      );
+      return;
+
+    }
+
+    game.cash-=cost;
+
+    game.health=
+      Math.min(
+        100,
+        game.health+45
+      );
+
+    game.mood=
+      Math.min(
+        100,
+        game.mood+3
+      );
+
+    notify(
+      "Treatment complete. Health restored."
+    );
+
+  }
+
+
+  if(action==="study"){
+
+    if(game.energy<15){
+
+      notify(
+        "You're too tired to study. Rest first."
+      );
+      return;
+
+    }
+
+    game.energy-=15;
+
+    game.reputation+=2;
+
+    game.mood=
+      Math.min(
+        100,
+        game.mood+2
+      );
+
+    notify(
+      "You studied and improved your skills."
+    );
+
+  }
+
+
+  if(action==="eat"){
+
+    const cost=3000;
+
+    if(game.cash<cost){
+
+      notify(
+        "You need ₦3,000 for a meal."
+      );
+      return;
+
+    }
+
+    game.cash-=cost;
+
+    game.energy=
+      Math.min(
+        100,
+        game.energy+25
+      );
+
+    game.mood=
+      Math.min(
+        100,
+        game.mood+10
+      );
+
+    notify(
+      "Nice meal. You feel better."
+    );
+
+  }
+
+
+  if(action==="park"){
+
+    game.mood=
+      Math.min(
+        100,
+        game.mood+12
+      );
+
+    game.reputation+=1;
+
+    notify(
+      "You relaxed at the park."
+    );
+
+  }
+
+
+  if(action==="career"){
+
+    openCareerMenu();
+    return;
+
+  }
+
+
+  if(action==="work"){
+
+    workJob();
+    return;
+
+  }
+
+
+  if(action==="market"){
+
+    game.mood=
+      Math.min(
+        100,
+        game.mood+3
+      );
+
+    notify(
+      "You explored the market."
+    );
+
+  }
+
+
+  if(action==="mechanic"){
+
+    if(
+      game.transport==="Walking"
+    ){
+
+      notify(
+        "You don't currently have a vehicle."
+      );
+
+    }else{
+
+      if(game.cash<5000){
+
+        notify(
+          "Vehicle service costs ₦5,000."
+        );
+
+      }else{
+
+        game.cash-=5000;
+
+        game.reputation+=1;
+
+        notify(
+          "Vehicle serviced."
+        );
+
+      }
+
+    }
+
+  }
+
+
+  updateHUD();
+  saveGame();
+
+}
+
+
+/* =========================
+   SHOP
+========================= */
+
+const itemPrices = {
+
+  Water:500,
+  Snack:1000,
+  Phone:80000
+
+};
+
+
+function buyItem(item){
+
+  const price =
+    itemPrices[item];
+
+  if(
+    typeof price!=="number"
+  ){
+
+    return;
+
+  }
+
+  if(game.cash<price){
+
+    notify(
+      "You don't have enough cash."
+    );
+
+    return;
+
+  }
+
+  game.cash-=price;
+
+  game.inventory.push({
+    name:item,
+    quantity:1
+  });
+
+  notify(
+    `${item} added to your inventory.`
+  );
+
+  updateHUD();
+
+  saveGame();
+
+}
+
+
+/* =========================
+   TRANSPORT
+========================= */
+
+function chooseTransport(
+  transport
+){
+
+  if(
+    transport==="Walking"
+  ){
+
+    game.transport="Walking";
+
+    notify(
+      "You are now walking."
+    );
+
+    closeModal();
+
+    saveGame();
+
+    return;
+
+  }
+
+
+  if(
+    transport==="Bike"
+  ){
+
+    const price=100000;
+
+    if(game.transport==="Bike"){
+
+      notify(
+        "You already have a bike."
+      );
+      return;
+
+    }
+
+    if(game.cash<price){
+
+      notify(
+        "You need ₦100,000."
+      );
+      return;
+
+    }
+
+    game.cash-=price;
+    game.transport="Bike";
+
+    notify(
+      "You bought a bike."
+    );
+
+  }
+
+
+  if(
+    transport==="Car"
+  ){
+
+    const price=3000000;
+
+    if(game.transport==="Car"){
+
+      notify(
+        "You already have a car."
+      );
+      return;
+
+    }
+
+    if(game.cash<price){
+
+      notify(
+        "You need ₦3,000,000."
+      );
+      return;
+
+    }
+
+    game.cash-=price;
+    game.transport="Car";
+
+    notify(
+      "You bought a car."
+    );
+
+  }
+
+
+  updateHUD();
+
+  saveGame();
+
+}
+
+
+/* =========================
+   CAREERS
+========================= */
+
+const careers = [
+
+  {
+    name:"Software Developer",
+    salary:120000
+  },
+
+  {
+    name:"Teacher",
+    salary:80000
+  },
+
+  {
+    name:"Graphic Designer",
+    salary:90000
+  },
+
+  {
+    name:"Business Owner",
+    salary:150000
+  },
+
+  {
+    name:"Content Creator",
+    salary:110000
+  },
+
+  {
+    name:"Freelancer",
+    salary:70000
+  }
+
+];
+
+
+function openCareerMenu(){
+
+  let html = `
+    <div class="notice">
+      Current career:
+      <strong>${game.career.name}</strong>
+      <br>
+      Salary:
+      <strong>₦${formatMoney(game.career.salary)}</strong>
+    </div>
+
+    <div class="actionList">
+  `;
+
+
+  careers.forEach(
+    career => {
+
+      html += `
+
+        <button class="bigAction"
+          data-career="${career.name}">
+          💼 <strong>${career.name}</strong>
+          <small>Salary: ₦${formatMoney(career.salary)}</small>
+        </button>
+
+      `;
+
+    }
+  );
+
+
+  html += `
+    </div>
+  `;
+
+
+  showModal(
+    "💼 Career Center",
+    html
+  );
+
+}
+
+
+document.addEventListener(
+  "click",
+  e => {
+
+    const careerBtn =
+      e.target.closest(
+        "[data-career]"
+      );
+
+    if(!careerBtn){
+
+      return;
+
+    }
+
+    const careerName =
+      careerBtn.dataset.career;
+
+    const career =
+      careers.find(
+        c => c.name===careerName
+      );
+
+    if(!career){
+
+      return;
+
+    }
+
+    game.career = {
+      name:career.name,
+      salary:career.salary
+    };
+
+    notify(
+      `Career selected: ${career.name}`
+    );
+
+    updateHUD();
+
+    saveGame();
+
+    closeModal();
+
+  }
+);
+
+
+/* =========================
+   WORK
+========================= */
+
+function workJob(){
+
+  if(
+    game.career.salary<=0
+  ){
+
+    notify(
+      "You don't have a career yet. Choose one first."
+    );
+
+    return;
+
+  }
+
+  if(game.energy<20){
+
+    notify(
+      "You're too tired to work."
+    );
+
+    return;
+
+  }
+
+  const earnings =
+    Math.floor(
+      game.career.salary*
+      (.7+Math.random()*.6)
+    );
+
+  game.cash+=earnings;
+
+  game.energy-=20;
+
+  game.mood=
+    Math.max(
+      0,
+      game.mood-3
+    );
+
+  game.reputation+=2;
+
+  notify(
+    `You worked and earned ₦${formatMoney(earnings)}.`
+  );
+
+  updateHUD();
+
+  saveGame();
+
+}
+
+
+/* =========================
+   NPC FRIENDSHIP
+========================= */
+
+function npcInteraction(
+  action,
+  npcId
+){
+
+  const npc =
+    npcs.find(
+      n => n.id===npcId
+    );
+
+  if(!npc){
+
+    return;
+
+  }
+
+  if(
+    typeof game.friendship[npcId]!=="number"
+  ){
+
+    game.friendship[npcId]=0;
+
+  }
+
+
+  if(action==="talk"){
+
+    game.friendship[npcId]+=3;
+
+    game.mood=
+      Math.min(
+        100,
+        game.mood+4
+      );
+
+    notify(
+      `You had a friendly conversation with ${npc.name}.`
+    );
+
+  }
+
+
+  if(action==="hangout"){
+
+    if(game.energy<10){
+
+      notify(
+        "You're too tired to hang out."
+      );
+
+      return;
+
+    }
+
+    game.friendship[npcId]+=7;
+
+    game.energy-=10;
+
+    game.mood=
+      Math.min(
+        100,
+        game.mood+8
+      );
+
+    notify(
+      `You hung out with ${npc.name}.`
+    );
+
+  }
+
+
+  updateHUD();
+
+  saveGame();
+
+  closeModal();
+
+}
+
+
+/* =========================
+   DAY SYSTEM
+========================= */
+
+function advanceDay(){
+
+  game.day++;
+
+  game.energy=100;
+
+  game.health=
+    Math.min(
+      100,
+      game.health+8
+    );
+
+  game.mood=
+    Math.min(
+      100,
+      game.mood+5
+    );
+
+
+  if(
+    game.career.salary>0
+  ){
+
+    const dailyIncome =
+      Math.floor(
+        game.career.salary/30
+      );
+
+    game.bank+=dailyIncome;
+
+  }
+
+
+  safeLifeEvent();
+
+  updateHUD();
+
+  saveGame();
+
+}
+
+
+/* =========================
+   SAFE RANDOM LIFE EVENTS
+========================= */
+
+function safeLifeEvent(){
+
+  const events = [
+
+    {
+      text:"You helped someone in your neighborhood. Your reputation increased.",
+      apply:()=>{
+        game.reputation+=3;
+      }
+    },
+
+    {
+      text:"You had a productive day. Your mood improved.",
+      apply:()=>{
+        game.mood=
+          Math.min(
+            100,
+            game.mood+8
+          );
+      }
+    },
+
+    {
+      text:"You found a small paid task.",
+      apply:()=>{
+        game.cash+=5000;
+      }
+    },
+
+    {
+      text:"You took some time to rest and reset.",
+      apply:()=>{
+        game.energy=
+          Math.min(
+            100,
+            game.energy+10
+          );
+      }
+    }
+
+  ];
+
+
+  if(
+    Math.random()<.45
+  ){
+
+    const event =
+      events[
+        Math.floor(
+          Math.random()*events.length
+        )
+      ];
+
+    event.apply();
+
+    setTimeout(
+      () => notify(event.text),
+      250
+    );
+
+  }
+
+}
+
+
+/* =========================
+   PROFILE MENU
+========================= */
+
+function openProfile(){
+
+  showModal(
+    "👤 Profile",
+    `
+
+      <div class="profileCard">
+
+        <div class="profileRow">
+          <span>Name</span>
+          <strong>${escapeHTML(game.character.name)}</strong>
+        </div>
+
+        <div class="profileRow">
+          <span>Age</span>
+          <strong>${game.character.age}</strong>
+        </div>
+
+        <div class="profileRow">
+          <span>Background</span>
+          <strong>${escapeHTML(game.character.background)}</strong>
+        </div>
+
+        <div class="profileRow">
+          <span>Career</span>
+          <strong>${escapeHTML(game.career.name)}</strong>
+        </div>
+
+        <div class="profileRow">
+          <span>Transport</span>
+          <strong>${escapeHTML(game.transport)}</strong>
+        </div>
+
+        <div class="profileRow">
+          <span>Day</span>
+          <strong>${game.day}</strong>
+        </div>
+
+      </div>
+
+    `
+  );
+
+}
+
+
+/* =========================
+   INVENTORY
+========================= */
+
+function openInventory(){
+
+  if(
+    !game.inventory.length
+  ){
+
+    showModal(
+      "🎒 Inventory",
+      `
+        <div class="notice">
+          Your inventory is empty.
+        </div>
+      `
+    );
+
+    return;
+
+  }
+
+
+  const counts={};
+
+  game.inventory.forEach(
+    item => {
+
+      counts[item.name] =
+        (counts[item.name]||0)+1;
+
+    }
+  );
+
+
+  let html =
+    `<div class="actionList">`;
+
+
+  Object.keys(counts).forEach(
+    item => {
+
+      html += `
+
+        <button class="bigAction"
+          data-inventory="${item}">
+          🎒 <strong>${escapeHTML(item)}</strong>
+          <small>Quantity: ${counts[item]}</small>
+        </button>
+
+      `;
+
+    }
+  );
+
+
+  html+=`</div>`;
+
+
+  showModal(
+    "🎒 Inventory",
+    html
+  );
+
+}
+
+
+/* =========================
+   SOCIAL
+========================= */
+
+function openSocial(){
+
+  let html=`
+    <div class="notice">
+      Explore Kaduna and meet people around the city.
+      Walk close to an NPC and press ENTER.
+    </div>
+  `;
+
+
+  html +=
+    `<div class="actionList">`;
+
+
+  npcs.forEach(
+    npc => {
+
+      const friendship =
+        game.friendship[npc.id]||0;
+
+      html += `
+
+        <div class="profileCard">
+          <div class="profileRow">
+            <span>${npc.emoji} ${escapeHTML(npc.name)}</span>
+            <strong>Friendship ${friendship}</strong>
+          </div>
+        </div>
+
+      `;
+
+    }
+  );
+
+
+  html+=`</div>`;
+
+
+  showModal(
+    "👥 Social",
+    html
+  );
+
+}
+
+
+/* =========================
+   MAP MENU
+========================= */
+
+function openMap(){
+
+  let html=`
+    <div class="notice">
+      Walk around the city using the controls.
+      Locations become available when you get close.
+    </div>
+
+    <div class="actionList">
+  `;
+
+
+  locations.forEach(
+    location => {
+
+      html += `
+
+        <button class="bigAction"
+          data-map-location="${location.id}">
+          ${location.emoji}
+          <strong>${escapeHTML(location.name)}</strong>
+          <small>Walk there to enter.</small>
+        </button>
+
+      `;
+
+    }
+  );
+
+
+  html+=`</div>`;
+
+
+  showModal(
+    "🗺️ Kaduna Map",
+    html
+  );
+
+}
+
+
+document.addEventListener(
+  "click",
+  e => {
+
+    const btn =
+      e.target.closest(
+        "[data-map-location]"
+      );
+
+    if(!btn){
+
+      return;
+
+    }
+
+    const location =
+      locations.find(
+        l =>
+          l.id===btn.dataset.mapLocation
+      );
+
+    if(!location){
+
+      return;
+
+    }
+
+    /* Place player outside location */
+
+    game.player.x =
+      location.x+
+      location.w/2;
+
+    game.player.y =
+      location.y+
+      location.h+
+      65;
+
+    /* Push downward if invalid */
+
+    if(
+      !canMoveTo(
+        game.player.x,
+        game.player.y
+      )
+    ){
+
+      game.player.y =
+        location.y-
+        65;
+
+    }
+
+    closeModal();
+
+    saveGame();
+
+  }
+);
+
+
+/* =========================
+   HELP
+========================= */
+
+function openHelp(){
+
+  showModal(
+    "❓ How to Play",
+    `
+
+      <div class="notice">
+
+        <strong>🎮 Move</strong><br>
+        Mobile: use the D-pad.<br>
+        Desktop: WASD or arrow keys.
+
+        <br><br>
+
+        <strong>🏃 Run</strong><br>
+        Hold the RUN button on mobile.
+        On desktop, movement is normal speed.
+
+        <br><br>
+
+        <strong>📍 Locations</strong><br>
+        Walk close to a building until the
+        ENTER prompt appears.
+
+        <br><br>
+
+        <strong>👥 NPCs</strong><br>
+        Walk close to people around the city
+        and press ENTER to talk.
+
+        <br><br>
+
+        <strong>💾 Save</strong><br>
+        Your game is saved to this device
+        and your profile is synced with Supabase
+        when possible.
+
+      </div>
+
+    `
+  );
+
+}
+
+
+/* =========================
+   MENU
+========================= */
+
+document
+  .getElementById("menuBtn")
+  .onclick = () => {
+
+    sidePanel.classList.add(
+      "open"
+    );
+
+  };
+
+
+document
+  .getElementById("closePanel")
+  .onclick = () => {
+
+    sidePanel.classList.remove(
+      "open"
+    );
+
+  };
+
+
+document
+  .querySelectorAll("[data-menu]")
+  .forEach(btn => {
+
+    btn.onclick=()=>{
+
+      const menu =
+        btn.dataset.menu;
+
+      sidePanel.classList.remove(
+        "open"
+      );
+
+      if(menu==="profile"){
+        openProfile();
+      }
+
+      if(menu==="career"){
+        openCareerMenu();
+      }
+
+      if(menu==="inventory"){
+        openInventory();
+      }
+
+      if(menu==="social"){
+        openSocial();
+      }
+
+      if(menu==="map"){
+        openMap();
+      }
+
+      if(menu==="help"){
+        openHelp();
+      }
+
+    };
+
+  });
+
+
+/* =========================
+   SAVE
+========================= */
+
+function storageKey(){
+
+  if(!currentUser){
+
+    return "kadunaLife_guest";
+
+  }
+
+  return (
+    "kadunaLife_v34_"+currentUser.id
+  );
+
+}
+
+
+function saveLocal(){
+
+  try{
+
+    localStorage.setItem(
+      storageKey(),
+      JSON.stringify(game)
+    );
+
+  }catch(error){
+
+    console.warn(
+      "Local save failed:",
+      error
+    );
+
+  }
+
+}
+
+
+function loadLocal(){
+
+  try{
+
+    const saved =
+      localStorage.getItem(
+        storageKey()
+      );
+
+    if(!saved){
+
+      return false;
+
+    }
+
+    const parsed =
+      JSON.parse(saved);
+
+    game =
+      normalizeGame(parsed);
+
+    return true;
+
+  }catch(error){
+
+    console.warn(
+      "Local load failed:",
+      error
+    );
+
+    return false;
+
+  }
+
+}
+
+
+/* =========================
+   NORMALIZE
+========================= */
+
+function normalizeGame(data){
+
+  const result =
+    structuredClone(
+      DEFAULT_GAME
+    );
+
+
+  if(
+    data &&
+    typeof data==="object"
+  ){
+
+    Object.assign(
+      result,
+      data
+    );
+
+  }
+
+
+  result.character =
+    Object.assign(
+      {},
+      DEFAULT_GAME.character,
+      data?.character||{}
+    );
+
+
+  result.career =
+    Object.assign(
+      {},
+      DEFAULT_GAME.career,
+      data?.career||{}
+    );
+
+
+  result.player =
+    Object.assign(
+      {},
+      DEFAULT_GAME.player,
+      data?.player||{}
+    );
+
+
+  if(
+    !Array.isArray(
+      result.inventory
+    )
+  ){
+
+    result.inventory=[];
+
+  }
+
+
+  if(
+    !result.friendship ||
+    typeof result.friendship!=="object"
+  ){
+
+    result.friendship={};
+
+  }
+
+
+  if(
+    !Array.isArray(
+      result.achievements
+    )
+  ){
+
+    result.achievements=[];
+
+  }
+
+
+  result.health =
+    Number(result.health)||100;
+
+  result.energy =
+    Number(result.energy)||100;
+
+  result.mood =
+    Number(result.mood)||75;
+
+  result.reputation =
+    Number(result.reputation)||0;
+
+  result.cash =
+    Number(result.cash)||0;
+
+  result.bank =
+    Number(result.bank)||0;
+
+  result.day =
+    Number(result.day)||1;
+
+
+  return result;
+
+}
+
+
+/* =========================
+   SUPABASE PROFILE
+========================= */
+
+async function loadCloudProfile(){
+
+  if(!currentUser){
+
+    return;
+
+  }
+
+
+  try{
+
+    const {data,error} =
+      await supabaseClient
+        .from("profiles")
+        .select("*")
+        .eq(
+          "id",
+          currentUser.id
+        )
+        .maybeSingle();
+
+
+    if(error){
+
+      console.warn(
+        "Cloud profile load:",
+        error.message
+      );
+
+      return;
+
+    }
+
+
+    if(data){
+
+      /* Try common state columns */
+
+      let cloudState =
+        null;
+
+
+      if(
+        data.game_state
+      ){
+
+        cloudState =
+          data.game_state;
+
+      }else if(
+        data.gamestate
+      ){
+
+        cloudState =
+          data.gamestate;
+
+      }else if(
+        data.game
+      ){
+
+        cloudState =
+          data.game;
+
+      }
+
+
+      if(
+        typeof cloudState==="string"
+      ){
+
+        try{
+
+          cloudState =
+            JSON.parse(
+              cloudState
+            );
+
+        }catch(e){
+
+          cloudState=null;
+
+        }
+
+      }
+
+
+      if(
+        cloudState &&
+        typeof cloudState==="object"
+      ){
+
+        game =
+          normalizeGame(
+            cloudState
+          );
+
+        saveLocal();
+
+      }else{
+
+        /* Existing profile may have
+           character information. */
+
+        if(data.name){
+
+          game.character.name =
+            data.name;
+
+        }
+
+        if(data.age){
+
+          game.character.age =
+            data.age;
+
+        }
+
+      }
+
+    }
+
+  }catch(error){
+
+    console.warn(
+      "Cloud load failed:",
+      error
+    );
+
+  }
+
+}
+
+
+async function saveCloud(){
+
+  if(!currentUser){
+
+    return;
+
+  }
+
+
+  try{
+
+    const payload = {
+
+      id:currentUser.id,
+
+      game_state:game
+
+    };
+
+
+    if(
+      game.character.name
+    ){
+
+      payload.name =
+        game.character.name;
+
+    }
+
+
+    if(
+      game.character.age
+    ){
+
+      payload.age =
+        game.character.age;
+
+    }
+
+
+    const {error} =
+      await supabaseClient
+        .from("profiles")
+        .upsert(
+          payload,
+          {
+            onConflict:"id"
+          }
+        );
+
+
+    if(error){
+
+      console.warn(
+        "Cloud save:",
+        error.message
+      );
+
+    }
+
+  }catch(error){
+
+    console.warn(
+      "Cloud save failed:",
+      error
+    );
+
+  }
+
+}
+
+
+async function saveGame(){
+
+  saveLocal();
+
+  await saveCloud();
+
+}
+
+
+/* =========================
+   SAVE BUTTON
+========================= */
+
+document
+  .getElementById("saveBtn")
+  .onclick = async () => {
+
+    await saveGame();
+
+    notify(
+      "Game saved."
+    );
+
+  };
+
+
+/* =========================
+   LOGOUT
+========================= */
+
+document
+  .getElementById("logoutBtn")
+  .onclick = async () => {
+
+    await saveGame();
+
+    await supabaseClient.auth.signOut();
+
+    currentUser=null;
+
+    running=false;
+
+    gameScreen.classList.add(
+      "hidden"
+    );
+
+    authScreen.classList.remove(
+      "hidden"
+    );
+
+  };
+
+
+/* =========================
+   NOTIFICATION
+========================= */
+
+let notificationTimer=null;
+
+function notify(message){
+
+  const old =
+    document.getElementById(
+      "gameNotification"
+    );
+
+  if(old){
+
+    old.remove();
+
+  }
+
+
+  const notification =
+    document.createElement("div");
+
+  notification.id=
+    "gameNotification";
+
+  notification.textContent=
+    message;
+
+
+  notification.style.position=
+    "fixed";
+
+  notification.style.left=
+    "50%";
+
+  notification.style.top=
+    "50%";
+
+  notification.style.transform=
+    "translate(-50%,-50%)";
+
+  notification.style.zIndex=
+    "500";
+
+  notification.style.background=
+    "rgba(7,17,31,.96)";
+
+  notification.style.border=
+    "1px solid rgba(255,255,255,.15)";
+
+  notification.style.borderRadius=
+    "14px";
+
+  notification.style.padding=
+    "14px 18px";
+
+  notification.style.maxWidth=
+    "85vw";
+
+  notification.style.textAlign=
+    "center";
+
+  notification.style.boxShadow=
+    "0 20px 60px rgba(0,0,0,.5)";
+
+
+  document.body.appendChild(
+    notification
+  );
+
+
+  clearTimeout(
+    notificationTimer
+  );
+
+
+  notificationTimer =
+    setTimeout(
+      () => {
+
+        notification.remove();
+
+      },
+      2200
+    );
+
+}
+
+
+/* =========================
+   ESCAPE HTML
+========================= */
+
+function escapeHTML(value){
+
+  return String(value??"")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+
+}
+
+
+/* =========================
+   CHARACTER CREATION
+========================= */
+
+async function createCharacter(){
+
+  const name =
+    charNameInput.value.trim();
+
+  const age =
+    Number(
+      charAgeInput.value
+    );
+
+  const background =
+    charBackgroundInput.value;
+
+
+  if(!name){
+
+    throw new Error(
+      "Enter a character name."
+    );
+
+  }
+
+
+  if(
+    age<18 ||
+    age>50
+  ){
+
+    throw new Error(
+      "Character age must be between 18 and 50."
+    );
+
+  }
+
+
+  game =
+    normalizeGame(
+      DEFAULT_GAME
+    );
+
+
+  game.character = {
+
+    name,
+
+    age,
+
+    background
+
+  };
+
+
+  /* Starting position */
+
+  game.player = {
+
+    x:800,
+
+    y:520
+
+  };
+
+
+  game.cash=50000;
+  game.bank=100000;
+
+
+  saveLocal();
+
+}
+
+
+/* =========================
+   AUTH
+========================= */
+
+authForm.addEventListener(
+  "submit",
+  async e => {
+
+    e.preventDefault();
+
+    authMessage.textContent=
+      "Please wait...";
+
+    authButton.disabled=true;
+
+
+    try{
+
+      const email =
+        emailInput.value.trim();
+
+      const password =
+        passwordInput.value;
+
+
+      if(authMode==="login"){
+
+        const {data,error} =
+          await supabaseClient
+            .auth
+            .signInWithPassword({
+              email,
+              password
+            });
+
+
+        if(error){
+
+          throw error;
+
+        }
+
+
+        currentUser =
+          data.user;
+
+
+        await startGame();
+
+
+      }else{
+
+        const {data,error} =
+          await supabaseClient
+            .auth
+            .signUp({
+
+              email,
+
+              password
+
+            });
+
+
+        if(error){
+
+          throw error;
+
+        }
+
+
+        if(!data.user){
+
+          throw new Error(
+            "Account could not be created."
+          );
+
+        }
+
+
+        currentUser =
+          data.user;
+
+
+        try{
+
+          await createCharacter();
+
+        }catch(characterError){
+
+          await supabaseClient
+            .auth
+            .signOut();
+
+          throw characterError;
+
+        }
+
+
+        /* Email confirmation is enabled
+           in the user's Supabase settings. */
+
+        if(
+          !data.session
+        ){
+
+          authMessage.textContent=
+            "Account created. Check your email to confirm your account, then log in.";
+
+          authButton.disabled=false;
+
+          return;
+
+        }
+
+
+        await startGame();
+
+      }
+
+    }catch(error){
+
+      console.error(error);
+
+      authMessage.textContent =
+        error?.message ||
+        "Something went wrong.";
+
+    }finally{
+
+      authButton.disabled=false;
+
+    }
+
+  }
+);
+
+
+/* =========================
+   START GAME
+========================= */
+
+async function startGame(){
+
+  authScreen.classList.add(
+    "hidden"
+  );
+
+  gameScreen.classList.remove(
+    "hidden"
+  );
+
+
+  loadLocal();
+
+  await loadCloudProfile();
+
+
+  /* Safety check */
+
+  if(
+    !game.character.name
+  ){
+
+    game.character.name =
+      "Player";
+
+  }
+
+
+  if(
+    game.character.age<18 ||
+    game.character.age>50
+  ){
+
+    game.character.age=18;
+
+  }
+
+
+  running=true;
+
+  lastFrame=0;
+
+  updateHUD();
+
+  requestAnimationFrame(
+    gameLoop
+  );
+
+}
+
+
+/* =========================
+   EXISTING SESSION
+========================= */
+
+(async function(){
+
+  try{
+
+    const {
+      data:{
+        session
+      }
+    } =
+      await supabaseClient
+        .auth
+        .getSession();
+
+
+    if(
+      session &&
+      session.user
+    ){
+
+      currentUser =
+        session.user;
+
+      await startGame();
+
+    }
+
+  }catch(error){
+
+    console.warn(
+      "Session check failed:",
+      error
+    );
+
+  }
+
+})();
+
+
+/* =========================
+   AUTO SAVE
+========================= */
+
+setInterval(
+  () => {
+
+    if(
+      running &&
+      currentUser
+    ){
+
+      saveGame();
+
+    }
+
+  },
+  30000
+);
+
+
+/* =========================
+   VISIBILITY SAVE
+========================= */
+
+document.addEventListener(
+  "visibilitychange",
+  () => {
+
+    if(
+      document.hidden &&
+      running
+    ){
+
+      saveGame();
+
+    }
+
+  }
+);
+
+
+/* =========================
+   PREVENT MOBILE PAGE SCROLL
+========================= */
+
+document.addEventListener(
+  "touchmove",
+  e => {
+
+    if(
+      e.target.closest(
+        "#gameScreen"
+      )
+    ){
+
+      e.preventDefault();
+
+    }
+
+  },
+  {
+    passive:false
+  }
+);
+
+</script>
+
+</body>
+</html>
