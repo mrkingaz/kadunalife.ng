@@ -1,0 +1,4730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Kaduna Life — V36</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+  margin:0;
+  padding:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#111;
+  font-family:Arial,Helvetica,sans-serif;
+  color:#fff;
+}
+
+body{
+  touch-action:none;
+}
+
+#gameCanvas{
+  position:fixed;
+  inset:0;
+  width:100%;
+  height:100%;
+  background:#79b95b;
+  display:block;
+}
+
+/* =========================
+   AUTH SCREEN
+========================= */
+
+#authScreen{
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:
+    radial-gradient(circle at top,#245c37,#0d1b13 70%);
+  padding:20px;
+}
+
+.authCard{
+  width:min(420px,94vw);
+  background:rgba(15,25,20,.96);
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:24px;
+  padding:26px;
+  box-shadow:0 20px 70px rgba(0,0,0,.5);
+}
+
+.authCard h1{
+  margin:0 0 5px;
+  text-align:center;
+  font-size:30px;
+}
+
+.authCard .subtitle{
+  text-align:center;
+  color:#b8c9be;
+  margin-bottom:22px;
+}
+
+.authCard input{
+  width:100%;
+  padding:14px;
+  margin:7px 0;
+  border:none;
+  border-radius:12px;
+  background:#26352c;
+  color:#fff;
+  outline:none;
+}
+
+.authButtons{
+  display:flex;
+  gap:10px;
+  margin-top:10px;
+}
+
+.authButtons button{
+  flex:1;
+}
+
+button{
+  border:none;
+  border-radius:12px;
+  padding:12px 14px;
+  background:#2f9e5b;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+button:active{
+  transform:scale(.96);
+}
+
+.secondary{
+  background:#34443a;
+}
+
+.authMessage{
+  min-height:22px;
+  margin-top:12px;
+  text-align:center;
+  color:#ffd66b;
+  font-size:13px;
+}
+
+/* =========================
+   CREATE CHARACTER
+========================= */
+
+#createScreen{
+  position:fixed;
+  inset:0;
+  z-index:900;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:
+    radial-gradient(circle at top,#244f3a,#101813 75%);
+  padding:20px;
+}
+
+.createCard{
+  width:min(430px,94vw);
+  background:rgba(15,25,20,.97);
+  border-radius:24px;
+  padding:25px;
+  box-shadow:0 20px 70px rgba(0,0,0,.5);
+}
+
+.createCard h2{
+  text-align:center;
+  margin-top:0;
+}
+
+.createCard input{
+  width:100%;
+  padding:14px;
+  margin:8px 0;
+  background:#26352c;
+  color:#fff;
+  border:0;
+  border-radius:12px;
+  outline:none;
+}
+
+.createCard select{
+  width:100%;
+  padding:14px;
+  margin:8px 0;
+  background:#26352c;
+  color:#fff;
+  border:0;
+  border-radius:12px;
+}
+
+#createMessage{
+  min-height:20px;
+  text-align:center;
+  color:#ffd66b;
+  font-size:13px;
+}
+
+/* =========================
+   HUD
+========================= */
+
+#hud{
+  position:fixed;
+  top:10px;
+  left:10px;
+  right:10px;
+  z-index:20;
+  display:none;
+  pointer-events:none;
+}
+
+.topBar{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:10px;
+}
+
+.stats{
+  background:rgba(0,0,0,.66);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:16px;
+  padding:10px 12px;
+  backdrop-filter:blur(8px);
+  min-width:205px;
+}
+
+.stats strong{
+  display:block;
+  font-size:15px;
+  margin-bottom:5px;
+}
+
+.statLine{
+  font-size:12px;
+  margin:3px 0;
+  color:#e7eee9;
+}
+
+.topButtons{
+  display:flex;
+  gap:7px;
+  pointer-events:auto;
+}
+
+.hudBtn{
+  padding:10px 11px;
+  border-radius:12px;
+  background:rgba(0,0,0,.68);
+  border:1px solid rgba(255,255,255,.15);
+  font-size:13px;
+}
+
+/* =========================
+   ONLINE BADGE
+========================= */
+
+#onlineBadge{
+  position:fixed;
+  top:112px;
+  left:12px;
+  z-index:25;
+  display:none;
+  background:rgba(0,0,0,.72);
+  border-radius:12px;
+  padding:8px 11px;
+  font-size:12px;
+  border:1px solid rgba(255,255,255,.12);
+}
+
+/* =========================
+   LOCATION
+========================= */
+
+#locationBadge{
+  position:fixed;
+  top:145px;
+  left:12px;
+  z-index:25;
+  display:none;
+  background:rgba(0,0,0,.72);
+  border-radius:12px;
+  padding:8px 11px;
+  font-size:12px;
+}
+
+/* =========================
+   D PAD
+========================= */
+
+#controls{
+  position:fixed;
+  bottom:18px;
+  left:18px;
+  z-index:30;
+  display:none;
+  width:145px;
+  height:145px;
+}
+
+.dpad{
+  position:relative;
+  width:145px;
+  height:145px;
+}
+
+.dpad button{
+  position:absolute;
+  width:48px;
+  height:48px;
+  padding:0;
+  background:rgba(0,0,0,.7);
+  border:1px solid rgba(255,255,255,.2);
+  font-size:20px;
+  border-radius:13px;
+}
+
+.up{
+  top:0;
+  left:48px;
+}
+
+.down{
+  bottom:0;
+  left:48px;
+}
+
+.left{
+  left:0;
+  top:48px;
+}
+
+.right{
+  right:0;
+  top:48px;
+}
+
+.center{
+  left:48px;
+  top:48px;
+  background:rgba(47,158,91,.7)!important;
+}
+
+/* =========================
+   RUN BUTTON
+========================= */
+
+#runButton{
+  position:fixed;
+  right:25px;
+  bottom:35px;
+  z-index:30;
+  display:none;
+  width:76px;
+  height:76px;
+  border-radius:50%;
+  background:rgba(0,0,0,.72);
+  border:2px solid rgba(255,255,255,.2);
+  font-size:14px;
+}
+
+/* =========================
+   CHAT
+========================= */
+
+#chatToggle{
+  position:fixed;
+  right:18px;
+  bottom:125px;
+  z-index:40;
+  display:none;
+  width:58px;
+  height:58px;
+  border-radius:50%;
+  padding:0;
+  font-size:24px;
+  background:rgba(0,0,0,.76);
+  border:1px solid rgba(255,255,255,.18);
+}
+
+#chatPanel{
+  position:fixed;
+  z-index:50;
+  display:none;
+  right:18px;
+  bottom:190px;
+  width:min(360px,88vw);
+  height:330px;
+  background:rgba(11,17,14,.96);
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:18px;
+  box-shadow:0 20px 60px rgba(0,0,0,.55);
+  overflow:hidden;
+}
+
+.chatHeader{
+  height:46px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 13px;
+  background:#1c2921;
+  font-weight:bold;
+}
+
+#chatMessages{
+  height:235px;
+  overflow-y:auto;
+  padding:10px;
+}
+
+.chatMessage{
+  margin-bottom:9px;
+  background:#202d25;
+  padding:8px 9px;
+  border-radius:11px;
+  font-size:12px;
+}
+
+.chatMessage .chatName{
+  font-weight:bold;
+  color:#8fe6ad;
+  margin-bottom:3px;
+}
+
+.chatMessage.system{
+  color:#aebbb3;
+  font-style:italic;
+  background:#172019;
+}
+
+.chatInputRow{
+  display:flex;
+  gap:6px;
+  padding:8px;
+  background:#172019;
+}
+
+#chatInput{
+  flex:1;
+  min-width:0;
+  border:0;
+  outline:none;
+  border-radius:10px;
+  background:#29372f;
+  color:#fff;
+  padding:10px;
+}
+
+#sendChat{
+  width:60px;
+  padding:8px;
+}
+
+/* =========================
+   NEARBY PANEL
+========================= */
+
+#nearbyPanel{
+  position:fixed;
+  z-index:45;
+  top:190px;
+  right:14px;
+  width:min(300px,86vw);
+  max-height:360px;
+  display:none;
+  background:rgba(10,17,13,.95);
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.15);
+  box-shadow:0 20px 60px rgba(0,0,0,.55);
+  overflow:hidden;
+}
+
+.nearbyHeader{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px;
+  background:#1d2a22;
+  font-weight:bold;
+}
+
+#nearbyList{
+  padding:8px;
+  max-height:300px;
+  overflow-y:auto;
+}
+
+.nearbyEmpty{
+  color:#aebbb3;
+  font-size:13px;
+  padding:12px;
+  text-align:center;
+}
+
+.nearbyItem{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  background:#202d25;
+  padding:9px;
+  border-radius:12px;
+  margin-bottom:7px;
+}
+
+.nearbyInfo{
+  min-width:0;
+}
+
+.nearbyName{
+  font-weight:bold;
+  font-size:13px;
+}
+
+.nearbyDistance{
+  color:#aebbb3;
+  font-size:11px;
+  margin-top:2px;
+}
+
+.nearbyInteract{
+  padding:8px 10px;
+  font-size:11px;
+  white-space:nowrap;
+}
+
+/* =========================
+   INTERACTION MODAL
+========================= */
+
+#interactionModal{
+  position:fixed;
+  inset:0;
+  z-index:100;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,.58);
+  padding:20px;
+}
+
+.interactionCard{
+  width:min(360px,92vw);
+  background:#142019;
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:22px;
+  padding:22px;
+  text-align:center;
+  box-shadow:0 25px 70px rgba(0,0,0,.65);
+}
+
+.interactionCard h3{
+  margin:0 0 5px;
+}
+
+.interactionCard p{
+  color:#aebbb3;
+  font-size:13px;
+  margin-bottom:18px;
+}
+
+.interactionButtons{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+
+.interactionButtons button{
+  min-height:48px;
+}
+
+.closeModal{
+  margin-top:10px;
+  width:100%;
+  background:#34443a;
+}
+
+/* =========================
+   TOAST
+========================= */
+
+#toastContainer{
+  position:fixed;
+  top:175px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:200;
+  width:min(390px,90vw);
+  pointer-events:none;
+}
+
+.toast{
+  background:rgba(0,0,0,.86);
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:13px;
+  padding:11px 13px;
+  margin-bottom:7px;
+  text-align:center;
+  font-size:13px;
+  animation:toastIn .2s ease;
+}
+
+@keyframes toastIn{
+  from{
+    opacity:0;
+    transform:translateY(-8px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+/* =========================
+   INTERACTION PROMPT
+========================= */
+
+#interactionPrompt{
+  position:fixed;
+  left:50%;
+  bottom:145px;
+  transform:translateX(-50%);
+  z-index:35;
+  display:none;
+  background:rgba(0,0,0,.82);
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:14px;
+  padding:10px 14px;
+  font-size:12px;
+  pointer-events:none;
+}
+
+/* =========================
+   LOADING
+========================= */
+
+#loading{
+  position:fixed;
+  inset:0;
+  z-index:1200;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:#101813;
+  font-size:16px;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:600px){
+
+  .stats{
+    min-width:175px;
+    padding:8px 9px;
+  }
+
+  .stats strong{
+    font-size:13px;
+  }
+
+  .statLine{
+    font-size:10px;
+  }
+
+  .topButtons{
+    flex-wrap:wrap;
+    justify-content:flex-end;
+  }
+
+  .hudBtn{
+    padding:8px 9px;
+    font-size:11px;
+  }
+
+  #onlineBadge{
+    top:105px;
+  }
+
+  #locationBadge{
+    top:137px;
+  }
+
+  #chatPanel{
+    right:8px;
+    bottom:190px;
+    width:calc(100vw - 16px);
+  }
+
+  #nearbyPanel{
+    right:8px;
+    top:180px;
+    width:calc(100vw - 16px);
+  }
+
+  #interactionPrompt{
+    bottom:130px;
+    max-width:90vw;
+    text-align:center;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="gameCanvas"></canvas>
+
+<!-- =========================
+     AUTH
+========================= -->
+
+<div id="authScreen">
+
+  <div class="authCard">
+
+    <h1>🌆 Kaduna Life</h1>
+
+    <div class="subtitle">
+      V36 — Multiplayer City
+    </div>
+
+    <input id="email" type="email" placeholder="Email">
+
+    <input id="password" type="password" placeholder="Password">
+
+    <div class="authButtons">
+      <button id="loginBtn">Login</button>
+      <button id="signupBtn" class="secondary">Sign Up</button>
+    </div>
+
+    <div id="authMessage" class="authMessage"></div>
+
+  </div>
+
+</div>
+
+<!-- =========================
+     CREATE CHARACTER
+========================= -->
+
+<div id="createScreen">
+
+  <div class="createCard">
+
+    <h2>🧑 Create Your Character</h2>
+
+    <input id="characterName" type="text" maxlength="20" placeholder="Character name">
+
+    <input id="characterAge"
+           type="number"
+           min="18"
+           max="50"
+           placeholder="18–50">
+
+    <select id="careerSelect">
+      <option value="unemployed">Unemployed</option>
+      <option value="trader">Trader</option>
+      <option value="developer">Developer</option>
+      <option value="teacher">Teacher</option>
+      <option value="nurse">Nurse</option>
+      <option value="engineer">Engineer</option>
+    </select>
+
+    <button id="createCharacterBtn" style="width:100%;margin-top:8px;">
+      Enter Kaduna
+    </button>
+
+    <div id="createMessage"></div>
+
+  </div>
+
+</div>
+
+<!-- =========================
+     LOADING
+========================= -->
+
+<div id="loading">
+  Loading Kaduna Life...
+</div>
+
+<!-- =========================
+     HUD
+========================= -->
+
+<div id="hud">
+
+  <div class="topBar">
+
+    <div class="stats">
+
+      <strong id="playerName">Player</strong>
+
+      <div class="statLine">
+        💰 Cash: ₦<span id="cashValue">50000</span>
+      </div>
+
+      <div class="statLine">
+        🏦 Bank: ₦<span id="bankValue">0</span>
+      </div>
+
+      <div class="statLine">
+        ❤️ Health: <span id="healthValue">100</span>
+      </div>
+
+      <div class="statLine">
+        ⚡ Energy: <span id="energyValue">100</span>
+      </div>
+
+      <div class="statLine">
+        🙂 Mood: <span id="moodValue">80</span>
+      </div>
+
+    </div>
+
+    <div class="topButtons">
+
+      <button id="nearbyBtn" class="hudBtn">
+        👥 Nearby
+      </button>
+
+      <button id="chatToggle" class="hudBtn">
+        💬 Chat
+      </button>
+
+      <button id="saveBtn" class="hudBtn">
+        💾 Save
+      </button>
+
+      <button id="logoutBtn" class="hudBtn">
+        🚪
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- =========================
+     ONLINE
+========================= -->
+
+<div id="onlineBadge">
+  🟢 <span id="onlineCount">1</span> online
+</div>
+
+<div id="locationBadge">
+  📍 <span id="locationName">Kaduna</span>
+</div>
+
+<!-- =========================
+     NEARBY
+========================= -->
+
+<div id="nearbyPanel">
+
+  <div class="nearbyHeader">
+
+    <span>👥 Nearby Players</span>
+
+    <button id="closeNearby"
+            style="padding:6px 9px;background:#34443a;">
+      ✕
+    </button>
+
+  </div>
+
+  <div id="nearbyList"></div>
+
+</div>
+
+<!-- =========================
+     CHAT
+========================= -->
+
+<div id="chatPanel">
+
+  <div class="chatHeader">
+
+    <span>💬 Kaduna Chat</span>
+
+    <button id="closeChat"
+            style="padding:5px 8px;background:#34443a;">
+      ✕
+    </button>
+
+  </div>
+
+  <div id="chatMessages"></div>
+
+  <div class="chatInputRow">
+
+    <input
+      id="chatInput"
+      maxlength="120"
+      placeholder="Type a message..."
+      autocomplete="off"
+    >
+
+    <button id="sendChat">
+      Send
+    </button>
+
+  </div>
+
+</div>
+
+<!-- =========================
+     CHAT TOGGLE
+========================= -->
+
+<button id="chatToggleFloating">
+  💬
+</button>
+
+<!-- =========================
+     CONTROLS
+========================= -->
+
+<div id="controls">
+
+  <div class="dpad">
+
+    <button class="up" data-dir="up">▲</button>
+
+    <button class="left" data-dir="left">◀</button>
+
+    <button class="center">●</button>
+
+    <button class="right" data-dir="right">▶</button>
+
+    <button class="down" data-dir="down">▼</button>
+
+  </div>
+
+</div>
+
+<button id="runButton">
+  🏃 RUN
+</button>
+
+<!-- =========================
+     INTERACTION PROMPT
+========================= -->
+
+<div id="interactionPrompt"></div>
+
+<!-- =========================
+     INTERACTION MODAL
+========================= -->
+
+<div id="interactionModal">
+
+  <div class="interactionCard">
+
+    <h3 id="interactionTitle">
+      Player
+    </h3>
+
+    <p id="interactionDescription">
+      Choose an interaction.
+    </p>
+
+    <div class="interactionButtons">
+
+      <button data-action="wave">
+        👋 Wave
+      </button>
+
+      <button data-action="hello">
+        💬 Say Hello
+      </button>
+
+      <button data-action="highfive">
+        ✋ High-five
+      </button>
+
+      <button data-action="cheer">
+        🎉 Cheer
+      </button>
+
+    </div>
+
+    <button class="closeModal" id="closeInteraction">
+      Cancel
+    </button>
+
+  </div>
+
+</div>
+
+<!-- =========================
+     TOAST
+========================= -->
+
+<div id="toastContainer"></div>
+
+<script>
+
+/* =========================================================
+   SUPABASE
+========================================================= */
+
+const SUPABASE_URL =
+  "https://mdcwdfwrgxqtcafsyldt.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_3asep2gSU5Z_Gx9bxXtw7Q_FhY-0ETp";
+
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+
+/* =========================================================
+   ELEMENTS
+========================================================= */
+
+const canvas =
+  document.getElementById("gameCanvas");
+
+const ctx =
+  canvas.getContext("2d");
+
+const authScreen =
+  document.getElementById("authScreen");
+
+const createScreen =
+  document.getElementById("createScreen");
+
+const loading =
+  document.getElementById("loading");
+
+const hud =
+  document.getElementById("hud");
+
+const controls =
+  document.getElementById("controls");
+
+const runButton =
+  document.getElementById("runButton");
+
+const onlineBadge =
+  document.getElementById("onlineBadge");
+
+const locationBadge =
+  document.getElementById("locationBadge");
+
+const chatPanel =
+  document.getElementById("chatPanel");
+
+const nearbyPanel =
+  document.getElementById("nearbyPanel");
+
+const interactionModal =
+  document.getElementById("interactionModal");
+
+const interactionPrompt =
+  document.getElementById("interactionPrompt");
+
+const toastContainer =
+  document.getElementById("toastContainer");
+
+
+/* =========================================================
+   GAME DATA
+========================================================= */
+
+let currentUser = null;
+
+let realtimeChannel = null;
+
+let isGameRunning = false;
+
+let selectedRemotePlayer = null;
+
+let lastChatTime = 0;
+
+let lastMoveBroadcast = 0;
+
+let localBubble = "";
+
+let localBubbleUntil = 0;
+
+let nearestRemote = null;
+
+let remotePlayers = {};
+
+let presenceState = {};
+
+let keys = {};
+
+let dpadDirection = {
+  x:0,
+  y:0
+};
+
+let lastFrame = performance.now();
+
+
+const WORLD_WIDTH = 2200;
+const WORLD_HEIGHT = 1500;
+
+const PLAYER_SPEED = 3;
+
+const RUN_SPEED = 5;
+
+const INTERACTION_DISTANCE = 105;
+
+
+/* =========================================================
+   DEFAULT GAME
+========================================================= */
+
+let game = {
+
+  character:{
+    name:"",
+    age:18
+  },
+
+  cash:50000,
+
+  bank:0,
+
+  health:100,
+
+  energy:100,
+
+  mood:80,
+
+  reputation:0,
+
+  day:1,
+
+  career:"unemployed",
+
+  home:"Kaduna",
+
+  transport:"walking",
+
+  inventory:[],
+
+  friendship:{},
+
+  achievements:[],
+
+  x:1100,
+
+  y:750
+
+};
+
+
+/* =========================================================
+   NPC DATA
+========================================================= */
+
+const NPCS = [
+
+  {
+    id:"amina",
+    name:"Amina",
+    x:700,
+    y:510,
+    color:"#e879f9"
+  },
+
+  {
+    id:"daniel",
+    name:"Daniel",
+    x:1300,
+    y:480,
+    color:"#60a5fa"
+  },
+
+  {
+    id:"fatima",
+    name:"Fatima",
+    x:1650,
+    y:850,
+    color:"#fbbf24"
+  },
+
+  {
+    id:"musa",
+    name:"Musa",
+    x:850,
+    y:1050,
+    color:"#34d399"
+  },
+
+  {
+    id:"zainab",
+    name:"Zainab",
+    x:1450,
+    y:1150,
+    color:"#fb7185"
+  }
+
+];
+
+
+/* =========================================================
+   CAREERS
+========================================================= */
+
+const CAREERS = {
+
+  unemployed:{
+    salary:0
+  },
+
+  trader:{
+    salary:45000
+  },
+
+  developer:{
+    salary:180000
+  },
+
+  teacher:{
+    salary:90000
+  },
+
+  nurse:{
+    salary:130000
+  },
+
+  engineer:{
+    salary:200000
+  }
+
+};
+
+
+/* =========================================================
+   LOCATIONS
+========================================================= */
+
+const LOCATIONS = [
+
+  {
+    name:"Kaduna Central Bank",
+    x:980,
+    y:270,
+    w:250,
+    h:150,
+    color:"#365c9a"
+  },
+
+  {
+    name:"Kaduna University",
+    x:330,
+    y:310,
+    w:310,
+    h:180,
+    color:"#8d6e63"
+  },
+
+  {
+    name:"General Hospital",
+    x:1600,
+    y:300,
+    w:280,
+    h:170,
+    color:"#dceff2"
+  },
+
+  {
+    name:"Restaurant",
+    x:350,
+    y:780,
+    w:230,
+    h:150,
+    color:"#b45309"
+  },
+
+  {
+    name:"Supermarket",
+    x:620,
+    y:720,
+    w:250,
+    h:160,
+    color:"#8b5cf6"
+  },
+
+  {
+    name:"Central Market",
+    x:1570,
+    y:610,
+    w:360,
+    h:220,
+    color:"#a16207"
+  },
+
+  {
+    name:"Mechanic",
+    x:1780,
+    y:1020,
+    w:250,
+    h:170,
+    color:"#4b5563"
+  },
+
+  {
+    name:"Work Office",
+    x:1050,
+    y:1050,
+    w:300,
+    h:180,
+    color:"#475569"
+  },
+
+  {
+    name:"Park",
+    x:350,
+    y:1100,
+    w:380,
+    h:210,
+    color:"#2f855a"
+  },
+
+  {
+    name:"Transport Hub",
+    x:1250,
+    y:250,
+    w:260,
+    h:140,
+    color:"#0f766e"
+  },
+
+  {
+    name:"Home",
+    x:980,
+    y:1250,
+    w:240,
+    h:150,
+    color:"#7c3aed"
+  }
+
+];
+
+
+/* =========================================================
+   CAMERA
+========================================================= */
+
+let camera = {
+
+  x:0,
+
+  y:0
+
+};
+
+
+/* =========================================================
+   CANVAS SIZE
+========================================================= */
+
+function resizeCanvas(){
+
+  canvas.width =
+    window.innerWidth *
+    window.devicePixelRatio;
+
+  canvas.height =
+    window.innerHeight *
+    window.devicePixelRatio;
+
+  canvas.style.width =
+    window.innerWidth + "px";
+
+  canvas.style.height =
+    window.innerHeight + "px";
+
+  ctx.setTransform(
+    window.devicePixelRatio,
+    0,
+    0,
+    window.devicePixelRatio,
+    0,
+    0
+  );
+
+}
+
+window.addEventListener(
+  "resize",
+  resizeCanvas
+);
+
+resizeCanvas();
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function clamp(value,min,max){
+
+  return Math.max(
+    min,
+    Math.min(max,value)
+  );
+
+}
+
+
+function escapeHTML(value){
+
+  const div =
+    document.createElement("div");
+
+  div.textContent =
+    String(value ?? "");
+
+  return div.innerHTML;
+
+}
+
+
+function formatMoney(value){
+
+  return Number(value || 0)
+    .toLocaleString("en-NG");
+
+}
+
+
+function showToast(message){
+
+  const toast =
+    document.createElement("div");
+
+  toast.className =
+    "toast";
+
+  toast.textContent =
+    message;
+
+  toastContainer.appendChild(
+    toast
+  );
+
+  setTimeout(()=>{
+
+    toast.remove();
+
+  },3200);
+
+}
+
+
+function addSystemMessage(message){
+
+  const div =
+    document.createElement("div");
+
+  div.className =
+    "chatMessage system";
+
+  div.textContent =
+    message;
+
+  const box =
+    document.getElementById("chatMessages");
+
+  box.appendChild(div);
+
+  box.scrollTop =
+    box.scrollHeight;
+
+}
+
+
+function addChatMessage(
+  name,
+  message
+){
+
+  const box =
+    document.getElementById("chatMessages");
+
+  const div =
+    document.createElement("div");
+
+  div.className =
+    "chatMessage";
+
+  const nameDiv =
+    document.createElement("div");
+
+  nameDiv.className =
+    "chatName";
+
+  nameDiv.textContent =
+    name;
+
+  const messageDiv =
+    document.createElement("div");
+
+  messageDiv.textContent =
+    message;
+
+  div.appendChild(nameDiv);
+
+  div.appendChild(messageDiv);
+
+  box.appendChild(div);
+
+  while(box.children.length > 80){
+
+    box.removeChild(
+      box.firstChild
+    );
+
+  }
+
+  box.scrollTop =
+    box.scrollHeight;
+
+}
+
+
+/* =========================================================
+   NORMALIZE GAME
+========================================================= */
+
+function normalizeGame(){
+
+  if(
+    !game ||
+    typeof game !== "object"
+  ){
+
+    game = {};
+
+  }
+
+  if(
+    !game.character ||
+    typeof game.character !== "object"
+  ){
+
+    game.character = {
+      name:"",
+      age:18
+    };
+
+  }
+
+  if(!Array.isArray(game.inventory)){
+
+    game.inventory = [];
+
+  }
+
+  if(
+    !game.friendship ||
+    typeof game.friendship !== "object"
+  ){
+
+    game.friendship = {};
+
+  }
+
+  if(!Array.isArray(game.achievements)){
+
+    game.achievements = [];
+
+  }
+
+  if(
+    typeof game.x !== "number"
+  ){
+
+    game.x = 1100;
+
+  }
+
+  if(
+    typeof game.y !== "number"
+  ){
+
+    game.y = 750;
+
+  }
+
+}
+
+
+/* =========================================================
+   LOCAL STORAGE
+========================================================= */
+
+function getStorageKey(){
+
+  return currentUser
+    ? "kadunaLife_" + currentUser.id
+    : "kadunaLife_guest";
+
+}
+
+
+function loadLocalGame(){
+
+  try{
+
+    const raw =
+      localStorage.getItem(
+        getStorageKey()
+      );
+
+    if(raw){
+
+      game =
+        Object.assign(
+          game,
+          JSON.parse(raw)
+        );
+
+    }
+
+  }catch(error){
+
+    console.warn(
+      "Local save error",
+      error
+    );
+
+  }
+
+  normalizeGame();
+
+}
+
+
+function saveLocalGame(){
+
+  normalizeGame();
+
+  try{
+
+    localStorage.setItem(
+      getStorageKey(),
+      JSON.stringify(game)
+    );
+
+  }catch(error){
+
+    console.warn(
+      "Local save error",
+      error
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   SUPABASE PROFILE SAVE
+========================================================= */
+
+async function saveCloudGame(){
+
+  if(!currentUser){
+
+    return;
+
+  }
+
+  normalizeGame();
+
+  const profile = {
+
+    id:currentUser.id,
+
+    name:game.character.name,
+
+    age:Number(game.character.age),
+
+    game_state:game
+
+  };
+
+  const {error} =
+    await supabaseClient
+      .from("profiles")
+      .upsert(
+        profile,
+        {
+          onConflict:"id"
+        }
+      );
+
+  if(error){
+
+    console.warn(
+      "Cloud save failed:",
+      error
+    );
+
+    showToast(
+      "⚠️ Local save complete. Cloud save unavailable."
+    );
+
+    return;
+
+  }
+
+  showToast(
+    "💾 Game saved"
+  );
+
+}
+
+
+/* =========================================================
+   LOAD CLOUD PROFILE
+========================================================= */
+
+async function loadCloudGame(){
+
+  if(!currentUser){
+
+    return false;
+
+  }
+
+  const {data,error} =
+    await supabaseClient
+      .from("profiles")
+      .select("*")
+      .eq(
+        "id",
+        currentUser.id
+      )
+      .maybeSingle();
+
+  if(error){
+
+    console.warn(
+      "Cloud profile read error:",
+      error
+    );
+
+    return false;
+
+  }
+
+  if(
+    data &&
+    data.game_state
+  ){
+
+    game =
+      Object.assign(
+        game,
+        data.game_state
+      );
+
+    normalizeGame();
+
+    saveLocalGame();
+
+    return true;
+
+  }
+
+  return false;
+
+}
+
+
+/* =========================================================
+   AUTH
+========================================================= */
+
+async function handleLogin(){
+
+  const email =
+    document.getElementById(
+      "email"
+    ).value.trim();
+
+  const password =
+    document.getElementById(
+      "password"
+    ).value;
+
+  const message =
+    document.getElementById(
+      "authMessage"
+    );
+
+  if(!email || !password){
+
+    message.textContent =
+      "Enter your email and password.";
+
+    return;
+
+  }
+
+  message.textContent =
+    "Logging in...";
+
+  const {data,error} =
+    await supabaseClient.auth.signInWithPassword({
+      email,
+      password
+    });
+
+  if(error){
+
+    message.textContent =
+      error.message;
+
+    return;
+
+  }
+
+  currentUser =
+    data.user;
+
+  message.textContent =
+    "Login successful.";
+
+  await startAfterAuth();
+
+}
+
+
+async function handleSignup(){
+
+  const email =
+    document.getElementById(
+      "email"
+    ).value.trim();
+
+  const password =
+    document.getElementById(
+      "password"
+    ).value;
+
+  const message =
+    document.getElementById(
+      "authMessage"
+    );
+
+  if(!email || !password){
+
+    message.textContent =
+      "Enter an email and password.";
+
+    return;
+
+  }
+
+  if(password.length < 6){
+
+    message.textContent =
+      "Password must be at least 6 characters.";
+
+    return;
+
+  }
+
+  message.textContent =
+    "Creating account...";
+
+  const {data,error} =
+    await supabaseClient.auth.signUp({
+      email,
+      password
+    });
+
+  if(error){
+
+    message.textContent =
+      error.message;
+
+    return;
+
+  }
+
+  if(data.user){
+
+    currentUser =
+      data.user;
+
+  }
+
+  message.textContent =
+    "Account created. Check your email if confirmation is required.";
+
+  if(data.session){
+
+    await startAfterAuth();
+
+  }
+
+}
+
+
+/* =========================================================
+   AUTH STATE
+========================================================= */
+
+supabaseClient.auth.onAuthStateChange(
+  async(event,session)=>{
+
+    if(session && !currentUser){
+
+      currentUser =
+        session.user;
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   START GAME
+========================================================= */
+
+async function startAfterAuth(){
+
+  loading.style.display =
+    "flex";
+
+  authScreen.style.display =
+    "none";
+
+  const hasCloudGame =
+    await loadCloudGame();
+
+  if(!hasCloudGame){
+
+    loadLocalGame();
+
+  }
+
+  if(
+    !game.character.name
+  ){
+
+    loading.style.display =
+      "none";
+
+    createScreen.style.display =
+      "flex";
+
+    return;
+
+  }
+
+  createScreen.style.display =
+    "none";
+
+  loading.style.display =
+    "none";
+
+  startGame();
+
+}
+
+
+/* =========================================================
+   CREATE CHARACTER
+========================================================= */
+
+async function createCharacter(){
+
+  const name =
+    document
+      .getElementById(
+        "characterName"
+      )
+      .value.trim();
+
+  const age =
+    Number(
+      document
+        .getElementById(
+          "characterAge"
+        )
+        .value
+    );
+
+  const career =
+    document
+      .getElementById(
+        "careerSelect"
+      )
+      .value;
+
+  const message =
+    document.getElementById(
+      "createMessage"
+    );
+
+  if(!name){
+
+    message.textContent =
+      "Enter a character name.";
+
+    return;
+
+  }
+
+  if(age < 18 || age > 50){
+
+    message.textContent =
+      "Character age must be between 18 and 50.";
+
+    return;
+
+  }
+
+  game.character = {
+
+    name,
+
+    age
+
+  };
+
+  game.career =
+    career;
+
+  game.cash =
+    50000;
+
+  game.bank =
+    0;
+
+  game.health =
+    100;
+
+  game.energy =
+    100;
+
+  game.mood =
+    80;
+
+  game.x =
+    1100;
+
+  game.y =
+    750;
+
+  normalizeGame();
+
+  saveLocalGame();
+
+  await saveCloudGame();
+
+  createScreen.style.display =
+    "none";
+
+  startGame();
+
+}
+
+
+/* =========================================================
+   START GAME
+========================================================= */
+
+async function startGame(){
+
+  isGameRunning =
+    true;
+
+  hud.style.display =
+    "block";
+
+  controls.style.display =
+    "block";
+
+  runButton.style.display =
+    "block";
+
+  document.getElementById(
+    "chatToggleFloating"
+  ).style.display =
+    "block";
+
+  onlineBadge.style.display =
+    "block";
+
+  locationBadge.style.display =
+    "block";
+
+  updateHUD();
+
+  await connectRealtime();
+
+  showToast(
+    "🌆 Welcome to Kaduna!"
+  );
+
+  requestAnimationFrame(
+    gameLoop
+  );
+
+}
+
+
+/* =========================================================
+   REALTIME
+========================================================= */
+
+async function connectRealtime(){
+
+  if(!currentUser){
+
+    return;
+
+  }
+
+  if(realtimeChannel){
+
+    try{
+
+      await supabaseClient
+        .removeChannel(
+          realtimeChannel
+        );
+
+    }catch(e){}
+
+  }
+
+  realtimeChannel =
+    supabaseClient.channel(
+      "kaduna-world",
+      {
+        config:{
+          presence:{
+            key:currentUser.id
+          },
+
+          broadcast:{
+            self:false
+          }
+        }
+      }
+    );
+
+
+  /* =========================
+     PLAYER MOVEMENT
+  ========================= */
+
+  realtimeChannel.on(
+    "broadcast",
+    {
+      event:"player-move"
+    },
+    payload=>{
+
+      const p =
+        payload.payload;
+
+      if(!p || p.userId === currentUser.id){
+
+        return;
+
+      }
+
+      remotePlayers[p.userId] =
+        Object.assign(
+          remotePlayers[p.userId] || {},
+          {
+            id:p.userId,
+            name:p.name || "Player",
+            age:p.age || 18,
+            x:Number(p.x) || 0,
+            y:Number(p.y) || 0,
+            color:p.color || "#60a5fa",
+            lastMove:Date.now(),
+            bubble:
+              remotePlayers[p.userId]
+                ?.bubble || "",
+            bubbleUntil:
+              remotePlayers[p.userId]
+                ?.bubbleUntil || 0
+          }
+        );
+
+    }
+  );
+
+
+  /* =========================
+     CHAT
+  ========================= */
+
+  realtimeChannel.on(
+    "broadcast",
+    {
+      event:"chat-message"
+    },
+    payload=>{
+
+      const p =
+        payload.payload;
+
+      if(!p || p.userId === currentUser.id){
+
+        return;
+
+      }
+
+      const name =
+        p.name || "Player";
+
+      const message =
+        String(
+          p.message || ""
+        ).slice(0,120);
+
+      addChatMessage(
+        name,
+        message
+      );
+
+      if(
+        remotePlayers[p.userId]
+      ){
+
+        remotePlayers[p.userId].bubble =
+          message;
+
+        remotePlayers[p.userId].bubbleUntil =
+          Date.now() + 6000;
+
+      }
+
+      showToast(
+        "💬 " + name + ": " + message
+      );
+
+    }
+  );
+
+
+  /* =========================
+     PLAYER ACTIONS
+  ========================= */
+
+  realtimeChannel.on(
+    "broadcast",
+    {
+      event:"player-action"
+    },
+    payload=>{
+
+      const p =
+        payload.payload;
+
+      if(
+        !p ||
+        p.userId === currentUser.id
+      ){
+
+        return;
+
+      }
+
+      const name =
+        p.name || "Player";
+
+      const action =
+        p.action;
+
+      const actionText = {
+
+        wave:"👋 waved at you!",
+
+        hello:"💬 said hello!",
+
+        highfive:"✋ sent you a high-five!",
+
+        cheer:"🎉 cheered for you!"
+
+      }[action] || "interacted with you!";
+
+
+      if(
+        remotePlayers[p.userId]
+      ){
+
+        remotePlayers[p.userId].bubble =
+          action === "wave"
+            ? "👋"
+            : action === "hello"
+              ? "Hello!"
+              : action === "highfive"
+                ? "✋"
+                : "🎉";
+
+        remotePlayers[p.userId].bubbleUntil =
+          Date.now() + 3000;
+
+      }
+
+      addSystemMessage(
+        name + " " + actionText
+      );
+
+      showToast(
+        name + " " + actionText
+      );
+
+    }
+  );
+
+
+  /* =========================
+     PRESENCE
+  ========================= */
+
+  realtimeChannel.on(
+    "presence",
+    {
+      event:"sync"
+    },
+    ()=>{
+
+      syncPresence();
+
+    }
+  );
+
+
+  realtimeChannel.on(
+    "presence",
+    {
+      event:"join"
+    },
+    ({key,newPresences})=>{
+
+      if(key !== currentUser.id){
+
+        const person =
+          newPresences &&
+          newPresences[0];
+
+        if(person){
+
+          showToast(
+            "🟢 " +
+            (person.name || "A player") +
+            " joined Kaduna."
+          );
+
+        }
+
+      }
+
+      syncPresence();
+
+    }
+  );
+
+
+  realtimeChannel.on(
+    "presence",
+    {
+      event:"leave"
+    },
+    ({key})=>{
+
+      if(key !== currentUser.id){
+
+        const old =
+          remotePlayers[key];
+
+        if(old){
+
+          showToast(
+            "🔴 " +
+            old.name +
+            " left Kaduna."
+          );
+
+        }
+
+        delete remotePlayers[key];
+
+      }
+
+      syncPresence();
+
+    }
+  );
+
+
+  realtimeChannel.subscribe(
+    async(status)=>{
+
+      if(status !== "SUBSCRIBED"){
+
+        return;
+
+      }
+
+      await realtimeChannel.track({
+
+        userId:currentUser.id,
+
+        name:
+          game.character.name,
+
+        age:
+          Number(game.character.age),
+
+        x:
+          game.x,
+
+        y:
+          game.y,
+
+        color:
+          playerColor(),
+
+        onlineAt:
+          new Date().toISOString()
+
+      });
+
+      syncPresence();
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   PRESENCE SYNC
+========================================================= */
+
+function syncPresence(){
+
+  if(!realtimeChannel){
+
+    return;
+
+  }
+
+  const state =
+    realtimeChannel.presenceState();
+
+  presenceState =
+    state || {};
+
+  const ids =
+    Object.keys(
+      presenceState
+    ).filter(
+      id=>id !== currentUser.id
+    );
+
+
+  for(const id of ids){
+
+    const entries =
+      presenceState[id];
+
+    const p =
+      entries &&
+      entries[0];
+
+    if(!p){
+
+      continue;
+
+    }
+
+    if(!remotePlayers[id]){
+
+      remotePlayers[id] = {
+
+        id,
+
+        name:p.name || "Player",
+
+        age:p.age || 18,
+
+        x:Number(p.x) || 0,
+
+        y:Number(p.y) || 0,
+
+        color:p.color || "#60a5fa",
+
+        lastMove:Date.now(),
+
+        bubble:"",
+
+        bubbleUntil:0
+
+      };
+
+    }
+
+  }
+
+
+  for(const id of Object.keys(remotePlayers)){
+
+    if(!ids.includes(id)){
+
+      delete remotePlayers[id];
+
+    }
+
+  }
+
+
+  updateOnlineCount();
+
+}
+
+
+function updateOnlineCount(){
+
+  let count = 1;
+
+  for(const id of Object.keys(presenceState)){
+
+    if(id !== currentUser.id){
+
+      count++;
+
+    }
+
+  }
+
+  document.getElementById(
+    "onlineCount"
+  ).textContent =
+    count;
+
+}
+
+
+/* =========================================================
+   PLAYER COLOR
+========================================================= */
+
+function playerColor(){
+
+  const colors = [
+
+    "#ef4444",
+
+    "#3b82f6",
+
+    "#22c55e",
+
+    "#f59e0b",
+
+    "#a855f7",
+
+    "#ec4899",
+
+    "#14b8a6",
+
+    "#f97316"
+
+  ];
+
+  let hash = 0;
+
+  const id =
+    currentUser
+      ? currentUser.id
+      : "player";
+
+  for(
+    let i=0;
+    i<id.length;
+    i++
+  ){
+
+    hash =
+      id.charCodeAt(i) +
+      ((hash << 5) - hash);
+
+  }
+
+  return colors[
+    Math.abs(hash) %
+    colors.length
+  ];
+
+}
+
+
+/* =========================================================
+   BROADCAST MOVEMENT
+========================================================= */
+
+async function broadcastMovement(){
+
+  if(
+    !realtimeChannel ||
+    !currentUser
+  ){
+
+    return;
+
+  }
+
+  const now =
+    Date.now();
+
+  if(
+    now -
+    lastMoveBroadcast <
+    100
+  ){
+
+    return;
+
+  }
+
+  lastMoveBroadcast =
+    now;
+
+  try{
+
+    await realtimeChannel.send({
+
+      type:"broadcast",
+
+      event:"player-move",
+
+      payload:{
+
+        userId:
+          currentUser.id,
+
+        name:
+          game.character.name,
+
+        age:
+          Number(game.character.age),
+
+        x:
+          game.x,
+
+        y:
+          game.y,
+
+        color:
+          playerColor(),
+
+        time:now
+
+      }
+
+    });
+
+  }catch(error){
+
+    console.warn(
+      "Movement broadcast error",
+      error
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   BROADCAST CHAT
+========================================================= */
+
+async function sendChatMessage(){
+
+  if(
+    !realtimeChannel ||
+    !currentUser
+  ){
+
+    showToast(
+      "⚠️ Multiplayer is still connecting."
+    );
+
+    return;
+
+  }
+
+  const input =
+    document.getElementById(
+      "chatInput"
+    );
+
+  const message =
+    input.value.trim();
+
+  if(!message){
+
+    return;
+
+  }
+
+  const now =
+    Date.now();
+
+  if(
+    now -
+    lastChatTime <
+    800
+  ){
+
+    showToast(
+      "⏳ Slow down a little."
+    );
+
+    return;
+
+  }
+
+  lastChatTime =
+    now;
+
+  const cleanMessage =
+    message.slice(0,120);
+
+  input.value = "";
+
+  addChatMessage(
+    "You",
+    cleanMessage
+  );
+
+  localBubble =
+    cleanMessage;
+
+  localBubbleUntil =
+    Date.now() + 6000;
+
+  try{
+
+    await realtimeChannel.send({
+
+      type:"broadcast",
+
+      event:"chat-message",
+
+      payload:{
+
+        userId:
+          currentUser.id,
+
+        name:
+          game.character.name,
+
+        message:
+          cleanMessage,
+
+        time:
+          Date.now()
+
+      }
+
+    });
+
+  }catch(error){
+
+    console.warn(
+      "Chat send error",
+      error
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   BROADCAST ACTION
+========================================================= */
+
+async function sendPlayerAction(
+  target
+){
+
+  if(
+    !target ||
+    !realtimeChannel ||
+    !currentUser
+  ){
+
+    return;
+
+  }
+
+  const distance =
+    Math.hypot(
+      game.x - target.x,
+      game.y - target.y
+    );
+
+  if(
+    distance >
+    INTERACTION_DISTANCE
+  ){
+
+    showToast(
+      "📍 Move closer to interact."
+    );
+
+    return;
+
+  }
+
+  const action =
+    this.dataset
+      ? this.dataset.action
+      : null;
+
+}
+
+
+/* =========================================================
+   ACTUAL ACTION SENDER
+========================================================= */
+
+async function performPlayerAction(
+  action
+){
+
+  if(
+    !selectedRemotePlayer
+  ){
+
+    return;
+
+  }
+
+  const target =
+    remotePlayers[
+      selectedRemotePlayer
+    ];
+
+  if(!target){
+
+    closeInteraction();
+
+    return;
+
+  }
+
+  const distance =
+    Math.hypot(
+      game.x - target.x,
+      game.y - target.y
+    );
+
+  if(
+    distance >
+    INTERACTION_DISTANCE
+  ){
+
+    showToast(
+      "📍 You're too far away."
+    );
+
+    closeInteraction();
+
+    return;
+
+  }
+
+  try{
+
+    await realtimeChannel.send({
+
+      type:"broadcast",
+
+      event:"player-action",
+
+      payload:{
+
+        userId:
+          currentUser.id,
+
+        name:
+          game.character.name,
+
+        targetId:
+          target.id,
+
+        action,
+
+        time:
+          Date.now()
+
+      }
+
+    });
+
+  }catch(error){
+
+    console.warn(
+      "Action error",
+      error
+    );
+
+  }
+
+
+  const localText = {
+
+    wave:"👋 You waved!",
+
+    hello:"💬 You said hello!",
+
+    highfive:"✋ High-five sent!",
+
+    cheer:"🎉 You cheered!"
+
+  }[action] || "Interaction sent.";
+
+  showToast(
+    localText
+  );
+
+  closeInteraction();
+
+}
+
+
+/* =========================================================
+   OPEN INTERACTION
+========================================================= */
+
+function openInteraction(
+  playerId
+){
+
+  const target =
+    remotePlayers[playerId];
+
+  if(!target){
+
+    return;
+
+  }
+
+  const distance =
+    Math.hypot(
+      game.x - target.x,
+      game.y - target.y
+    );
+
+  if(
+    distance >
+    INTERACTION_DISTANCE
+  ){
+
+    showToast(
+      "📍 Move closer to " +
+      target.name
+    );
+
+    return;
+
+  }
+
+  selectedRemotePlayer =
+    playerId;
+
+  document.getElementById(
+    "interactionTitle"
+  ).textContent =
+    target.name;
+
+  document.getElementById(
+    "interactionDescription"
+  ).textContent =
+    "Choose an interaction with " +
+    target.name + ".";
+
+  interactionModal.style.display =
+    "flex";
+
+}
+
+
+function closeInteraction(){
+
+  selectedRemotePlayer =
+    null;
+
+  interactionModal.style.display =
+    "none";
+
+}
+
+
+/* =========================================================
+   FIND NEAREST PLAYER
+========================================================= */
+
+function findNearestPlayer(){
+
+  let nearest =
+    null;
+
+  let nearestDistance =
+    Infinity;
+
+  for(
+    const id of Object.keys(
+      remotePlayers
+    )
+  ){
+
+    const p =
+      remotePlayers[id];
+
+    const distance =
+      Math.hypot(
+        game.x - p.x,
+        game.y - p.y
+      );
+
+    if(
+      distance <
+      nearestDistance
+    ){
+
+      nearestDistance =
+        distance;
+
+      nearest =
+        p;
+
+    }
+
+  }
+
+  if(
+    nearest &&
+    nearestDistance <=
+    INTERACTION_DISTANCE
+  ){
+
+    nearest.distance =
+      nearestDistance;
+
+    return nearest;
+
+  }
+
+  return null;
+
+}
+
+
+/* =========================================================
+   UPDATE INTERACTION PROMPT
+========================================================= */
+
+function updateInteractionPrompt(){
+
+  nearestRemote =
+    findNearestPlayer();
+
+  if(!nearestRemote){
+
+    interactionPrompt.style.display =
+      "none";
+
+    return;
+
+  }
+
+  interactionPrompt.style.display =
+    "block";
+
+  interactionPrompt.textContent =
+    "👥 " +
+    nearestRemote.name +
+    " is nearby — tap Nearby to interact";
+
+}
+
+
+/* =========================================================
+   NEARBY PANEL
+========================================================= */
+
+function updateNearbyPanel(){
+
+  const list =
+    document.getElementById(
+      "nearbyList"
+    );
+
+  list.innerHTML = "";
+
+  const players =
+    Object.values(
+      remotePlayers
+    )
+    .map(player=>{
+
+      const distance =
+        Math.hypot(
+          game.x - player.x,
+          game.y - player.y
+        );
+
+      return {
+        player,
+        distance
+      };
+
+    })
+    .sort(
+      (a,b)=>
+        a.distance -
+        b.distance
+    );
+
+
+  if(!players.length){
+
+    list.innerHTML =
+      `<div class="nearbyEmpty">
+        No other players are online right now.
+      </div>`;
+
+    return;
+
+  }
+
+
+  for(
+    const item of players
+  ){
+
+    const row =
+      document.createElement(
+        "div"
+      );
+
+    row.className =
+      "nearbyItem";
+
+    const info =
+      document.createElement(
+        "div"
+      );
+
+    info.className =
+      "nearbyInfo";
+
+    const name =
+      document.createElement(
+        "div"
+      );
+
+    name.className =
+      "nearbyName";
+
+    name.textContent =
+      "🟢 " +
+      item.player.name;
+
+    const distance =
+      document.createElement(
+        "div"
+      );
+
+    distance.className =
+      "nearbyDistance";
+
+    distance.textContent =
+      Math.round(
+        item.distance
+      ) +
+      "m away";
+
+    info.appendChild(name);
+
+    info.appendChild(distance);
+
+
+    const button =
+      document.createElement(
+        "button"
+      );
+
+    button.className =
+      "nearbyInteract";
+
+    button.textContent =
+      item.distance <=
+      INTERACTION_DISTANCE
+        ? "Interact"
+        : "Too far";
+
+    button.disabled =
+      item.distance >
+      INTERACTION_DISTANCE;
+
+    button.onclick =
+      ()=>{
+        openInteraction(
+          item.player.id
+        );
+      };
+
+
+    row.appendChild(info);
+
+    row.appendChild(button);
+
+    list.appendChild(row);
+
+  }
+
+}
+
+
+/* =========================================================
+   HUD UPDATE
+========================================================= */
+
+function updateHUD(){
+
+  document.getElementById(
+    "playerName"
+  ).textContent =
+    game.character.name ||
+    "Player";
+
+  document.getElementById(
+    "cashValue"
+  ).textContent =
+    formatMoney(game.cash);
+
+  document.getElementById(
+    "bankValue"
+  ).textContent =
+    formatMoney(game.bank);
+
+  document.getElementById(
+    "healthValue"
+  ).textContent =
+    Math.round(game.health);
+
+  document.getElementById(
+    "energyValue"
+  ).textContent =
+    Math.round(game.energy);
+
+  document.getElementById(
+    "moodValue"
+  ).textContent =
+    Math.round(game.mood);
+
+}
+
+
+/* =========================================================
+   LOCATION DETECTION
+========================================================= */
+
+function getCurrentLocation(){
+
+  for(
+    const location of LOCATIONS
+  ){
+
+    if(
+
+      game.x >= location.x &&
+      game.x <= location.x + location.w &&
+
+      game.y >= location.y &&
+      game.y <= location.y + location.h
+
+    ){
+
+      return location.name;
+
+    }
+
+  }
+
+  return "Kaduna Streets";
+
+}
+
+
+function updateLocation(){
+
+  document.getElementById(
+    "locationName"
+  ).textContent =
+    getCurrentLocation();
+
+}
+
+
+/* =========================================================
+   COLLISION
+========================================================= */
+
+function isInsideBuilding(
+  x,
+  y
+){
+
+  const padding =
+    18;
+
+  for(
+    const location of LOCATIONS
+  ){
+
+    if(
+
+      x + padding >
+      location.x &&
+
+      x - padding <
+      location.x +
+      location.w &&
+
+      y + padding >
+      location.y &&
+
+      y - padding <
+      location.y +
+      location.h
+
+    ){
+
+      return true;
+
+    }
+
+  }
+
+  return false;
+
+}
+
+
+/* =========================================================
+   MOVEMENT
+========================================================= */
+
+function movePlayer(
+  dx,
+  dy,
+  speed
+){
+
+  if(
+    !isGameRunning
+  ){
+
+    return;
+
+  }
+
+  const length =
+    Math.hypot(dx,dy);
+
+  if(length > 0){
+
+    dx /= length;
+
+    dy /= length;
+
+  }
+
+  const amount =
+    speed;
+
+  const newX =
+    clamp(
+      game.x +
+      dx * amount,
+      25,
+      WORLD_WIDTH - 25
+    );
+
+  const newY =
+    clamp(
+      game.y +
+      dy * amount,
+      25,
+      WORLD_HEIGHT - 25
+    );
+
+
+  if(
+    !isInsideBuilding(
+      newX,
+      game.y
+    )
+  ){
+
+    game.x =
+      newX;
+
+  }
+
+
+  if(
+    !isInsideBuilding(
+      game.x,
+      newY
+    )
+  ){
+
+    game.y =
+      newY;
+
+  }
+
+}
+
+
+/* =========================================================
+   KEYBOARD
+========================================================= */
+
+window.addEventListener(
+  "keydown",
+  event=>{
+
+    keys[
+      event.key.toLowerCase()
+    ] = true;
+
+    if(
+      event.key === "Enter" &&
+      nearestRemote
+    ){
+
+      openInteraction(
+        nearestRemote.id
+      );
+
+    }
+
+    if(
+      event.key === "Enter" &&
+      document.activeElement ===
+      document.getElementById(
+        "chatInput"
+      )
+    ){
+
+      event.preventDefault();
+
+      sendChatMessage();
+
+    }
+
+  }
+);
+
+
+window.addEventListener(
+  "keyup",
+  event=>{
+
+    keys[
+      event.key.toLowerCase()
+    ] = false;
+
+  }
+);
+
+
+/* =========================================================
+   TOUCH D PAD
+========================================================= */
+
+document
+  .querySelectorAll(
+    "#controls button[data-dir]"
+  )
+  .forEach(button=>{
+
+    const direction =
+      button.dataset.dir;
+
+
+    function start(){
+
+      if(direction === "up"){
+
+        dpadDirection =
+          {x:0,y:-1};
+
+      }
+
+      if(direction === "down"){
+
+        dpadDirection =
+          {x:0,y:1};
+
+      }
+
+      if(direction === "left"){
+
+        dpadDirection =
+          {x:-1,y:0};
+
+      }
+
+      if(direction === "right"){
+
+        dpadDirection =
+          {x:1,y:0};
+
+      }
+
+    }
+
+
+    function stop(){
+
+      dpadDirection =
+        {x:0,y:0};
+
+    }
+
+
+    button.addEventListener(
+      "touchstart",
+      event=>{
+
+        event.preventDefault();
+
+        start();
+
+      },
+      {passive:false}
+    );
+
+
+    button.addEventListener(
+      "touchend",
+      event=>{
+
+        event.preventDefault();
+
+        stop();
+
+      },
+      {passive:false}
+    );
+
+
+    button.addEventListener(
+      "mousedown",
+      start
+    );
+
+    button.addEventListener(
+      "mouseup",
+      stop
+    );
+
+    button.addEventListener(
+      "mouseleave",
+      stop
+    );
+
+  });
+
+
+/* =========================================================
+   RUN
+========================================================= */
+
+let running =
+  false;
+
+
+function startRun(event){
+
+  if(event){
+
+    event.preventDefault();
+
+  }
+
+  running = true;
+
+}
+
+
+function stopRun(event){
+
+  if(event){
+
+    event.preventDefault();
+
+  }
+
+  running = false;
+
+}
+
+
+runButton.addEventListener(
+  "touchstart",
+  startRun,
+  {passive:false}
+);
+
+runButton.addEventListener(
+  "touchend",
+  stopRun,
+  {passive:false}
+);
+
+runButton.addEventListener(
+  "mousedown",
+  startRun
+);
+
+runButton.addEventListener(
+  "mouseup",
+  stopRun
+);
+
+
+/* =========================================================
+   GET KEYBOARD DIRECTION
+========================================================= */
+
+function getKeyboardDirection(){
+
+  let dx = 0;
+
+  let dy = 0;
+
+
+  if(
+    keys["w"] ||
+    keys["arrowup"]
+  ){
+
+    dy -= 1;
+
+  }
+
+  if(
+    keys["s"] ||
+    keys["arrowdown"]
+  ){
+
+    dy += 1;
+
+  }
+
+  if(
+    keys["a"] ||
+    keys["arrowleft"]
+  ){
+
+    dx -= 1;
+
+  }
+
+  if(
+    keys["d"] ||
+    keys["arrowright"]
+  ){
+
+    dx += 1;
+
+  }
+
+
+  return {
+    x:dx,
+    y:dy
+  };
+
+}
+
+
+/* =========================================================
+   DRAW WORLD
+========================================================= */
+
+function drawWorld(){
+
+  const width =
+    window.innerWidth;
+
+  const height =
+    window.innerHeight;
+
+
+  ctx.fillStyle =
+    "#72b657";
+
+  ctx.fillRect(
+    0,
+    0,
+    width,
+    height
+  );
+
+
+  ctx.save();
+
+  ctx.translate(
+    -camera.x,
+    -camera.y
+  );
+
+
+  /* =========================
+     GROUND
+  ========================= */
+
+  ctx.fillStyle =
+    "#78b95c";
+
+  ctx.fillRect(
+    0,
+    0,
+    WORLD_WIDTH,
+    WORLD_HEIGHT
+  );
+
+
+  /* =========================
+     ROAD NETWORK
+  ========================= */
+
+  ctx.fillStyle =
+    "#5b6165";
+
+  ctx.fillRect(
+    0,
+    650,
+    WORLD_WIDTH,
+    150
+  );
+
+  ctx.fillRect(
+    900,
+    0,
+    160,
+    WORLD_HEIGHT
+  );
+
+  ctx.fillRect(
+    0,
+    350,
+    WORLD_WIDTH,
+    80
+  );
+
+  ctx.fillRect(
+    1450,
+    0,
+    80,
+    WORLD_HEIGHT
+  );
+
+
+  /* =========================
+     ROAD LINES
+  ========================= */
+
+  ctx.strokeStyle =
+    "#e7d46b";
+
+  ctx.lineWidth =
+    4;
+
+  ctx.setLineDash([
+    25,
+    20
+  ]);
+
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    0,
+    725
+  );
+
+  ctx.lineTo(
+    WORLD_WIDTH,
+    725
+  );
+
+  ctx.stroke();
+
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    980,
+    0
+  );
+
+  ctx.lineTo(
+    980,
+    WORLD_HEIGHT
+  );
+
+  ctx.stroke();
+
+
+  ctx.setLineDash([]);
+
+
+  /* =========================
+     BUILDINGS
+  ========================= */
+
+  for(
+    const location of LOCATIONS
+  ){
+
+    ctx.fillStyle =
+      "rgba(0,0,0,.18)";
+
+    ctx.fillRect(
+      location.x + 8,
+      location.y + 9,
+      location.w,
+      location.h
+    );
+
+
+    ctx.fillStyle =
+      location.color;
+
+    ctx.fillRect(
+      location.x,
+      location.y,
+      location.w,
+      location.h
+    );
+
+
+    ctx.strokeStyle =
+      "rgba(0,0,0,.35)";
+
+    ctx.lineWidth =
+      3;
+
+    ctx.strokeRect(
+      location.x,
+      location.y,
+      location.w,
+      location.h
+    );
+
+
+    ctx.fillStyle =
+      "#fff";
+
+    ctx.font =
+      "bold 15px Arial";
+
+    ctx.textAlign =
+      "center";
+
+    ctx.fillText(
+      location.name,
+      location.x +
+      location.w / 2,
+      location.y +
+      location.h / 2
+    );
+
+  }
+
+
+  /* =========================
+     TREES
+  ========================= */
+
+  drawTree(
+    130,
+    180
+  );
+
+  drawTree(
+    210,
+    950
+  );
+
+  drawTree(
+    760,
+    150
+  );
+
+  drawTree(
+    2020,
+    500
+  );
+
+  drawTree(
+    2040,
+    1350
+  );
+
+  drawTree(
+    800,
+    1380
+  );
+
+  drawTree(
+    1370,
+    1320
+  );
+
+
+  /* =========================
+     NPCS
+  ========================= */
+
+  for(
+    const npc of NPCS
+  ){
+
+    drawCharacter(
+      npc.x,
+      npc.y,
+      npc.color,
+      npc.name,
+      false
+    );
+
+  }
+
+
+  /* =========================
+     REMOTE PLAYERS
+  ========================= */
+
+  for(
+    const id of Object.keys(
+      remotePlayers
+    )
+  ){
+
+    const player =
+      remotePlayers[id];
+
+    drawCharacter(
+      player.x,
+      player.y,
+      player.color,
+      player.name,
+      true,
+      player.bubble,
+      player.bubbleUntil
+    );
+
+  }
+
+
+  /* =========================
+     LOCAL PLAYER
+  ========================= */
+
+  drawCharacter(
+    game.x,
+    game.y,
+    playerColor(),
+    game.character.name,
+    true,
+    localBubble,
+    localBubbleUntil,
+    true
+  );
+
+
+  ctx.restore();
+
+}
+
+
+/* =========================================================
+   TREE
+========================================================= */
+
+function drawTree(
+  x,
+  y
+){
+
+  ctx.fillStyle =
+    "#754c24";
+
+  ctx.fillRect(
+    x - 7,
+    y,
+    14,
+    40
+  );
+
+  ctx.beginPath();
+
+  ctx.fillStyle =
+    "#287a38";
+
+  ctx.arc(
+    x,
+    y,
+    32,
+    0,
+    Math.PI * 2
+  );
+
+  ctx.fill();
+
+}
+
+
+/* =========================================================
+   CHARACTER
+========================================================= */
+
+function drawCharacter(
+  x,
+  y,
+  color,
+  name,
+  isPlayer,
+  bubble,
+  bubbleUntil,
+  isLocal=false
+){
+
+  /* shadow */
+
+  ctx.beginPath();
+
+  ctx.fillStyle =
+    "rgba(0,0,0,.25)";
+
+  ctx.ellipse(
+    x,
+    y + 18,
+    17,
+    7,
+    0,
+    0,
+    Math.PI * 2
+  );
+
+  ctx.fill();
+
+
+  /* body */
+
+  ctx.beginPath();
+
+  ctx.fillStyle =
+    color;
+
+  ctx.arc(
+    x,
+    y,
+    15,
+    0,
+    Math.PI * 2
+  );
+
+  ctx.fill();
+
+
+  /* head */
+
+  ctx.beginPath();
+
+  ctx.fillStyle =
+    "#d6a77a";
+
+  ctx.arc(
+    x,
+    y - 22,
+    10,
+    0,
+    Math.PI * 2
+  );
+
+  ctx.fill();
+
+
+  /* player ring */
+
+  if(isPlayer){
+
+    ctx.beginPath();
+
+    ctx.strokeStyle =
+      isLocal
+        ? "#ffffff"
+        : "rgba(255,255,255,.65)";
+
+    ctx.lineWidth =
+      2;
+
+    ctx.arc(
+      x,
+      y,
+      20,
+      0,
+      Math.PI * 2
+    );
+
+    ctx.stroke();
+
+  }
+
+
+  /* name */
+
+  ctx.font =
+    "bold 11px Arial";
+
+  ctx.textAlign =
+    "center";
+
+  ctx.fillStyle =
+    "#fff";
+
+  ctx.fillText(
+    name,
+    x,
+    y + 38
+  );
+
+
+  /* online */
+
+  if(isPlayer && !isLocal){
+
+    ctx.font =
+      "9px Arial";
+
+    ctx.fillStyle =
+      "#8ff0a7";
+
+    ctx.fillText(
+      "ONLINE",
+      x,
+      y + 49
+    );
+
+  }
+
+
+  /* chat bubble */
+
+  if(
+    bubble &&
+    bubbleUntil >
+    Date.now()
+  ){
+
+    drawBubble(
+      x,
+      y - 50,
+      bubble
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   CHAT BUBBLE
+========================================================= */
+
+function drawBubble(
+  x,
+  y,
+  message
+){
+
+  const maxWidth =
+    150;
+
+  ctx.font =
+    "12px Arial";
+
+  let text =
+    String(message);
+
+  if(text.length > 28){
+
+    text =
+      text.slice(
+        0,
+        27
+      ) + "…";
+
+  }
+
+  const width =
+    Math.min(
+      maxWidth,
+      ctx.measureText(text).width + 20
+    );
+
+  const height =
+    30;
+
+
+  ctx.fillStyle =
+    "rgba(0,0,0,.9)";
+
+  ctx.beginPath();
+
+  ctx.roundRect(
+    x - width / 2,
+    y - height,
+    width,
+    height,
+    10
+  );
+
+  ctx.fill();
+
+
+  ctx.fillStyle =
+    "#fff";
+
+  ctx.textAlign =
+    "center";
+
+  ctx.fillText(
+    text,
+    x,
+    y - 11
+  );
+
+}
+
+
+/* =========================================================
+   CAMERA
+========================================================= */
+
+function updateCamera(){
+
+  const width =
+    window.innerWidth;
+
+  const height =
+    window.innerHeight;
+
+
+  camera.x =
+    game.x -
+    width / 2;
+
+  camera.y =
+    game.y -
+    height / 2;
+
+
+  camera.x =
+    clamp(
+      camera.x,
+      0,
+      WORLD_WIDTH -
+      width
+    );
+
+  camera.y =
+    clamp(
+      camera.y,
+      0,
+      WORLD_HEIGHT -
+      height
+    );
+
+}
+
+
+/* =========================================================
+   GAME LOOP
+========================================================= */
+
+function gameLoop(
+  timestamp
+){
+
+  if(!isGameRunning){
+
+    return;
+
+  }
+
+
+  const delta =
+    timestamp -
+    lastFrame;
+
+  lastFrame =
+    timestamp;
+
+
+  let direction =
+    getKeyboardDirection();
+
+
+  if(
+    dpadDirection.x !== 0 ||
+    dpadDirection.y !== 0
+  ){
+
+    direction =
+      dpadDirection;
+
+  }
+
+
+  if(
+    direction.x !== 0 ||
+    direction.y !== 0
+  ){
+
+    movePlayer(
+
+      direction.x,
+
+      direction.y,
+
+      running
+        ? RUN_SPEED
+        : PLAYER_SPEED
+
+    );
+
+    game.energy =
+      clamp(
+        game.energy -
+        (
+          running
+            ? .035
+            : .012
+        ) *
+        Math.max(
+          1,
+          delta / 16
+        ),
+        0,
+        100
+      );
+
+  }else{
+
+    game.energy =
+      clamp(
+        game.energy +
+        .006 *
+        Math.max(
+          1,
+          delta / 16
+        ),
+        0,
+        100
+      );
+
+  }
+
+
+  updateCamera();
+
+  updateLocation();
+
+  updateInteractionPrompt();
+
+  broadcastMovement();
+
+  drawWorld();
+
+  requestAnimationFrame(
+    gameLoop
+  );
+
+}
+
+
+/* =========================================================
+   CHAT BUTTONS
+========================================================= */
+
+document
+  .getElementById(
+    "chatToggleFloating"
+  )
+  .addEventListener(
+    "click",
+    ()=>{
+
+      chatPanel.style.display =
+        chatPanel.style.display ===
+        "block"
+          ? "none"
+          : "block";
+
+      if(
+        chatPanel.style.display ===
+        "block"
+      ){
+
+        document
+          .getElementById(
+            "chatInput"
+          )
+          .focus();
+
+      }
+
+    }
+  );
+
+
+document
+  .getElementById(
+    "closeChat"
+  )
+  .addEventListener(
+    "click",
+    ()=>{
+
+      chatPanel.style.display =
+        "none";
+
+    }
+  );
+
+
+document
+  .getElementById(
+    "sendChat"
+  )
+  .addEventListener(
+    "click",
+    sendChatMessage
+  );
+
+
+/* =========================================================
+   NEARBY BUTTON
+========================================================= */
+
+document
+  .getElementById(
+    "nearbyBtn"
+  )
+  .addEventListener(
+    "click",
+    ()=>{
+
+      updateNearbyPanel();
+
+      nearbyPanel.style.display =
+        nearbyPanel.style.display ===
+        "block"
+          ? "none"
+          : "block";
+
+    }
+  );
+
+
+document
+  .getElementById(
+    "closeNearby"
+  )
+  .addEventListener(
+    "click",
+    ()=>{
+
+      nearbyPanel.style.display =
+        "none";
+
+    }
+  );
+
+
+/* =========================================================
+   INTERACTION BUTTONS
+========================================================= */
+
+document
+  .querySelectorAll(
+    ".interactionButtons button"
+  )
+  .forEach(button=>{
+
+    button.addEventListener(
+      "click",
+      ()=>{
+
+        performPlayerAction(
+          button.dataset.action
+        );
+
+      }
+    );
+
+  });
+
+
+document
+  .getElementById(
+    "closeInteraction"
+  )
+  .addEventListener(
+    "click",
+    closeInteraction
+  );
+
+
+/* =========================================================
+   SAVE
+========================================================= */
+
+document
+  .getElementById(
+    "saveBtn"
+  )
+  .addEventListener(
+    "click",
+    async()=>{
+
+      saveLocalGame();
+
+      await saveCloudGame();
+
+    }
+  );
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+document
+  .getElementById(
+    "logoutBtn"
+  )
+  .addEventListener(
+    "click",
+    async()=>{
+
+      if(realtimeChannel){
+
+        try{
+
+          await supabaseClient
+            .removeChannel(
+              realtimeChannel
+            );
+
+        }catch(e){}
+
+        realtimeChannel =
+          null;
+
+      }
+
+      isGameRunning =
+        false;
+
+      remotePlayers = {};
+
+      presenceState = {};
+
+      hud.style.display =
+        "none";
+
+      controls.style.display =
+        "none";
+
+      runButton.style.display =
+        "none";
+
+      onlineBadge.style.display =
+        "none";
+
+      locationBadge.style.display =
+        "none";
+
+      document
+        .getElementById(
+          "chatToggleFloating"
+        )
+        .style.display =
+        "none";
+
+      nearbyPanel.style.display =
+        "none";
+
+      chatPanel.style.display =
+        "none";
+
+      createScreen.style.display =
+        "none";
+
+      authScreen.style.display =
+        "flex";
+
+      await supabaseClient.auth.signOut();
+
+      currentUser =
+        null;
+
+    }
+  );
+
+
+/* =========================================================
+   LOGIN / SIGNUP
+========================================================= */
+
+document
+  .getElementById(
+    "loginBtn"
+  )
+  .addEventListener(
+    "click",
+    handleLogin
+  );
+
+
+document
+  .getElementById(
+    "signupBtn"
+  )
+  .addEventListener(
+    "click",
+    handleSignup
+  );
+
+
+document
+  .getElementById(
+    "createCharacterBtn"
+  )
+  .addEventListener(
+    "click",
+    createCharacter
+  );
+
+
+/* =========================================================
+   CHAT ENTER KEY
+========================================================= */
+
+document
+  .getElementById(
+    "chatInput"
+  )
+  .addEventListener(
+    "keydown",
+    event=>{
+
+      if(
+        event.key ===
+        "Enter"
+      ){
+
+        event.preventDefault();
+
+        sendChatMessage();
+
+      }
+
+    }
+  );
+
+
+/* =========================================================
+   SESSION CHECK
+========================================================= */
+
+(async function(){
+
+  const {
+    data
+  } =
+    await supabaseClient
+      .auth
+      .getSession();
+
+  if(
+    data &&
+    data.session &&
+    data.session.user
+  ){
+
+    currentUser =
+      data.session.user;
+
+    await startAfterAuth();
+
+  }
+
+})();
+
+</script>
+
+</body>
+</html>
