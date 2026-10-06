@@ -1,0 +1,2843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>Kaduna Life — V30</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+ --bg:#06101c;
+ --panel:#0c1b2c;
+ --panel2:#10263d;
+ --card:#132b43;
+ --border:#24435f;
+ --text:#f5f8fb;
+ --muted:#91a8bd;
+ --blue:#38a9ff;
+ --green:#4cdd91;
+ --gold:#ffc857;
+ --red:#ff6675;
+}
+
+body{
+ font-family:Arial,Helvetica,sans-serif;
+ background:var(--bg);
+ color:var(--text);
+ min-height:100vh;
+ overflow-x:hidden;
+}
+
+button,input{font:inherit}
+
+button{
+ border:0;
+ cursor:pointer;
+}
+
+button:active{transform:scale(.97)}
+
+header{
+ position:sticky;
+ top:0;
+ z-index:100;
+ background:rgba(5,15,27,.97);
+ border-bottom:1px solid var(--border);
+ padding:10px;
+ backdrop-filter:blur(10px);
+}
+
+.top{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+}
+
+.logo{
+ font-size:21px;
+ font-weight:900;
+}
+
+.sub{
+ color:var(--blue);
+ font-size:10px;
+ margin-top:2px;
+}
+
+.stats{
+ display:flex;
+ gap:6px;
+ overflow-x:auto;
+ margin-top:9px;
+}
+
+.stat{
+ min-width:82px;
+ background:var(--panel);
+ border:1px solid var(--border);
+ border-radius:9px;
+ padding:6px 8px;
+}
+
+.stat small{
+ display:block;
+ color:var(--muted);
+ font-size:9px;
+}
+
+.stat b{font-size:12px}
+
+.layout{
+ display:flex;
+ min-height:calc(100vh - 105px);
+}
+
+.sidebar{
+ width:205px;
+ background:#081625;
+ border-right:1px solid var(--border);
+ padding:10px;
+ flex-shrink:0;
+}
+
+.nav{
+ display:flex;
+ flex-direction:column;
+ gap:5px;
+}
+
+.nav button{
+ text-align:left;
+ background:transparent;
+ color:#aabed1;
+ padding:10px;
+ border-radius:8px;
+}
+
+.nav button.active,
+.nav button:hover{
+ background:var(--panel2);
+ color:white;
+}
+
+.main{
+ flex:1;
+ width:100%;
+ max-width:1250px;
+ margin:auto;
+ padding:15px;
+}
+
+.title{
+ font-size:25px;
+ font-weight:900;
+}
+
+.desc{
+ color:var(--muted);
+ margin:5px 0 15px;
+}
+
+.grid{
+ display:grid;
+ grid-template-columns:repeat(3,1fr);
+ gap:12px;
+}
+
+.card{
+ background:linear-gradient(145deg,var(--panel),#091726);
+ border:1px solid var(--border);
+ border-radius:15px;
+ padding:14px;
+}
+
+.card h3{margin-bottom:7px}
+
+.card p{
+ color:#b7c8d8;
+ line-height:1.5;
+}
+
+.big{
+ grid-column:span 2;
+}
+
+.btn{
+ background:var(--blue);
+ color:#001523;
+ padding:10px 14px;
+ border-radius:9px;
+ font-weight:800;
+}
+
+.btn.green{
+ background:var(--green);
+ color:#04150d;
+}
+
+.btn.gold{
+ background:var(--gold);
+ color:#231900;
+}
+
+.btn.red{
+ background:var(--red);
+ color:white;
+}
+
+.btn.dark{
+ background:#1a3652;
+ color:white;
+}
+
+.actions{
+ display:flex;
+ flex-wrap:wrap;
+ gap:7px;
+ margin-top:12px;
+}
+
+/* WORLD */
+
+.worldWrap{
+ background:#050d16;
+ border:1px solid var(--border);
+ border-radius:18px;
+ overflow:hidden;
+}
+
+.world{
+ position:relative;
+ width:100%;
+ height:570px;
+ overflow:hidden;
+ background:
+ linear-gradient(30deg,rgba(255,255,255,.025) 12%,transparent 12.5%,transparent 87%,rgba(255,255,255,.025) 87.5%),
+ linear-gradient(150deg,rgba(255,255,255,.025) 12%,transparent 12.5%,transparent 87%,rgba(255,255,255,.025) 87.5%),
+ #10291f;
+ background-size:80px 80px;
+ touch-action:none;
+}
+
+.road{
+ position:absolute;
+ background:#273746;
+ box-shadow:inset 0 0 0 2px rgba(255,255,255,.035);
+}
+
+.road.h{
+ height:42px;
+ width:100%;
+ left:0;
+}
+
+.road.v{
+ width:42px;
+ height:100%;
+ top:0;
+}
+
+.road.r1{top:28%}
+.road.r2{top:65%}
+.road.r3{top:86%}
+
+.road.c1{left:25%}
+.road.c2{left:58%}
+.road.c3{left:82%}
+
+.building{
+ position:absolute;
+ width:125px;
+ min-height:78px;
+ background:#203c52;
+ border:2px solid #41637b;
+ border-radius:10px;
+ padding:9px;
+ z-index:3;
+ box-shadow:0 7px 20px rgba(0,0,0,.25);
+}
+
+.building strong{
+ display:block;
+ font-size:12px;
+}
+
+.building span{
+ color:#9eb3c5;
+ font-size:10px;
+}
+
+.building[data-location="centre"]{left:7%;top:8%}
+.building[data-location="barnawa"]{left:32%;top:8%}
+.building[data-location="university"]{left:65%;top:7%}
+.building[data-location="kawo"]{left:3%;top:38%}
+.building[data-location="malali"]{left:38%;top:40%}
+.building[data-location="centenary"]{left:68%;top:38%}
+.building[data-location="millennium"]{left:15%;top:72%}
+.building[data-location="government"]{left:48%;top:72%}
+.building[data-location="musaco"]{left:76%;top:70%}
+
+.player{
+ position:absolute;
+ width:45px;
+ height:67px;
+ z-index:20;
+ transform:translate(-50%,-50%);
+ transition:left .08s linear,top .08s linear;
+ pointer-events:none;
+}
+
+.head{
+ width:25px;
+ height:25px;
+ margin:auto;
+ border-radius:50%;
+ background:#b97955;
+ border:2px solid #162333;
+}
+
+.body{
+ width:35px;
+ height:32px;
+ margin:auto;
+ background:#328fd0;
+ border-radius:9px 9px 5px 5px;
+}
+
+.legs{
+ display:flex;
+ justify-content:center;
+ gap:5px;
+}
+
+.leg{
+ width:9px;
+ height:17px;
+ background:#172536;
+ border-radius:0 0 4px 4px;
+}
+
+.playerName{
+ text-align:center;
+ font-size:9px;
+ font-weight:bold;
+ white-space:nowrap;
+ margin-top:2px;
+}
+
+.npc{
+ position:absolute;
+ width:42px;
+ height:42px;
+ border-radius:50%;
+ background:#182f46;
+ border:2px solid #73a0c2;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ font-size:20px;
+ z-index:15;
+ transform:translate(-50%,-50%);
+ transition:left .7s,top .7s;
+}
+
+.npcLabel{
+ position:absolute;
+ top:43px;
+ white-space:nowrap;
+ font-size:9px;
+ color:white;
+}
+
+.worldHud{
+ position:absolute;
+ top:10px;
+ left:10px;
+ z-index:30;
+ background:rgba(3,12,21,.84);
+ border:1px solid #31506a;
+ padding:9px 12px;
+ border-radius:10px;
+ font-size:11px;
+}
+
+.worldHint{
+ position:absolute;
+ bottom:10px;
+ left:50%;
+ transform:translateX(-50%);
+ z-index:30;
+ background:rgba(3,12,21,.85);
+ border:1px solid #31506a;
+ border-radius:20px;
+ padding:8px 13px;
+ color:#c9d8e6;
+ font-size:10px;
+ white-space:nowrap;
+}
+
+/* controls */
+
+.controls{
+ display:grid;
+ grid-template-columns:repeat(3,58px);
+ justify-content:center;
+ gap:6px;
+ margin-top:12px;
+}
+
+.control{
+ width:58px;
+ height:48px;
+ border-radius:12px;
+ background:#17324c;
+ color:white;
+ border:1px solid #2c4e6d;
+ font-size:20px;
+}
+
+.control.blank{
+ visibility:hidden;
+}
+
+.interact{
+ text-align:center;
+ margin-top:10px;
+ color:#9fb5c9;
+ font-size:12px;
+}
+
+/* bars */
+
+.bar{
+ height:8px;
+ background:#1c3044;
+ border-radius:20px;
+ overflow:hidden;
+ margin-top:6px;
+}
+
+.bar i{
+ display:block;
+ height:100%;
+ background:var(--blue);
+}
+
+/* modal */
+
+.modal{
+ position:fixed;
+ inset:0;
+ z-index:500;
+ background:rgba(0,0,0,.76);
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ padding:18px;
+}
+
+.modal.hidden{display:none}
+
+.modalBox{
+ width:min(550px,100%);
+ max-height:90vh;
+ overflow:auto;
+ background:#0b1b2c;
+ border:1px solid var(--border);
+ border-radius:20px;
+ padding:20px;
+}
+
+.modalBox h2{margin-bottom:7px}
+
+.modalBox p{
+ color:#9eb2c5;
+ line-height:1.5;
+ margin-bottom:14px;
+}
+
+input{
+ width:100%;
+ padding:12px;
+ margin-bottom:10px;
+ background:#06111e;
+ border:1px solid #29455f;
+ color:white;
+ border-radius:9px;
+ outline:none;
+}
+
+.toast{
+ position:fixed;
+ bottom:25px;
+ left:50%;
+ transform:translateX(-50%);
+ background:#112a41;
+ border:1px solid #315572;
+ color:white;
+ padding:11px 18px;
+ border-radius:25px;
+ z-index:800;
+ opacity:0;
+ pointer-events:none;
+ transition:.25s;
+}
+
+.toast.show{opacity:1}
+
+.list{
+ display:flex;
+ flex-direction:column;
+ gap:8px;
+}
+
+.item{
+ background:var(--card);
+ border:1px solid var(--border);
+ border-radius:10px;
+ padding:12px;
+}
+
+.phone{
+ max-width:390px;
+ min-height:570px;
+ margin:auto;
+ background:#02070c;
+ border:5px solid #1b2938;
+ border-radius:30px;
+ padding:13px;
+}
+
+.message{
+ background:#152c43;
+ border-radius:14px;
+ padding:11px;
+ margin-bottom:8px;
+}
+
+.empty{
+ color:var(--muted);
+ padding:20px;
+ text-align:center;
+}
+
+.mobileNav{
+ display:none;
+}
+
+@media(max-width:850px){
+
+ .sidebar{display:none}
+
+ .main{
+  padding:11px;
+  padding-bottom:80px;
+ }
+
+ .grid{
+  grid-template-columns:1fr;
+ }
+
+ .big{
+  grid-column:span 1;
+ }
+
+ .world{
+  height:520px;
+ }
+
+ .building{
+  width:100px;
+  min-height:65px;
+  padding:6px;
+ }
+
+ .building strong{font-size:10px}
+ .building span{font-size:8px}
+
+ .mobileNav{
+  position:fixed;
+  display:flex;
+  bottom:0;
+  left:0;
+  right:0;
+  z-index:200;
+  background:#071321;
+  border-top:1px solid var(--border);
+  overflow-x:auto;
+ }
+
+ .mobileNav button{
+  min-width:72px;
+  padding:10px 5px;
+  background:transparent;
+  color:#aabed1;
+  font-size:10px;
+ }
+
+ .mobileNav button.active{
+  color:var(--blue);
+ }
+
+ .worldHint{
+  max-width:90%;
+  overflow:hidden;
+ }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="app"></div>
+<div id="toast" class="toast"></div>
+
+<!-- START -->
+<div id="startModal" class="modal">
+ <div class="modalBox">
+  <h2>🌆 Kaduna Life V30</h2>
+
+  <p>
+   Welcome to the next stage of Kaduna Life.
+   This version introduces a playable world where you can
+   actually move your character around.
+  </p>
+
+  <input id="nameInput" placeholder="Your name">
+  <input id="ageInput" type="number" min="13" max="19" placeholder="Age">
+
+  <button class="btn" data-action="start">
+   Start My Life 🚀
+  </button>
+ </div>
+</div>
+
+<!-- NPC -->
+<div id="npcModal" class="modal hidden">
+ <div class="modalBox">
+
+  <h2 id="npcTitle">👤 NPC</h2>
+  <p id="npcDescription"></p>
+
+  <div id="npcDialogue"></div>
+
+  <div class="actions" id="npcButtons"></div>
+
+  <button class="btn dark" data-action="close-npc">
+   Close
+  </button>
+
+ </div>
+</div>
+
+<script>
+"use strict";
+
+/* =====================================================
+   KADUNA LIFE V30
+===================================================== */
+
+const SAVE_KEY="kadunaLifeV30";
+
+const worldLocations={
+ centre:{
+  name:"Kaduna City Centre",
+  x:16,
+  y:18
+ },
+
+ barnawa:{
+  name:"Barnawa",
+  x:42,
+  y:18
+ },
+
+ university:{
+  name:"University Area",
+  x:74,
+  y:18
+ },
+
+ kawo:{
+  name:"Kawo",
+  x:13,
+  y:47
+ },
+
+ malali:{
+  name:"Malali",
+  x:48,
+  y:48
+ },
+
+ centenary:{
+  name:"Centenary Park",
+  x:77,
+  y:48
+ },
+
+ millennium:{
+  name:"Millennium City",
+  x:23,
+  y:78
+ },
+
+ government:{
+  name:"Government Area",
+  x:57,
+  y:78
+ },
+
+ musaco:{
+  name:"Musaco Motors",
+  x:84,
+  y:78
+ }
+};
+
+const allLocations={
+ barnawa:"Barnawa",
+ urimi:"Ungwan Rimi",
+ udosa:"Ungwan Dosa",
+ usarki:"Ungwan Sarki",
+ kawo:"Kawo",
+ kasuwanMagani:"Kasuwan Magani",
+ centre:"Kaduna City Centre",
+ malali:"Malali",
+ tudunWada:"Tudun Wada",
+ university:"University Area",
+ centenary:"Centenary Park",
+ millennium:"Millennium City",
+ gamji:"Gamji Gate",
+ government:"Government Area",
+ hamdala:"Hamdala",
+ msquare:"M Square",
+ fifth:"Fifth Chukker",
+ nda:"NDA Area",
+ naf:"NAF Club",
+ garkuwa:"Garkuwa",
+ clearwater:"Clearwater",
+ musaco:"Musaco Motors",
+ smartkids:"Smart Kids"
+};
+
+const npcData=[
+ ["aisha","Aisha","👩🏽","Student","university"],
+ ["musa","Musa","👨🏽","Driver","kawo"],
+ ["zainab","Zainab","👩🏽","Student","malali"],
+ ["ibrahim","Ibrahim","👨🏽","Tech Assistant","barnawa"],
+ ["maryam","Maryam","👩🏽","Designer","centre"],
+ ["david","David","👨🏾","Student","university"],
+ ["umar","Umar","👨🏽","Shop Assistant","kawo"],
+ ["fatima","Fatima","👩🏽","Student","barnawa"],
+ ["abdullahi","Abdullahi","👨🏽","Auto Technician","musaco"],
+ ["sarah","Sarah","👩🏽","Teacher Assistant","university"],
+ ["yusuf","Yusuf","👨🏽","Business Trainee","government"],
+ ["amina","Amina","👩🏽","Artist","centre"]
+];
+
+const backgroundData=[
+ ["Nepo Baby","💎",350000,10,10],
+ ["LAPO Baby","💪",25000,0,0],
+ ["Middle-Class Baby","🏠",100000,5,5],
+ ["Scholar Baby","📚",60000,20,5],
+ ["Hustler Baby","🔥",45000,0,3],
+ ["Family Business Baby","🏪",150000,5,8],
+ ["Northern Roots","🌅",50000,2,4],
+ ["Lucky Baby","🍀",200000,10,8]
+];
+
+let game=null;
+let currentNPC=null;
+
+let player={
+ x:50,
+ y:50,
+ speed:2.2,
+ moving:false
+};
+
+let keys={};
+
+function money(n){
+ return "₦"+Math.round(n||0).toLocaleString();
+}
+
+function clamp(n,min,max){
+ return Math.max(min,Math.min(max,n));
+}
+
+function toast(text){
+ const el=document.getElementById("toast");
+
+ el.textContent=text;
+ el.classList.add("show");
+
+ clearTimeout(window.__toast);
+
+ window.__toast=setTimeout(()=>{
+  el.classList.remove("show");
+ },2200);
+}
+
+function log(text){
+ if(!game)return;
+
+ game.logs.unshift(
+  `Day ${game.day} • ${text}`
+ );
+
+ game.logs=game.logs.slice(0,100);
+}
+
+function save(){
+ if(!game)return;
+
+ try{
+  localStorage.setItem(SAVE_KEY,JSON.stringify({
+   game,
+   player
+  }));
+ }catch(e){
+  console.error(e);
+ }
+}
+
+/* =====================================================
+   CREATE GAME
+===================================================== */
+
+function createGame(name,age){
+
+ game={
+  version:30,
+
+  name:name,
+  age:age,
+
+  background:"Middle-Class Baby",
+
+  cash:100000,
+  health:100,
+  energy:100,
+  mood:75,
+  education:5,
+  reputation:5,
+
+  day:1,
+  hour:8,
+
+  location:"barnawa",
+
+  career:null,
+  careerLevel:1,
+  careerXP:0,
+
+  home:"Family Home",
+  debt:0,
+
+  businesses:[],
+  inventory:[],
+
+  achievements:[],
+  logs:[],
+  news:[],
+
+  phone:[],
+
+  stats:{
+   work:0,
+   study:0,
+   travel:0,
+   conversations:0,
+   events:0,
+   activities:0,
+   visited:["barnawa"]
+  },
+
+  npcs:npcData.map(n=>({
+   id:n[0],
+   name:n[1],
+   avatar:n[2],
+   role:n[3],
+   location:n[4],
+   friendship:5,
+   mood:70
+  }))
+ };
+
+ player.x=50;
+ player.y=50;
+
+ log(`Welcome to Kaduna, ${name}.`);
+
+ save();
+}
+
+/* =====================================================
+   LOAD
+===================================================== */
+
+function load(){
+
+ try{
+
+  const raw=localStorage.getItem(SAVE_KEY);
+
+  if(raw){
+
+   const saved=JSON.parse(raw);
+
+   if(saved.game){
+
+    game=saved.game;
+
+    player={
+     x:saved.player?.x||50,
+     y:saved.player?.y||50,
+     speed:2.2,
+     moving:false
+    };
+
+    normalize();
+    render();
+
+    return;
+   }
+  }
+
+ }catch(e){
+  console.error(e);
+ }
+
+ document.getElementById("startModal")
+  .classList.remove("hidden");
+}
+
+function normalize(){
+
+ if(!game.stats){
+  game.stats={
+   work:0,
+   study:0,
+   travel:0,
+   conversations:0,
+   events:0,
+   activities:0,
+   visited:[game.location]
+  };
+ }
+
+ if(!Array.isArray(game.stats.visited)){
+  game.stats.visited=[game.location];
+ }
+
+ if(!Array.isArray(game.npcs)){
+  game.npcs=[];
+ }
+
+ if(!Array.isArray(game.logs))game.logs=[];
+ if(!Array.isArray(game.news))game.news=[];
+ if(!Array.isArray(game.phone))game.phone=[];
+ if(!Array.isArray(game.businesses))game.businesses=[];
+ if(!Array.isArray(game.inventory))game.inventory=[];
+ if(!Array.isArray(game.achievements))game.achievements[];
+
+ game.version=30;
+}
+
+/* =====================================================
+   START
+===================================================== */
+
+function start(){
+
+ const name=document.getElementById("nameInput").value.trim();
+ const age=Number(document.getElementById("ageInput").value);
+
+ if(!name){
+  toast("Enter your name.");
+  return;
+ }
+
+ if(age<13||age>19){
+  toast("Choose an age between 13 and 19.");
+  return;
+ }
+
+ createGame(name,age);
+
+ document.getElementById("startModal")
+  .classList.add("hidden");
+
+ render();
+
+ toast("Your Kaduna story begins! 🚀");
+}
+
+/* =====================================================
+   PLAYER MOVEMENT
+===================================================== */
+
+function movePlayer(){
+
+ if(!game)return;
+
+ let dx=0;
+ let dy=0;
+
+ if(keys.ArrowLeft||keys.a)dx-=1;
+ if(keys.ArrowRight||keys.d)dx+=1;
+ if(keys.ArrowUp||keys.w)dy-=1;
+ if(keys.ArrowDown||keys.s)dy+=1;
+
+ if(!dx&&!dy){
+  player.moving=false;
+  return;
+ }
+
+ player.moving=true;
+
+ if(dx&&dy){
+  dx*=.707;
+  dy*=.707;
+ }
+
+ player.x+=dx*player.speed;
+ player.y+=dy*player.speed;
+
+ player.x=clamp(player.x,3,97);
+ player.y=clamp(player.y,5,95);
+
+ detectLocation();
+
+ checkNPCProximity();
+
+ save();
+ updateWorldPosition();
+}
+
+function updateWorldPosition(){
+
+ const el=document.getElementById("player");
+
+ if(!el)return;
+
+ el.style.left=player.x+"%";
+ el.style.top=player.y+"%";
+}
+
+function detectLocation(){
+
+ let closest=null;
+ let distance=999;
+
+ Object.entries(worldLocations).forEach(([id,l])=>{
+
+  const d=Math.hypot(
+   player.x-l.x,
+   player.y-l.y
+  );
+
+  if(d<distance){
+   distance=d;
+   closest=id;
+  }
+
+ });
+
+ if(distance<13&&game.location!==closest){
+
+  game.location=closest;
+
+  if(!game.stats.visited.includes(closest)){
+   game.stats.visited.push(closest);
+   game.phone.unshift(
+    `📍 You discovered ${worldLocations[closest].name}.`
+   );
+   toast(`Discovered ${worldLocations[closest].name}!`);
+  }
+
+  save();
+
+  const loc=document.getElementById("currentLocation");
+
+  if(loc){
+   loc.textContent=worldLocations[closest].name;
+  }
+ }
+}
+
+function checkNPCProximity(){
+
+ if(!game)return;
+
+ const nearby=game.npcs.find(n=>{
+
+  const pos=n.worldPos||randomNPCPosition(n.location);
+
+  const d=Math.hypot(
+   player.x-pos.x,
+   player.y-pos.y
+  );
+
+  return d<7;
+ });
+
+ if(nearby){
+
+  const hint=document.getElementById("interactionHint");
+
+  if(hint){
+   hint.textContent=
+    `👋 ${nearby.name} is nearby — tap INTERACT`;
+  }
+ }
+}
+
+/* =====================================================
+   NPC POSITIONS
+===================================================== */
+
+function randomNPCPosition(location){
+
+ const base=worldLocations[location]||{
+  x:50,
+  y:50
+ };
+
+ return{
+  x:clamp(base.x+(Math.random()*14-7),5,95),
+  y:clamp(base.y+(Math.random()*14-7),7,93)
+ };
+}
+
+function assignNPCPositions(){
+
+ game.npcs.forEach(n=>{
+
+  if(!n.worldPos){
+   n.worldPos=randomNPCPosition(n.location);
+  }
+ });
+}
+
+function moveNPCs(){
+
+ if(!game)return;
+
+ game.npcs.forEach(n=>{
+
+  if(Math.random()<.35){
+
+   const p=n.worldPos||randomNPCPosition(n.location);
+
+   p.x=clamp(p.x+(Math.random()*14-7),4,96);
+   p.y=clamp(p.y+(Math.random()*14-7),6,94);
+
+   n.worldPos=p;
+  }
+ });
+
+ save();
+
+ if(document.getElementById("world")){
+  renderWorldOnly();
+ }
+}
+
+/* =====================================================
+   INTERACT
+===================================================== */
+
+function interact(){
+
+ if(!game)return;
+
+ let nearest=null;
+ let distance=999;
+
+ game.npcs.forEach(n=>{
+
+  const p=n.worldPos||randomNPCPosition(n.location);
+
+  const d=Math.hypot(
+   player.x-p.x,
+   player.y-p.y
+  );
+
+  if(d<distance){
+   distance=d;
+   nearest=n;
+  }
+ });
+
+ if(!nearest||distance>10){
+  toast("Move closer to someone first.");
+  return;
+ }
+
+ openNPC(nearest.id);
+}
+
+function openNPC(id){
+
+ const npc=game.npcs.find(n=>n.id===id);
+
+ if(!npc)return;
+
+ currentNPC=npc;
+
+ document.getElementById("npcTitle").textContent=
+  `${npc.avatar} ${npc.name}`;
+
+ document.getElementById("npcDescription").textContent=
+  `${npc.role} • Friendship ${npc.friendship}/100`;
+
+ document.getElementById("npcDialogue").innerHTML=`
+  <div class="message">
+   <b>${npc.name}:</b>
+   <p style="margin-top:6px">
+    Hey ${game.name}! Good to see you around here.
+   </p>
+  </div>
+ `;
+
+ document.getElementById("npcButtons").innerHTML=`
+  <button class="btn" data-action="npc-talk" data-type="hello">
+   👋 Say Hi
+  </button>
+
+  <button class="btn dark" data-action="npc-talk" data-type="question">
+   💬 Ask Question
+  </button>
+
+  <button class="btn green" data-action="npc-talk" data-type="kind">
+   ⭐ Be Friendly
+  </button>
+ `;
+
+ document.getElementById("npcModal")
+  .classList.remove("hidden");
+}
+
+function npcTalk(type){
+
+ if(!currentNPC)return;
+
+ let gain=2;
+ let response="Nice talking with you.";
+
+ if(type==="hello"){
+  gain=3;
+  response="Good to see you too! We should hang out again.";
+ }
+
+ if(type==="question"){
+  gain=2;
+  response="There's always something happening around Kaduna.";
+ }
+
+ if(type==="kind"){
+  gain=5;
+  response="I appreciate that. You're actually really cool.";
+
+ }
+
+ currentNPC.friendship=
+  clamp(currentNPC.friendship+gain,0,100);
+
+ game.mood=clamp(game.mood+3,0,100);
+ game.reputation=clamp(game.reputation+1,0,100);
+ game.stats.conversations++;
+
+ log(`Talked with ${currentNPC.name}.`);
+
+ document.getElementById("npcDialogue").innerHTML+=`
+  <div class="message">
+   <b>${currentNPC.name}:</b>
+   <p style="margin-top:6px">${response}</p>
+  </div>
+ `;
+
+ save();
+
+ toast(`Friendship +${gain} ❤️`);
+}
+
+function closeNPC(){
+
+ document.getElementById("npcModal")
+  .classList.add("hidden");
+
+ currentNPC=null;
+}
+
+/* =====================================================
+   TIME
+===================================================== */
+
+function timeText(){
+
+ const h=game.hour%24;
+ const suffix=h>=12?"PM":"AM";
+ const display=h%12||12;
+
+ return `${display}:00 ${suffix}`;
+}
+
+function advanceTime(hours=1){
+
+ game.hour+=hours;
+
+ while(game.hour>=24){
+
+  game.hour-=24;
+
+  game.day++;
+
+  game.energy=clamp(
+   game.energy+30,
+   0,
+   120
+  );
+
+  game.health=clamp(
+   game.health+4,
+   0,
+   100
+  );
+
+  game.phone.unshift(
+   `🌅 Day ${game.day} has started.`
+  );
+
+  moveNPCs();
+ }
+
+ save();
+}
+
+/* =====================================================
+   ACTIONS
+===================================================== */
+
+function work(){
+
+ if(!game.career){
+  toast("Choose a career first.");
+  return;
+ }
+
+ if(game.energy<15){
+  toast("You're too tired.");
+  return;
+ }
+
+ const earning=game.career.pay;
+
+ game.cash+=earning;
+
+ game.energy=clamp(
+  game.energy-18,
+  0,
+  120
+ );
+
+ game.mood=clamp(
+  game.mood+2,
+  0,
+  100
+ );
+
+ game.reputation=clamp(
+  game.reputation+1,
+  0,
+  100
+ );
+
+ game.careerXP+=10;
+ game.stats.work++;
+
+ log(
+  `Worked as ${game.career.name} and earned ${money(earning)}.`
+ );
+
+ advanceTime(4);
+ render();
+
+ toast(`Earned ${money(earning)} 💰`);
+}
+
+function study(){
+
+ if(game.energy<10){
+  toast("You're too tired.");
+  return;
+ }
+
+ game.education++;
+ game.energy=clamp(
+  game.energy-10,
+  0,
+  120
+ );
+
+ game.stats.study++;
+
+ log("Studied and improved education.");
+
+ advanceTime(2);
+ render();
+
+ toast("Education +1 🎓");
+}
+
+function rest(){
+
+ game.energy=clamp(
+  game.energy+35,
+  0,
+  120
+ );
+
+ game.health=clamp(
+  game.health+5,
+  0,
+  100
+ );
+
+ game.mood=clamp(
+  game.mood+5,
+  0,
+  100
+ );
+
+ log("Rested.");
+
+ advanceTime(3);
+ render();
+}
+
+function eat(){
+
+ if(game.cash<1500){
+  toast("You need ₦1,500.");
+  return;
+ }
+
+ game.cash-=1500;
+
+ game.energy=clamp(
+  game.energy+12,
+  0,
+  120
+ );
+
+ game.health=clamp(
+  game.health+7,
+  0,
+  100
+ );
+
+ game.mood=clamp(
+  game.mood+3,
+  0,
+  100
+ );
+
+ log("Bought food.");
+
+ advanceTime(1);
+ render();
+}
+
+function shop(){
+
+ if(game.cash<5000){
+  toast("You need ₦5,000.");
+  return;
+ }
+
+ game.cash-=5000;
+
+ game.inventory.push({
+  name:"New Item",
+  day:game.day
+ });
+
+ game.mood=clamp(
+  game.mood+6,
+  0,
+  100
+ );
+
+ log("Bought a new item.");
+
+ advanceTime(2);
+ render();
+}
+
+/* =====================================================
+   CAREER
+===================================================== */
+
+const careers=[
+ ["Shop Assistant",2500],
+ ["Driver",4000],
+ ["Computer Assistant",5500],
+ ["Admin Assistant",6000],
+ ["Graphic Designer",8000],
+ ["Sales Executive",8500],
+ ["Auto Technician",7500],
+ ["Marketing Officer",10000],
+ ["Teacher",12000],
+ ["Web Developer",10000],
+ ["Accountant",13000],
+ ["Software Developer",14000],
+ ["Data Analyst",15000],
+ ["Nurse",15000],
+ ["Civil Engineer",18000],
+ ["Financial Analyst",20000],
+ ["Project Manager",22000],
+ ["Senior Software Engineer",28000],
+ ["Business Manager",25000]
+];
+
+function chooseCareer(i){
+
+ const c=careers[i];
+
+ if(!c)return;
+
+ game.career={
+  name:c[0],
+  pay:c[1]
+ };
+
+ game.careerLevel=1;
+ game.careerXP=0;
+
+ log(`Started career as ${c[0]}.`);
+
+ save();
+ render();
+
+ toast(`Career selected: ${c[0]} 💼`);
+}
+
+/* =====================================================
+   MAP TRAVEL
+===================================================== */
+
+function travel(id){
+
+ if(!allLocations[id]){
+  return;
+ }
+
+ game.location=id;
+
+ const w=worldLocations[id];
+
+ if(w){
+  player.x=w.x;
+  player.y=w.y;
+ }
+
+ game.stats.travel++;
+
+ if(!game.stats.visited.includes(id)){
+  game.stats.visited.push(id);
+ }
+
+ game.cash=Math.max(
+  0,
+  game.cash-300
+ );
+
+ game.energy=clamp(
+  game.energy-3,
+  0,
+  120
+ );
+
+ log(`Travelled to ${allLocations[id]}.`);
+
+ advanceTime(1);
+ render();
+
+ toast(`Arrived at ${allLocations[id]} 📍`);
+}
+
+/* =====================================================
+   BUSINESS
+===================================================== */
+
+const businesses=[
+ ["Food Stand",50000,8000],
+ ["Fashion Store",150000,18000],
+ ["Phone Accessories",90000,14000],
+ ["Barbershop",80000,12000],
+ ["Tech Services",120000,20000],
+ ["Transport Business",250000,30000]
+];
+
+function startBusiness(i){
+
+ const b=businesses[i];
+
+ if(!b)return;
+
+ if(game.cash<b[1]){
+  toast("Not enough money.");
+  return;
+ }
+
+ game.cash-=b[1];
+
+ game.businesses.push({
+  name:b[0],
+  profit:b[2],
+  level:1
+ });
+
+ log(`Started ${b[0]}.`);
+
+ save();
+ render();
+
+ toast(`${b[0]} opened 🏪`);
+}
+
+function operateBusiness(i){
+
+ const b=game.businesses[i];
+
+ if(!b)return;
+
+ const profit=b.profit*b.level;
+
+ game.cash+=profit;
+
+ log(`${b.name} earned ${money(profit)}.`);
+
+ advanceTime(3);
+ render();
+
+ toast(`Earned ${money(profit)} 💰`);
+}
+
+/* =====================================================
+   HOME
+===================================================== */
+
+const homes=[
+ ["Family Home",0],
+ ["Single Room",30000],
+ ["Self-Contained Flat",80000],
+ ["Two-Bedroom Apartment",180000],
+ ["Luxury Apartment",500000]
+];
+
+function buyHome(i){
+
+ const h=homes[i];
+
+ if(!h)return;
+
+ if(game.cash<h[1]){
+  toast("Not enough money.");
+  return;
+ }
+
+ game.cash-=h[1];
+ game.home=h[0];
+
+ log(`Moved into ${h[0]}.`);
+
+ save();
+ render();
+
+ toast(`New home 🏠`);
+}
+
+/* =====================================================
+   WORLD RENDER
+===================================================== */
+
+function worldHTML(){
+
+ assignNPCPositions();
+
+ return`
+ <div class="worldWrap">
+
+  <div id="world" class="world">
+
+   <div class="worldHud">
+    📍 <span id="currentLocation">
+     ${allLocations[game.location]||"Kaduna"}
+    </span>
+    <br>
+    🕐 ${timeText()}
+   </div>
+
+   <div class="road h r1"></div>
+   <div class="road h r2"></div>
+   <div class="road h r3"></div>
+
+   <div class="road v c1"></div>
+   <div class="road v c2"></div>
+   <div class="road v c3"></div>
+
+   ${Object.entries(worldLocations).map(([id,l])=>`
+    <div
+     class="building"
+     data-location="${id}">
+
+     <strong>${l.name}</strong>
+     <span>📍 Location</span>
+    </div>
+   `).join("")}
+
+   <div
+    id="player"
+    class="player"
+    style="
+     left:${player.x}%;
+     top:${player.y}%;
+    ">
+
+    <div class="head"></div>
+    <div class="body"></div>
+
+    <div class="legs">
+     <div class="leg"></div>
+     <div class="leg"></div>
+    </div>
+
+    <div class="playerName">
+     ${game.name}
+    </div>
+
+   </div>
+
+   ${game.npcs.map(n=>{
+
+    const p=n.worldPos;
+
+    return`
+     <div
+      class="npc"
+      data-npc="${n.id}"
+      style="
+       left:${p.x}%;
+       top:${p.y}%;
+      ">
+
+      ${n.avatar}
+
+      <span class="npcLabel">
+       ${n.name}
+      </span>
+
+     </div>
+    `;
+
+   }).join("")}
+
+   <div class="worldHint" id="interactionHint">
+    🎮 Move with the controls • Get close to NPCs to interact
+   </div>
+
+  </div>
+
+ </div>
+
+ <div class="controls">
+
+  <button class="control blank"></button>
+
+  <button
+   class="control"
+   data-key="ArrowUp">
+   ▲
+  </button>
+
+  <button class="control blank"></button>
+
+  <button
+   class="control"
+   data-key="ArrowLeft">
+   ◀
+  </button>
+
+  <button
+   class="control"
+   data-action="interact">
+   👋
+  </button>
+
+  <button
+   class="control"
+   data-key="ArrowRight">
+   ▶
+  </button>
+
+  <button class="control blank"></button>
+
+  <button
+   class="control"
+   data-key="ArrowDown">
+   ▼
+  </button>
+
+  <button class="control blank"></button>
+
+ </div>
+
+ <div class="interact">
+  👋 Center button = interact with a nearby NPC
+ </div>
+ `;
+}
+
+function renderWorldOnly(){
+
+ const old=document.querySelector(".worldWrap");
+
+ if(!old)return;
+
+ old.outerHTML=worldHTML();
+}
+
+/* =====================================================
+   MAIN RENDER
+===================================================== */
+
+let page="home";
+
+function render(){
+
+ if(!game)return;
+
+ const app=document.getElementById("app");
+
+ app.innerHTML=`
+
+ <header>
+
+  <div class="top">
+
+   <div>
+    <div class="logo">🌆 Kaduna Life</div>
+    <div class="sub">V30 • PLAYABLE WORLD</div>
+   </div>
+
+   <div style="text-align:right">
+    <b>Day ${game.day}</b>
+    <div style="font-size:10px;color:#8ea6ba">
+     ${timeText()}
+    </div>
+   </div>
+
+  </div>
+
+  <div class="stats">
+   <div class="stat">
+    <small>💰 Cash</small>
+    <b>${money(game.cash)}</b>
+   </div>
+
+   <div class="stat">
+    <small>❤️ Health</small>
+    <b>${game.health}</b>
+   </div>
+
+   <div class="stat">
+    <small>⚡ Energy</small>
+    <b>${game.energy}</b>
+   </div>
+
+   <div class="stat">
+    <small>😊 Mood</small>
+    <b>${game.mood}</b>
+   </div>
+
+   <div class="stat">
+    <small>🎓 Education</small>
+    <b>${game.education}</b>
+   </div>
+
+   <div class="stat">
+    <small>⭐ Reputation</small>
+    <b>${game.reputation}</b>
+   </div>
+  </div>
+
+ </header>
+
+ <div class="layout">
+
+  <aside class="sidebar">
+
+   <div class="nav">
+
+    ${nav("home","🏠 Home")}
+    ${nav("world","🎮 Play World")}
+    ${nav("map","🗺️ Locations")}
+    ${nav("careers","💼 Careers")}
+    ${nav("social","👥 Social")}
+    ${nav("business","🏪 Business")}
+    ${nav("lifestyle","🏠 Lifestyle")}
+    ${nav("phone","📱 Phone")}
+    ${nav("profile","👤 Profile")}
+
+    <button data-action="save">
+     💾 Save
+    </button>
+
+    <button data-action="new">
+     🔄 New Life
+    </button>
+
+   </div>
+
+  </aside>
+
+  <main class="main">
+
+   ${renderPage()}
+
+  </main>
+
+ </div>
+
+ <nav class="mobileNav">
+  ${nav("home","🏠")}
+  ${nav("world","🎮")}
+  ${nav("map","🗺️")}
+  ${nav("social","👥")}
+  ${nav("phone","📱")}
+  ${nav("profile","👤")}
+ </nav>
+
+ `;
+
+}
+
+function nav(id,label){
+
+ return`
+ <button
+  data-page="${id}"
+  class="${page===id?"active":""}">
+  ${label}
+ </button>
+ `;
+}
+
+function renderPage(){
+
+ if(page==="world")return renderWorldPage();
+ if(page==="map")return renderMap();
+ if(page==="careers")return renderCareers();
+ if(page==="social")return renderSocial();
+ if(page==="business")return renderBusiness();
+ if(page==="lifestyle")return renderLifestyle();
+ if(page==="phone")return renderPhone();
+ if(page==="profile")return renderProfile();
+
+ return renderHome();
+}
+
+/* =====================================================
+   HOME
+===================================================== */
+
+function renderHome(){
+
+ return`
+
+ <div class="title">
+  Welcome back, ${game.name} 👋
+ </div>
+
+ <div class="desc">
+  ${allLocations[game.location]} • Day ${game.day}
+ </div>
+
+ <div class="grid">
+
+  <div class="card big">
+
+   <h3>🎮 Your Life</h3>
+
+   <p>
+    You are currently in
+    <b>${allLocations[game.location]}</b>.
+   </p>
+
+   <div class="actions">
+
+    <button
+     class="btn"
+     data-page="world">
+     Enter World 🎮
+    </button>
+
+    <button
+     class="btn dark"
+     data-action="work">
+     💼 Work
+    </button>
+
+    <button
+     class="btn green"
+     data-action="rest">
+     😴 Rest
+    </button>
+
+    <button
+     class="btn gold"
+     data-action="eat">
+     🍛 Eat
+    </button>
+
+   </div>
+
+  </div>
+
+  <div class="card">
+
+   <h3>💼 Career</h3>
+
+   <p>
+    ${
+     game.career
+     ? `${game.career.name}<br>
+        Level ${game.careerLevel}<br>
+        ${money(game.career.pay)}`
+     : "You don't have a career yet."
+    }
+   </p>
+
+   <div class="actions">
+    <button class="btn" data-page="careers">
+     Careers
+    </button>
+   </div>
+
+  </div>
+
+  <div class="card">
+
+   <h3>🏠 Home</h3>
+
+   <p>${game.home}</p>
+
+   <div class="actions">
+    <button class="btn dark" data-page="lifestyle">
+     Lifestyle
+    </button>
+   </div>
+
+  </div>
+
+  <div class="card">
+
+   <h3>📊 Progress</h3>
+
+   <p>
+    Education: ${game.education}<br>
+    Reputation: ${game.reputation}<br>
+    Locations visited: ${game.stats.visited.length}
+   </p>
+
+  </div>
+
+  <div class="card">
+
+   <h3>📰 News</h3>
+
+   <div class="list">
+
+    ${
+     game.news.slice(0,4).map(n=>`
+      <div class="item">${n}</div>
+     `).join("")
+     ||
+     `<div class="empty">No news yet.</div>`
+    }
+
+   </div>
+
+  </div>
+
+ </div>
+
+ `;
+}
+
+/* =====================================================
+   WORLD PAGE
+===================================================== */
+
+function renderWorldPage(){
+
+ return`
+
+ <div class="title">
+  🎮 Playable Kaduna
+ </div>
+
+ <div class="desc">
+  Walk around the world, discover places and meet NPCs.
+ </div>
+
+ ${worldHTML()}
+
+ <div class="card" style="margin-top:14px">
+
+  <h3>🎮 Controls</h3>
+
+  <p>
+   On phone: use the directional buttons below the map.<br>
+   On computer: use <b>W A S D</b> or the arrow keys.<br>
+   Move close to an NPC and press the center 👋 button.
+  </p>
+
+ </div>
+
+ `;
+}
+
+/* =====================================================
+   MAP PAGE
+===================================================== */
+
+function renderMap(){
+
+ return`
+
+ <div class="title">🗺️ Kaduna Locations</div>
+
+ <div class="desc">
+  Choose a destination.
+ </div>
+
+ <div class="grid">
+
+  ${Object.entries(allLocations).map(([id,name])=>`
+
+   <div class="card">
+
+    <h3>📍 ${name}</h3>
+
+    <p>
+     ${
+      game.location===id
+      ?"You are here."
+      :"Travel to this area."
+     }
+    </p>
+
+    <div class="actions">
+
+     <button
+      class="btn"
+      data-action="travel"
+      data-id="${id}">
+      ${
+       game.location===id
+       ?"Current"
+       :"Travel — ₦300"
+      }
+     </button>
+
+    </div>
+
+   </div>
+
+  `).join("")}
+
+ </div>
+
+ `;
+}
+
+/* =====================================================
+   CAREERS PAGE
+===================================================== */
+
+function renderCareers(){
+
+ return`
+
+ <div class="title">💼 Careers</div>
+
+ <div class="desc">
+  Build your career and increase your income.
+ </div>
+
+ ${
+  game.career
+  ?`
+   <div class="card" style="margin-bottom:14px">
+
+    <h3>Current Career</h3>
+
+    <p>
+     ${game.career.name}<br>
+     Level ${game.careerLevel}<br>
+     ${money(game.career.pay)} per work session
+    </p>
+
+   </div>
+  `
+  :""
+ }
+
+ <div class="grid">
+
+  ${careers.map((c,i)=>`
+
+   <div class="card">
+
+    <h3>${c[0]}</h3>
+
+    <p>
+     Starting pay:
+     <b>${money(c[1])}</b>
+    </p>
+
+    <div class="actions">
+
+     <button
+      class="btn"
+      data-action="career"
+      data-index="${i}">
+      Choose
+     </button>
+
+    </div>
+
+   </div>
+
+  `).join("")}
+
+ </div>
+
+ `;
+}
+
+/* =====================================================
+   SOCIAL PAGE
+===================================================== */
+
+function renderSocial(){
+
+ return`
+
+ <div class="title">👥 Social</div>
+
+ <div class="desc">
+  Meet people and build friendships.
+ </div>
+
+ <div class="grid">
+
+ ${
+  game.npcs.map(n=>`
+
+   <div class="card">
+
+    <h3>
+     ${n.avatar} ${n.name}
+    </h3>
+
+    <p>
+     ${n.role}<br>
+     Friendship: ${n.friendship}/100
+    </p>
+
+    <div class="bar">
+     <i style="width:${n.friendship}%"></i>
+    </div>
+
+    <div class="actions">
+
+     <button
+      class="btn"
+      data-action="goto-npc"
+      data-id="${n.id}">
+      Find Them
+     </button>
+
+    </div>
+
+   </div>
+
+  `).join("")
+ }
+
+ </div>
+
+ `;
+}
+
+/* =====================================================
+   BUSINESS
+===================================================== */
+
+function renderBusiness(){
+
+ return`
+
+ <div class="title">🏪 Business</div>
+
+ <div class="desc">
+  Build businesses around Kaduna.
+ </div>
+
+ ${
+  game.businesses.length
+  ?`
+   <div class="card" style="margin-bottom:14px">
+
+    <h3>Your Businesses</h3>
+
+    <div class="list">
+
+     ${game.businesses.map((b,i)=>`
+
+      <div class="item">
+
+       <b>${b.name}</b>
+
+       <p>
+        Level ${b.level}<br>
+        Earnings: ${money(b.profit)}
+       </p>
+
+       <div class="actions">
+
+        <button
+         class="btn green"
+         data-action="operate"
+         data-index="${i}">
+         Operate
+        </button>
+
+       </div>
+
+      </div>
+
+     `).join("")}
+
+    </div>
+
+   </div>
+  `
+  :""
+ }
+
+ <div class="grid">
+
+ ${
+  businesses.map((b,i)=>`
+
+   <div class="card">
+
+    <h3>${b[0]}</h3>
+
+    <p>
+     Startup: ${money(b[1])}<br>
+     Earnings: ${money(b[2])}
+    </p>
+
+    <div class="actions">
+
+     <button
+      class="btn"
+      data-action="business"
+      data-index="${i}">
+      Start
+     </button>
+
+    </div>
+
+   </div>
+
+  `).join("")
+ }
+
+ </div>
+
+ `;
+}
+
+/* =====================================================
+   LIFESTYLE
+===================================================== */
+
+function renderLifestyle(){
+
+ return`
+
+ <div class="title">🏠 Lifestyle</div>
+
+ <div class="desc">
+  Choose your home and manage your lifestyle.
+ </div>
+
+ <div class="card" style="margin-bottom:14px">
+
+  <h3>Current Home</h3>
+
+  <p>${game.home}</p>
+
+ </div>
+
+ <div class="grid">
+
+ ${
+  homes.map((h,i)=>`
+
+   <div class="card">
+
+    <h3>${h[0]}</h3>
+
+    <p>
+     ${
+      h[1]
+      ?"Purchase: "+money(h[1])
+      :"Family home"
+     }
+    </p>
+
+    <div class="actions">
+
+     <button
+      class="btn"
+      data-action="home"
+      data-index="${i}">
+      ${game.home===h[0]?"Current":"Choose"}
+     </button>
+
+    </div>
+
+   </div>
+
+  `).join("")
+ }
+
+ </div>
+
+ <div class="card" style="margin-top:14px">
+
+  <h3>🎒 Inventory</h3>
+
+  ${
+   game.inventory.length
+   ?game.inventory.map(i=>`
+    <div class="item" style="margin-top:7px">
+     ${i.name} — Day ${i.day}
+    </div>
+   `).join("")
+   :`<div class="empty">Nothing yet.</div>`
+  }
+
+ </div>
+
+ `;
+}
+
+/* =====================================================
+   PHONE
+===================================================== */
+
+function renderPhone(){
+
+ return`
+
+ <div class="title">📱 Phone</div>
+
+ <div class="desc">
+  Your notifications and life updates.
+ </div>
+
+ <div class="phone">
+
+  <div style="text-align:center;padding:10px;border-bottom:1px solid #1d3042">
+   📱 <b>Kaduna Mobile</b>
+  </div>
+
+  <div style="padding-top:15px">
+
+   ${
+    game.phone.length
+    ?game.phone.slice(0,15).map(n=>`
+     <div class="message">${n}</div>
+    `).join("")
+    :`<div class="empty">No notifications.</div>`
+   }
+
+   <button
+    class="btn dark"
+    data-action="clear-phone">
+    Clear
+   </button>
+
+  </div>
+
+ </div>
+
+ `;
+}
+
+/* =====================================================
+   PROFILE
+===================================================== */
+
+function renderProfile(){
+
+ return`
+
+ <div class="title">👤 Profile</div>
+
+ <div class="desc">
+  Your life so far.
+ </div>
+
+ <div class="grid">
+
+  <div class="card">
+
+   <h3>Character</h3>
+
+   <p>
+    Name: ${game.name}<br>
+    Age: ${game.age}<br>
+    Background: ${game.background}<br>
+    Home: ${game.home}
+   </p>
+
+  </div>
+
+  <div class="card">
+
+   <h3>Statistics</h3>
+
+   <p>
+    Work: ${game.stats.work}<br>
+    Study: ${game.stats.study}<br>
+    Travel: ${game.stats.travel}<br>
+    Conversations: ${game.stats.conversations}<br>
+    Locations: ${game.stats.visited.length}
+   </p>
+
+  </div>
+
+  <div class="card">
+
+   <h3>Money</h3>
+
+   <p>
+    Cash: ${money(game.cash)}<br>
+    Debt: ${money(game.debt)}
+   </p>
+
+  </div>
+
+  <div class="card">
+
+   <h3>World Progress</h3>
+
+   <p>
+    Locations discovered:
+    ${game.stats.visited.length}
+   </p>
+
+  </div>
+
+ </div>
+
+ <div class="card" style="margin-top:14px">
+
+  <h3>📜 Life Log</h3>
+
+  <div class="list" style="margin-top:10px">
+
+   ${game.logs.slice(0,30).map(l=>`
+    <div class="item">${l}</div>
+   `).join("")}
+
+  </div>
+
+ </div>
+
+ `;
+}
+
+/* =====================================================
+   EVENTS
+===================================================== */
+
+document.addEventListener("click",function(e){
+
+ const pageButton=e.target.closest("[data-page]");
+
+ if(pageButton){
+
+  page=pageButton.dataset.page;
+
+  render();
+
+  return;
+ }
+
+ const keyButton=e.target.closest("[data-key]");
+
+ if(keyButton){
+
+  const key=keyButton.dataset.key;
+
+  keys[key]=true;
+
+  setTimeout(()=>{
+   keys[key]=false;
+  },180);
+
+  return;
+ }
+
+ const npc=e.target.closest(".npc");
+
+ if(npc){
+
+  openNPC(npc.dataset.npc);
+
+  return;
+ }
+
+ const action=e.target.closest("[data-action]");
+
+ if(!action)return;
+
+ const type=action.dataset.action;
+
+ switch(type){
+
+  case"start":
+   start();
+   break;
+
+  case"interact":
+   interact();
+   break;
+
+  case"close-npc":
+   closeNPC();
+   break;
+
+  case"npc-talk":
+   npcTalk(action.dataset.type);
+   break;
+
+  case"work":
+   work();
+   break;
+
+  case"study":
+   study();
+   break;
+
+  case"rest":
+   rest();
+   break;
+
+  case"eat":
+   eat();
+   break;
+
+  case"shop":
+   shop();
+   break;
+
+  case"travel":
+   travel(action.dataset.id);
+   break;
+
+  case"career":
+   chooseCareer(Number(action.dataset.index));
+   break;
+
+  case"business":
+   startBusiness(Number(action.dataset.index));
+   break;
+
+  case"operate":
+   operateBusiness(Number(action.dataset.index));
+   break;
+
+  case"home":
+   buyHome(Number(action.dataset.index));
+   break;
+
+  case"goto-npc":{
+
+   const n=game.npcs.find(
+    x=>x.id===action.dataset.id
+   );
+
+   if(n){
+    travel(n.location);
+
+    page="world";
+
+    render();
+   }
+
+   break;
+  }
+
+  case"clear-phone":
+
+   game.phone=[];
+
+   save();
+   render();
+
+   break;
+
+  case"save":
+
+   save();
+   toast("Game saved 💾");
+
+   break;
+
+  case"new":{
+
+   const yes=confirm(
+    "Start a new life? Your V30 save will be replaced."
+   );
+
+   if(yes){
+
+    localStorage.removeItem(SAVE_KEY);
+
+    game=null;
+
+    document.getElementById("app").innerHTML="";
+
+    document.getElementById("startModal")
+     .classList.remove("hidden");
+   }
+
+   break;
+  }
+
+ }
+
+});
+
+/* =====================================================
+   KEYBOARD
+===================================================== */
+
+window.addEventListener("keydown",function(e){
+
+ if(
+  ["ArrowUp","ArrowDown","ArrowLeft","ArrowRight",
+   "w","a","s","d",
+   "W","A","S","D"].includes(e.key)
+ ){
+
+  e.preventDefault();
+
+  if(e.key==="W")keys.w=true;
+  else if(e.key==="A")keys.a=true;
+  else if(e.key==="S")keys.s=true;
+  else if(e.key==="D")keys.d=true;
+  else keys[e.key]=true;
+ }
+});
+
+window.addEventListener("keyup",function(e){
+
+ if(e.key==="W")keys.w=false;
+ else if(e.key==="A")keys.a=false;
+ else if(e.key==="S")keys.s=false;
+ else if(e.key==="D")keys.d=false;
+ else keys[e.key]=false;
+});
+
+/* =====================================================
+   GAME LOOP
+===================================================== */
+
+setInterval(()=>{
+
+ if(game){
+
+  movePlayer();
+
+ }
+
+},50);
+
+/* NPC movement */
+
+setInterval(()=>{
+
+ if(game){
+
+  moveNPCs();
+
+ }
+
+},7000);
+
+/* AUTOSAVE */
+
+setInterval(()=>{
+
+ if(game){
+  save();
+ }
+
+},15000);
+
+/* =====================================================
+   INIT
+===================================================== */
+
+load();
+
+</script>
+
+<noscript>
+ <div style="
+ position:fixed;
+ inset:0;
+ background:#06101c;
+ color:white;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ padding:30px;
+ text-align:center;
+ font-family:Arial">
+ JavaScript must be enabled to play Kaduna Life.
+ </div>
+</noscript>
+
+</body>
+</html>
