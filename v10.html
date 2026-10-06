@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kaduna Life — V10</title>
+
+<style>
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#0b1020;
+  color:#fff;
+}
+
+header{
+  padding:18px;
+  text-align:center;
+  background:linear-gradient(135deg,#182848,#4b6cb7);
+  box-shadow:0 3px 15px rgba(0,0,0,.4);
+}
+
+header h1{
+  margin:0;
+  font-size:28px;
+}
+
+header p{
+  margin:6px 0 0;
+  opacity:.85;
+}
+
+.container{
+  max-width:1100px;
+  margin:auto;
+  padding:15px;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+  margin-bottom:15px;
+}
+
+.stat{
+  background:#151d33;
+  padding:13px;
+  border-radius:12px;
+  text-align:center;
+  border:1px solid #27304b;
+}
+
+.stat small{
+  display:block;
+  color:#9da8c5;
+  margin-bottom:5px;
+}
+
+.stat strong{
+  font-size:18px;
+}
+
+.card{
+  background:#121a2d;
+  border:1px solid #27304b;
+  border-radius:16px;
+  padding:16px;
+  margin-bottom:15px;
+  box-shadow:0 8px 25px rgba(0,0,0,.18);
+}
+
+.card h2{
+  margin-top:0;
+}
+
+.map{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+
+.location{
+  background:#1b2743;
+  border:1px solid #354467;
+  border-radius:12px;
+  padding:15px;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.location:hover{
+  transform:translateY(-2px);
+  background:#243455;
+}
+
+.location.active{
+  border:2px solid #6ea8fe;
+}
+
+.location h3{
+  margin:0 0 5px;
+}
+
+.location p{
+  margin:0;
+  color:#aeb9d4;
+  font-size:13px;
+}
+
+.buttons{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:9px;
+}
+
+button{
+  border:0;
+  border-radius:10px;
+  padding:12px;
+  background:#273b68;
+  color:white;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+button:hover{
+  background:#38558e;
+}
+
+button:active{
+  transform:scale(.98);
+}
+
+.people{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+
+.npc{
+  background:#1a243b;
+  border:1px solid #34425f;
+  border-radius:14px;
+  padding:14px;
+}
+
+.npc h3{
+  margin:0 0 5px;
+}
+
+.npc .role{
+  color:#9faac5;
+  font-size:13px;
+}
+
+.npcStats{
+  margin:10px 0;
+  font-size:13px;
+}
+
+.progress{
+  height:7px;
+  background:#30394d;
+  border-radius:20px;
+  overflow:hidden;
+  margin-top:5px;
+}
+
+.progress div{
+  height:100%;
+  background:#65d6a6;
+}
+
+.log{
+  max-height:220px;
+  overflow-y:auto;
+  background:#0c1324;
+  padding:12px;
+  border-radius:10px;
+  font-size:14px;
+}
+
+.log p{
+  margin:7px 0;
+  border-bottom:1px solid #202a40;
+  padding-bottom:7px;
+}
+
+.dialogue{
+  background:#0d1528;
+  border:1px solid #33415f;
+  border-radius:12px;
+  padding:15px;
+  margin-top:10px;
+}
+
+.choice{
+  display:block;
+  width:100%;
+  text-align:left;
+  margin-top:8px;
+}
+
+.quest{
+  background:#17243d;
+  padding:12px;
+  border-radius:10px;
+  margin-bottom:8px;
+}
+
+.quest strong{
+  display:block;
+  margin-bottom:5px;
+}
+
+.badge{
+  display:inline-block;
+  padding:4px 8px;
+  border-radius:20px;
+  background:#2c416d;
+  font-size:12px;
+  margin-top:6px;
+}
+
+@media(max-width:700px){
+  .stats{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .map{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .buttons{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .people{
+    grid-template-columns:1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🏙️ Kaduna Life</h1>
+  <p>V10 — People, Reputation & Opportunities</p>
+</header>
+
+<div class="container">
+
+  <div class="stats">
+
+    <div class="stat">
+      <small>💰 Money</small>
+      <strong id="money">₦0</strong>
+    </div>
+
+    <div class="stat">
+      <small>❤️ Health</small>
+      <strong id="health">100</strong>
+    </div>
+
+    <div class="stat">
+      <small>😊 Mood</small>
+      <strong id="mood">70</strong>
+    </div>
+
+    <div class="stat">
+      <small>⚡ Energy</small>
+      <strong id="energy">80</strong>
+    </div>
+
+    <div class="stat">
+      <small>📚 Education</small>
+      <strong id="education">50</strong>
+    </div>
+
+    <div class="stat">
+      <small>⭐ Reputation</small>
+      <strong id="reputation">0</strong>
+    </div>
+
+    <div class="stat">
+      <small>📅 Day</small>
+      <strong id="day">1</strong>
+    </div>
+
+    <div class="stat">
+      <small>📍 Location</small>
+      <strong id="location">Barnawa</strong>
+    </div>
+
+  </div>
+
+  <div class="card">
+    <h2>🗺️ Kaduna Map</h2>
+
+    <div class="map">
+
+      <div class="location" onclick="travel('Barnawa')" id="loc-Barnawa">
+        <h3>🏘️ Barnawa</h3>
+        <p>Residential area</p>
+      </div>
+
+      <div class="location" onclick="travel('Kaduna Central')" id="loc-Kaduna Central">
+        <h3>🏙️ Kaduna Central</h3>
+        <p>Busy city centre</p>
+      </div>
+
+      <div class="location" onclick="travel('Kawo')" id="loc-Kawo">
+        <h3>🛍️ Kawo</h3>
+        <p>Markets & businesses</p>
+      </div>
+
+      <div class="location" onclick="travel('Sabon Tasha')" id="loc-Sabon Tasha">
+        <h3>🏠 Sabon Tasha</h3>
+        <p>Homes & shops</p>
+      </div>
+
+      <div class="location" onclick="travel('Unguwan Rimi')" id="loc-Unguwan Rimi">
+        <h3>🌆 Unguwan Rimi</h3>
+        <p>Urban neighbourhood</p>
+      </div>
+
+      <div class="location" onclick="travel('Malali')" id="loc-Malali">
+        <h3>🌳 Malali</h3>
+        <p>Quiet neighbourhood</p>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🎮 Actions</h2>
+
+    <div class="buttons">
+      <button onclick="work()">💼 Work</button>
+      <button onclick="study()">📚 Study</button>
+      <button onclick="eat()">🍛 Eat</button>
+      <button onclick="rest()">😴 Rest</button>
+      <button onclick="hangout()">😎 Hangout</button>
+      <button onclick="explore()">🔎 Explore</button>
+      <button onclick="saveGame()">💾 Save</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>👥 People Nearby</h2>
+
+    <div id="people" class="people"></div>
+
+    <div id="dialogue"></div>
+  </div>
+
+  <div class="card">
+    <h2>📋 Opportunities</h2>
+    <div id="quests"></div>
+  </div>
+
+  <div class="card">
+    <h2>📜 Life Log</h2>
+    <div id="log" class="log"></div>
+  </div>
+
+</div>
+
+<script>
+
+const locations = [
+  "Barnawa",
+  "Kaduna Central",
+  "Kawo",
+  "Sabon Tasha",
+  "Unguwan Rimi",
+  "Malali"
+];
+
+const npcDefaults = {
+
+  Aisha:{
+    name:"Aisha",
+    role:"Student",
+    location:"Kaduna Central",
+    friendship:20,
+    trust:15,
+    mood:70
+  },
+
+  Musa:{
+    name:"Musa",
+    role:"Shopkeeper",
+    location:"Kawo",
+    friendship:15,
+    trust:20,
+    mood:65
+  },
+
+  Zara:{
+    name:"Zara",
+    role:"Neighbour",
+    location:"Barnawa",
+    friendship:25,
+    trust:20,
+    mood:75
+  },
+
+  Sadiq:{
+    name:"Sadiq",
+    role:"Mechanic",
+    location:"Sabon Tasha",
+    friendship:10,
+    trust:25,
+    mood:60
+  },
+
+  Maryam:{
+    name:"Maryam",
+    role:"Student",
+    location:"Malali",
+    friendship:18,
+    trust:18,
+    mood:72
+  },
+
+  Daniel:{
+    name:"Daniel",
+    role:"Job Recruiter",
+    location:"Unguwan Rimi",
+    friendship:5,
+    trust:30,
+    mood:60
+  }
+
+};
+
+let saved = JSON.parse(
+  localStorage.getItem("kadunaLifeV10") ||
+  localStorage.getItem("kadunaLifeV8") ||
+  "{}"
+);
+
+let game = {
+
+  money: saved.money ?? 15000,
+  health: saved.health ?? 100,
+  mood: saved.mood ?? 70,
+  energy: saved.energy ?? 80,
+  education: saved.education ?? 50,
+  day: saved.day ?? 1,
+  location: saved.location ?? "Barnawa",
+  reputation: saved.reputation ?? 0,
+
+  relationships: saved.relationships || {},
+
+  quests: saved.quests || [],
+
+  log: saved.log || [
+    "🏙️ Welcome to Kaduna Life V10.",
+    "👥 People now live and interact around Kaduna."
+  ]
+};
+
+for(const key in npcDefaults){
+
+  if(!game.relationships[key]){
+
+    game.relationships[key] = {
+      friendship:npcDefaults[key].friendship,
+      trust:npcDefaults[key].trust,
+      mood:npcDefaults[key].mood
+    };
+
+  }
+
+}
+
+let activeNPC = null;
+
+function clamp(value,min,max){
+
+  return Math.max(min,Math.min(max,value));
+
+}
+
+function moneyFormat(value){
+
+  return "₦" + Math.floor(value).toLocaleString();
+
+}
+
+function log(message){
+
+  game.log.unshift(message);
+
+  if(game.log.length > 40){
+
+    game.log.pop();
+
+  }
+
+  renderLog();
+
+}
+
+function renderStats(){
+
+  document.getElementById("money").textContent =
+    moneyFormat(game.money);
+
+  document.getElementById("health").textContent =
+    game.health;
+
+  document.getElementById("mood").textContent =
+    game.mood;
+
+  document.getElementById("energy").textContent =
+    game.energy;
+
+  document.getElementById("education").textContent =
+    game.education;
+
+  document.getElementById("reputation").textContent =
+    game.reputation;
+
+  document.getElementById("day").textContent =
+    game.day;
+
+  document.getElementById("location").textContent =
+    game.location;
+
+  locations.forEach(loc=>{
+
+    const element =
+      document.getElementById("loc-"+loc);
+
+    if(element){
+
+      element.classList.toggle(
+        "active",
+        loc === game.location
+      );
+
+    }
+
+  });
+
+}
+
+function renderLog(){
+
+  document.getElementById("log").innerHTML =
+    game.log.map(item=>`<p>${item}</p>`).join("");
+
+}
+
+function getNearbyNPCs(){
+
+  return Object.keys(npcDefaults).filter(
+
+    key => npcDefaults[key].location === game.location
+
+  );
+
+}
+
+function renderPeople(){
+
+  const container =
+    document.getElementById("people");
+
+  const nearby = getNearbyNPCs();
+
+  if(nearby.length === 0){
+
+    container.innerHTML =
+      "<p>No one you know is here right now.</p>";
+
+    return;
+
+  }
+
+  container.innerHTML = nearby.map(key=>{
+
+    const npc = npcDefaults[key];
+
+    const rel = game.relationships[key];
+
+    return `
+
+      <div class="npc">
+
+        <h3>👤 ${npc.name}</h3>
+
+        <div class="role">
+          ${npc.role}
+        </div>
+
+        <div class="npcStats">
+
+          🤝 Friendship: ${rel.friendship}
+
+          <div class="progress">
+            <div style="width:${rel.friendship}%"></div>
+          </div>
+
+          <br>
+
+          🔐 Trust: ${rel.trust}
+
+          <div class="progress">
+            <div style="width:${rel.trust}%"></div>
+          </div>
+
+        </div>
+
+        <span class="badge">
+          ${npc.location}
+        </span>
+
+        <br><br>
+
+        <button onclick="talk('${key}')">
+          💬 Talk
+        </button>
+
+      </div>
+
+    `;
+
+  }).join("");
+
+}
+
+function talk(key){
+
+  activeNPC = key;
+
+  const npc = npcDefaults[key];
+
+  const rel = game.relationships[key];
+
+  let greeting =
+    `👤 <strong>${npc.name}</strong><br><br>`;
+
+  if(rel.friendship >= 70){
+
+    greeting +=
+      `"Good to see you again! You're becoming one of my favourite people to talk to."`;
+
+  }else if(rel.friendship >= 40){
+
+    greeting +=
+      `"Hey! Nice seeing you around."`;
+
+  }else{
+
+    greeting +=
+      `"Hey. What's up?"`;
+
+  }
+
+  document.getElementById("dialogue").innerHTML = `
+
+    <div class="dialogue">
+
+      ${greeting}
+
+      <button class="choice"
+        onclick="dialogueChoice('friendly')">
+        😊 Be friendly
+      </button>
+
+      <button class="choice"
+        onclick="dialogueChoice('funny')">
+        😂 Make a joke
+      </button>
+
+      <button class="choice"
+        onclick="dialogueChoice('work')">
+        💼 Ask about opportunities
+      </button>
+
+      <button class="choice"
+        onclick="dialogueChoice('rude')">
+        😒 Act rude
+      </button>
+
+    </div>
+
+  `;
+
+}
+
+function dialogueChoice(type){
+
+  if(!activeNPC) return;
+
+  const npc =
+    npcDefaults[activeNPC];
+
+  const rel =
+    game.relationships[activeNPC];
+
+  if(type === "friendly"){
+
+    rel.friendship =
+      clamp(rel.friendship + 8,0,100);
+
+    rel.trust =
+      clamp(rel.trust + 5,0,100);
+
+    game.mood =
+      clamp(game.mood + 3,0,100);
+
+    game.reputation += 1;
+
+    log(
+      `😊 You had a friendly conversation with ${npc.name}.`
+    );
+
+  }
+
+  if(type === "funny"){
+
+    rel.friendship =
+      clamp(rel.friendship + 5,0,100);
+
+    rel.mood =
+      clamp(rel.mood + 5,0,100);
+
+    game.mood =
+      clamp(game.mood + 5,0,100);
+
+    log(
+      `😂 ${npc.name} laughed at your joke.`
+    );
+
+  }
+
+  if(type === "rude"){
+
+    rel.friendship =
+      clamp(rel.friendship - 8,0,100);
+
+    rel.trust =
+      clamp(rel.trust - 6,0,100);
+
+    game.reputation =
+      clamp(game.reputation - 1,-100,100);
+
+    log(
+      `😬 You were rude to ${npc.name}.`
+    );
+
+  }
+
+  if(type === "work"){
+
+    if(npc.role === "Job Recruiter"){
+
+      if(!game.quests.includes("recruiterJob")){
+
+        game.quests.push("recruiterJob");
+
+        log(
+          `💼 ${npc.name} told you about a temporary job opportunity.`
+        );
+
+      }else{
+
+        log(
+          `💼 ${npc.name} says you already have the job opportunity.`
+        );
+
+      }
+
+    }else{
+
+      rel.trust =
+        clamp(rel.trust + 3,0,100);
+
+      log(
+        `💬 ${npc.name} doesn't have a job for you right now.`
+      );
+
+    }
+
+  }
+
+  activeNPC = null;
+
+  document.getElementById("dialogue").innerHTML = "";
+
+  renderAll();
+
+  saveGame();
+
+}
+
+function work(){
+
+  if(game.energy < 15){
+
+    log("⚡ You're too tired to work.");
+
+    return;
+
+  }
+
+  const earnings =
+    Math.floor(Math.random()*2500)+1500;
+
+  game.money += earnings;
+
+  game.energy -= 15;
+
+  game.mood =
+    clamp(game.mood - 3,0,100);
+
+  game.day++;
+
+  game.reputation += 1;
+
+  log(
+    `💼 You worked and earned ${moneyFormat(earnings)}.`
+  );
+
+  randomEvent();
+
+  renderAll();
+
+  saveGame();
+
+}
+
+function study(){
+
+  if(game.energy < 10){
+
+    log("⚡ You need more energy before studying.");
+
+    return;
+
+  }
+
+  game.education =
+    clamp(game.education + 4,0,100);
+
+  game.energy -= 10;
+
+  game.day++;
+
+  log("📚 You studied and improved your education.");
+
+  renderAll();
+
+  saveGame();
+
+}
+
+function eat(){
+
+  if(game.money < 1000){
+
+    log("💸 You don't have enough money for food.");
+
+    return;
+
+  }
+
+  game.money -= 1000;
+
+  game.health =
+    clamp(game.health + 8,0,100);
+
+  game.energy =
+    clamp(game.energy + 8,0,100);
+
+  game.mood =
+    clamp(game.mood + 4,0,100);
+
+  log("🍛 You bought food and had a good meal.");
+
+  renderAll();
+
+  saveGame();
+
+}
+
+function rest(){
+
+  game.energy =
+    clamp(game.energy + 25,0,100);
+
+  game.health =
+    clamp(game.health + 5,0,100);
+
+  game.day++;
+
+  log("😴 You rested and recovered some energy.");
+
+  randomEvent();
+
+  renderAll();
+
+  saveGame();
+
+}
+
+function hangout(){
+
+  if(game.energy < 8){
+
+    log("⚡ You're too tired to hang out.");
+
+    return;
+
+  }
+
+  game.energy -= 8;
+
+  game.mood =
+    clamp(game.mood + 12,0,100);
+
+  game.reputation += 1;
+
+  log(
+    `😎 You hung out around ${game.location}.`
+  );
+
+  renderAll();
+
+  saveGame();
+
+}
+
+function explore(){
+
+  if(game.energy < 12){
+
+    log("⚡ You need more energy to explore.");
+
+    return;
+
+  }
+
+  game.energy -= 12;
+
+  game.day++;
+
+  const events = [
+
+    "🎲 You discovered a quiet spot in the area.",
+
+    "🎲 You met someone who may become useful later.",
+
+    "🎲 You found a shortcut through the neighbourhood.",
+
+    "🎲 A local shopkeeper remembered your face.",
+
+    "🎲 You heard about a new opportunity nearby.",
+
+    "🎲 You helped someone and gained a little reputation."
+
+  ];
+
+  const event =
+    events[Math.floor(Math.random()*events.length)];
+
+  log(event);
+
+  game.reputation += 1;
+
+  randomEvent();
+
+  renderAll();
+
+  saveGame();
+
+}
+
+function travel(destination){
+
+  if(destination === game.location){
+
+    log(`📍 You're already in ${destination}.`);
+
+    return;
+
+  }
+
+  if(game.energy < 5){
+
+    log("⚡ You don't have enough energy to travel.");
+
+    return;
+
+  }
+
+  if(game.money < 500){
+
+    log("💸 You need ₦500 for transport.");
+
+    return;
+
+  }
+
+  game.money -= 500;
+
+  game.energy -= 5;
+
+  game.location = destination;
+
+  log(
+    `🚌 You travelled to ${destination}.`
+  );
+
+  encounterOnTravel();
+
+  renderAll();
+
+  saveGame();
+
+}
+
+function encounterOnTravel(){
+
+  const nearby =
+    getNearbyNPCs();
+
+  if(nearby.length === 0) return;
+
+  if(Math.random() > .55) return;
+
+  const key =
+    nearby[Math.floor(Math.random()*nearby.length)];
+
+  const npc =
+    npcDefaults[key];
+
+  log(
+    `👋 You spotted ${npc.name} around ${game.location}.`
+  );
+
+}
+
+function randomEvent(){
+
+  if(Math.random() > .45) return;
+
+  const events = [
+
+    {
+      text:"🎉 Someone complimented your work today.",
+      mood:5
+    },
+
+    {
+      text:"😅 Transport cost you more than expected.",
+      money:-500
+    },
+
+    {
+      text:"💰 You found a small business opportunity.",
+      money:1000
+    },
+
+    {
+      text:"🤝 You helped someone in the community.",
+      reputation:2
+    },
+
+    {
+      text:"😓 You had a stressful moment.",
+      mood:-5
+    }
+
+  ];
+
+  const event =
+    events[Math.floor(Math.random()*events.length)];
+
+  log(event.text);
+
+  if(event.money){
+
+    game.money += event.money;
+
+    if(event.money < 0){
+
+      game.money =
+        Math.max(0,game.money);
+
+    }
+
+  }
+
+  if(event.mood){
+
+    game.mood =
+      clamp(game.mood + event.mood,0,100);
+
+  }
+
+  if(event.reputation){
+
+    game.reputation += event.reputation;
+
+  }
+
+}
+
+function renderQuests(){
+
+  const container =
+    document.getElementById("quests");
+
+  if(game.quests.length === 0){
+
+    container.innerHTML =
+      "<p>No active opportunities yet. Talk to people and explore Kaduna.</p>";
+
+    return;
+
+  }
+
+  container.innerHTML =
+    game.quests.map(q=>{
+
+      if(q === "recruiterJob"){
+
+        return `
+
+          <div class="quest">
+
+            <strong>💼 Temporary Job</strong>
+
+            Daniel mentioned a temporary opportunity.
+
+            <br><br>
+
+            <button onclick="completeRecruiterJob()">
+              Complete Job
+            </button>
+
+          </div>
+
+        `;
+
+      }
+
+      return "";
+
+    }).join("");
+
+}
+
+function completeRecruiterJob(){
+
+  if(!game.quests.includes("recruiterJob")){
+
+    return;
+
+  }
+
+  game.money += 5000;
+
+  game.reputation += 3;
+
+  game.energy =
+    clamp(game.energy - 15,0,100);
+
+  game.quests =
+    game.quests.filter(q=>q !== "recruiterJob");
+
+  log(
+    "💼 You completed the temporary job and earned ₦5,000."
+  );
+
+  renderAll();
+
+  saveGame();
+
+}
+
+function saveGame(){
+
+  localStorage.setItem(
+    "kadunaLifeV10",
+    JSON.stringify(game)
+  );
+
+  logSave();
+
+}
+
+function logSave(){
+
+  // Prevent save messages from filling the activity log.
+}
+
+function renderAll(){
+
+  renderStats();
+
+  renderPeople();
+
+  renderQuests();
+
+  renderLog();
+
+}
+
+renderAll();
+
+</script>
+
+</body>
+</html>
