@@ -1,3342 +1,1608 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Kaduna Life — V16.1</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kaduna Life</title>
 
 <style>
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-}
+    * {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+    }
 
-body{
-  font-family:Arial,Helvetica,sans-serif;
-  background:#07110d;
-  color:#f1f7f3;
-  padding:14px;
-}
+    body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #07140f;
+        color: #f4fff8;
+    }
 
-.container{
-  max-width:1100px;
-  margin:auto;
-}
+    button {
+        width: 100%;
+        border: 0;
+        border-radius: 12px;
+        padding: 14px;
+        margin: 6px 0;
+        background: #16a36a;
+        color: white;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+    }
 
-header{
-  background:linear-gradient(135deg,#0e2a1d,#123d29);
-  padding:22px;
-  border-radius:18px;
-  margin-bottom:14px;
-  border:1px solid #24563c;
-}
+    button:active {
+        transform: scale(.98);
+    }
 
-h1{
-  font-size:28px;
-  margin-bottom:5px;
-}
+    .danger {
+        background: #c0392b;
+    }
 
-.subtitle{
-  color:#9cc9ad;
-}
+    .gold {
+        background: #b8860b;
+    }
 
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:12px;
-}
+    .blue {
+        background: #2878d7;
+    }
 
-.card{
-  background:#0c1b14;
-  border:1px solid #1c3b2b;
-  border-radius:16px;
-  padding:16px;
-  margin-bottom:14px;
-}
+    .purple {
+        background: #7650c8;
+    }
 
-.card h2{
-  font-size:19px;
-  margin-bottom:12px;
-  color:#b9e7c8;
-}
+    header {
+        background: linear-gradient(135deg, #0d3b28, #0a2118);
+        padding: 22px 16px;
+        text-align: center;
+        border-bottom: 1px solid #1e6044;
+    }
 
-.stat{
-  background:#10241a;
-  border-radius:12px;
-  padding:12px;
-  border:1px solid #1c3b2b;
-}
+    header h1 {
+        margin: 0;
+        font-size: 29px;
+    }
 
-.stat strong{
-  display:block;
-  font-size:19px;
-  margin-top:4px;
-}
+    header p {
+        margin: 7px 0 0;
+        color: #a9cdbb;
+    }
 
-button{
-  background:#1d6f43;
-  color:white;
-  border:0;
-  padding:11px 13px;
-  border-radius:10px;
-  margin:5px 4px 5px 0;
-  font-weight:bold;
-  cursor:pointer;
-}
+    .container {
+        max-width: 850px;
+        margin: auto;
+        padding: 12px;
+    }
 
-button:hover{
-  background:#278d56;
-}
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 9px;
+    }
 
-button.secondary{
-  background:#244235;
-}
+    .stat {
+        background: #10231a;
+        border: 1px solid #1c4935;
+        border-radius: 13px;
+        padding: 13px;
+    }
 
-button.warning{
-  background:#795c19;
-}
+    .stat small {
+        color: #9ab4a6;
+    }
 
-button.danger{
-  background:#7b2929;
-}
+    .stat strong {
+        display: block;
+        font-size: 19px;
+        margin-top: 4px;
+    }
 
-button:disabled{
-  opacity:.45;
-  cursor:not-allowed;
-}
+    .money {
+        color: #70e6a9;
+    }
 
-.item{
-  background:#0f2519;
-  border:1px solid #204832;
-  padding:13px;
-  border-radius:12px;
-  margin:8px 0;
-}
+    .section {
+        margin-top: 14px;
+        background: #0d1d16;
+        border: 1px solid #1b3c2d;
+        border-radius: 15px;
+        padding: 15px;
+    }
 
-.item-title{
-  font-weight:bold;
-  font-size:16px;
-}
+    .section h2 {
+        margin: 0 0 10px;
+        font-size: 19px;
+    }
 
-.small{
-  color:#9eb5a6;
-  font-size:13px;
-  margin-top:4px;
-}
+    .card {
+        background: #13281e;
+        border-radius: 11px;
+        padding: 12px;
+        margin: 8px 0;
+    }
 
-.money{
-  color:#7de29c;
-  font-weight:bold;
-}
+    .card-title {
+        font-weight: bold;
+        font-size: 16px;
+    }
 
-.good{
-  color:#73df95;
-}
+    .muted {
+        color: #9eb4a7;
+        font-size: 13px;
+        line-height: 1.5;
+    }
 
-.bad{
-  color:#ff8b8b;
-}
+    .row {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        align-items: center;
+    }
 
-.warning-text{
-  color:#f1c96b;
-}
+    .row button {
+        width: auto;
+        min-width: 110px;
+        margin: 0;
+    }
 
-.bar{
-  height:8px;
-  background:#15271d;
-  border-radius:20px;
-  overflow:hidden;
-  margin-top:7px;
-}
+    .location-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
 
-.bar span{
-  display:block;
-  height:100%;
-  background:#42a968;
-}
+    .location {
+        background: #12291f;
+        border: 1px solid #24553e;
+        padding: 14px 8px;
+        border-radius: 12px;
+        text-align: center;
+        font-weight: bold;
+    }
 
-.log{
-  max-height:260px;
-  overflow-y:auto;
-}
+    .log {
+        max-height: 240px;
+        overflow-y: auto;
+    }
 
-.log-entry{
-  padding:9px;
-  border-bottom:1px solid #193426;
-  font-size:14px;
-}
+    .log-item {
+        padding: 9px 0;
+        border-bottom: 1px solid #20382c;
+        font-size: 13px;
+    }
 
-.goal{
-  display:flex;
-  justify-content:space-between;
-  gap:10px;
-  align-items:center;
-}
+    .modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,.78);
+        z-index: 1000;
+        padding: 18px;
+        overflow-y: auto;
+    }
 
-.badge{
-  display:inline-block;
-  background:#183d29;
-  color:#9de0b3;
-  padding:5px 8px;
-  border-radius:8px;
-  font-size:12px;
-}
+    .modal-box {
+        max-width: 600px;
+        margin: 30px auto;
+        background: #0d2117;
+        border: 1px solid #286447;
+        border-radius: 17px;
+        padding: 18px;
+    }
 
-footer{
-  text-align:center;
-  color:#6f8e7b;
-  padding:20px;
-}
+    .modal-box h2 {
+        margin-top: 0;
+    }
 
-@media(max-width:600px){
-  body{
-    padding:9px;
-  }
+    footer {
+        text-align: center;
+        padding: 25px 10px;
+        color: #6f8e7e;
+        font-size: 12px;
+    }
 
-  header{
-    padding:17px;
-  }
+    @media (min-width: 650px) {
+        .stats {
+            grid-template-columns: repeat(4, 1fr);
+        }
 
-  h1{
-    font-size:23px;
-  }
-
-  button{
-    width:100%;
-    margin:4px 0;
-  }
-
-  .goal{
-    flex-direction:column;
-    align-items:flex-start;
-  }
-}
+        .location-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
 </style>
 </head>
 
 <body>
 
-<div class="container">
-
 <header>
-  <h1>🏙️ Kaduna Life</h1>
-  <div class="subtitle">V16.1 — Economy Gameplay Update</div>
+    <h1>🏙️ Kaduna Life</h1>
+    <p>Build your life. Make your choices. Create your story.</p>
 </header>
 
-<div id="stats" class="grid"></div>
+<div class="container">
 
-<div class="card">
-  <h2>📊 Financial Overview</h2>
-  <div id="finance" class="grid"></div>
-</div>
+    <div class="stats">
+        <div class="stat">
+            <small>💰 Money</small>
+            <strong class="money" id="money">₦15,000</strong>
+        </div>
 
-<div class="card">
-  <h2>💼 Career</h2>
-  <div id="career"></div>
-</div>
+        <div class="stat">
+            <small>❤️ Health</small>
+            <strong id="health">100</strong>
+        </div>
 
-<div class="card">
-  <h2>🏪 Businesses</h2>
-  <div id="businesses"></div>
-</div>
+        <div class="stat">
+            <small>😊 Mood</small>
+            <strong id="mood">70</strong>
+        </div>
 
-<div class="card">
-  <h2>🏠 Home</h2>
-  <div id="homes"></div>
-</div>
+        <div class="stat">
+            <small>⚡ Energy</small>
+            <strong id="energy">80</strong>
+        </div>
 
-<div class="card">
-  <h2>🚗 Transportation</h2>
-  <div id="vehicles"></div>
-</div>
+        <div class="stat">
+            <small>📚 Education</small>
+            <strong id="education">50</strong>
+        </div>
 
-<div class="card">
-  <h2>🎒 Inventory</h2>
-  <div id="inventory"></div>
-</div>
+        <div class="stat">
+            <small>⭐ Reputation</small>
+            <strong id="reputation">0</strong>
+        </div>
 
-<div class="card">
-  <h2>🌍 Daily Economy</h2>
-  <div id="dailyActions"></div>
-</div>
+        <div class="stat">
+            <small>📅 Day</small>
+            <strong id="day">1</strong>
+        </div>
 
-<div class="card">
-  <h2>🎯 Financial Goals</h2>
-  <div id="goals"></div>
-</div>
+        <div class="stat">
+            <small>📍 Location</small>
+            <strong id="location">Barnawa</strong>
+        </div>
+    </div>
 
-<div class="card">
-  <h2>🗺️ Kaduna Map</h2>
-  <div id="map"></div>
-</div>
+    <!-- CAREER -->
+    <div class="section">
+        <h2>💼 Career</h2>
 
-<div class="card">
-  <h2>⚡ Quick Actions</h2>
-  <div id="quickActions"></div>
-</div>
+        <div class="card">
+            <div class="row">
+                <div>
+                    <div class="card-title" id="careerName">Unemployed</div>
+                    <div class="muted">
+                        Level <span id="careerLevel">1</span> ·
+                        XP <span id="careerXP">0</span>
+                    </div>
+                </div>
+            </div>
 
-<div class="card">
-  <h2>👥 People Nearby</h2>
-  <div id="people"></div>
-</div>
+            <button onclick="openJobs()">💼 Find a Job</button>
+            <button onclick="work()">🧑‍💼 Work</button>
+        </div>
+    </div>
 
-<div class="card">
-  <h2>🎯 Opportunities</h2>
-  <div id="opportunities"></div>
-</div>
+    <!-- DAILY ACTIONS -->
+    <div class="section">
+        <h2>⚡ Daily Actions</h2>
 
-<div class="card">
-  <h2>📒 Financial History</h2>
-  <div id="financeHistory" class="log"></div>
-</div>
+        <button onclick="eat()">🍲 Eat — ₦500</button>
+        <button onclick="study()">📚 Study</button>
+        <button onclick="hangout()">😎 Hangout — ₦300</button>
+        <button onclick="rest()">😴 Rest</button>
+        <button onclick="explore()">🔎 Explore</button>
+        <button class="gold" onclick="endDay()">🌙 End Day</button>
+    </div>
 
-<div class="card">
-  <h2>📜 Life Log</h2>
-  <div id="lifeLog" class="log"></div>
-</div>
+    <!-- HOME -->
+    <div class="section">
+        <h2>🏠 Home</h2>
 
-<div class="card">
-  <h2>⚙️ Game Controls</h2>
-  <button onclick="saveGame(true)">💾 Save Game</button>
-  <button class="secondary" onclick="repairSave()">🛠️ Repair Save</button>
-  <button class="danger" onclick="newGame()">🔄 Start New Game</button>
+        <div class="card">
+            <div class="card-title" id="homeName">No Home</div>
+            <div class="muted" id="homeDetails">
+                You currently don't own a home.
+            </div>
+        </div>
+
+        <button onclick="openHomes()">🏠 View Homes</button>
+        <button onclick="homeRest()">🛏️ Rest At Home</button>
+    </div>
+
+    <!-- TRANSPORT -->
+    <div class="section">
+        <h2>🚗 Transportation</h2>
+
+        <div class="card">
+            <div class="card-title" id="vehicleName">Walking</div>
+            <div class="muted" id="vehicleDetails">
+                No vehicle selected.
+            </div>
+        </div>
+
+        <button onclick="openVehicles()">🚗 Vehicle Market</button>
+        <button onclick="refuel()">⛽ Refuel — ₦1,000</button>
+    </div>
+
+    <!-- INVENTORY -->
+    <div class="section">
+        <h2>🎒 Inventory</h2>
+
+        <div class="card">
+            <div class="muted">
+                Items: <span id="inventoryCount">0</span> / 20
+            </div>
+            <div id="inventoryList" class="muted">
+                Your inventory is empty.
+            </div>
+        </div>
+
+        <button onclick="openItems()">🛒 Item Market</button>
+    </div>
+
+    <!-- BUSINESS -->
+    <div class="section">
+        <h2>🏪 Businesses</h2>
+
+        <div id="businessList"></div>
+
+        <button onclick="openBusinesses()">🏪 Business Centre</button>
+    </div>
+
+    <!-- MAP -->
+    <div class="section">
+        <h2>🗺️ Kaduna Map</h2>
+
+        <div class="location-grid">
+            <div class="location" onclick="travel('Barnawa')">📍 Barnawa</div>
+            <div class="location" onclick="travel('Kaduna Central')">🏙️ Kaduna Central</div>
+            <div class="location" onclick="travel('Kawo')">📍 Kawo</div>
+            <div class="location" onclick="travel('Sabon Tasha')">📍 Sabon Tasha</div>
+            <div class="location" onclick="travel('Unguwan Rimi')">📍 Unguwan Rimi</div>
+            <div class="location" onclick="travel('Malali')">📍 Malali</div>
+        </div>
+    </div>
+
+    <!-- PEOPLE -->
+    <div class="section">
+        <h2>👥 People Nearby</h2>
+        <div id="peopleList"></div>
+    </div>
+
+    <!-- FINANCES -->
+    <div class="section">
+        <h2>📊 Financial Summary</h2>
+
+        <div class="card">
+            <div>💰 Cash: <strong id="cashSummary">₦15,000</strong></div>
+            <div>🏠 Property: <strong id="propertyValue">₦0</strong></div>
+            <div>🚗 Vehicles: <strong id="vehicleValue">₦0</strong></div>
+            <div>🏪 Businesses: <strong id="businessValue">₦0</strong></div>
+            <div>📦 Inventory: <strong id="inventoryValue">₦0</strong></div>
+            <hr>
+            <div>💎 Net Worth: <strong id="netWorth">₦15,000</strong></div>
+        </div>
+    </div>
+
+    <!-- LOG -->
+    <div class="section">
+        <h2>📜 Life Log</h2>
+        <div id="log" class="log"></div>
+    </div>
+
+    <!-- CONTROLS -->
+    <div class="section">
+        <h2>🎮 Game Controls</h2>
+
+        <button class="blue" onclick="saveGame()">💾 Save Game</button>
+        <button onclick="loadGame()">📂 Load Game</button>
+        <button class="danger" onclick="newGame()">🔄 Start New Game</button>
+    </div>
+
 </div>
 
 <footer>
-  Kaduna Life V16.1 — Economy Gameplay Simulator
+    Kaduna Life — Clean Core Edition
 </footer>
 
+
+<!-- JOB MODAL -->
+<div class="modal" id="jobsModal">
+    <div class="modal-box">
+        <h2>💼 Available Jobs</h2>
+        <div id="jobsList"></div>
+        <button class="danger" onclick="closeModal('jobsModal')">Close</button>
+    </div>
 </div>
 
+
+<!-- HOME MODAL -->
+<div class="modal" id="homesModal">
+    <div class="modal-box">
+        <h2>🏠 Homes</h2>
+        <div id="homesList"></div>
+        <button class="danger" onclick="closeModal('homesModal')">Close</button>
+    </div>
+</div>
+
+
+<!-- VEHICLE MODAL -->
+<div class="modal" id="vehiclesModal">
+    <div class="modal-box">
+        <h2>🚗 Vehicle Market</h2>
+        <div id="vehiclesList"></div>
+        <button class="danger" onclick="closeModal('vehiclesModal')">Close</button>
+    </div>
+</div>
+
+
+<!-- ITEMS MODAL -->
+<div class="modal" id="itemsModal">
+    <div class="modal-box">
+        <h2>🛒 Item Market</h2>
+        <div id="itemsList"></div>
+        <button class="danger" onclick="closeModal('itemsModal')">Close</button>
+    </div>
+</div>
+
+
+<!-- BUSINESS MODAL -->
+<div class="modal" id="businessModal">
+    <div class="modal-box">
+        <h2>🏪 Business Centre</h2>
+        <div id="businessChoices"></div>
+        <button class="danger" onclick="closeModal('businessModal')">Close</button>
+    </div>
+</div>
+
+
 <script>
+"use strict";
 
-const SAVE_KEY = "kadunaLifeV16_1";
+/* =========================
+   GAME DATA
+========================= */
 
-const locations = [
-  "Barnawa",
-  "Kaduna Central",
-  "Kawo",
-  "Sabon Tasha",
-  "Unguwan Rimi",
-  "Malali"
+const SAVE_KEY = "kadunaLifeClean";
+
+const JOBS = [
+    { name:"Shop Assistant", salary:2500, education:0, xp:15 },
+    { name:"Driver", salary:4000, education:10, xp:20 },
+    { name:"Computer Assistant", salary:5500, education:25, xp:25 },
+    { name:"Office Assistant", salary:7000, education:35, xp:30 },
+    { name:"Junior Developer", salary:10000, education:50, xp:40 },
+    { name:"Business Assistant", salary:12000, education:60, xp:45 }
 ];
 
-const jobs = [
-  {
-    name:"Shop Assistant",
-    salary:2500,
-    education:0,
-    xp:15
-  },
-  {
-    name:"Driver",
-    salary:4000,
-    education:10,
-    xp:20
-  },
-  {
-    name:"Computer Assistant",
-    salary:5500,
-    education:25,
-    xp:25
-  },
-  {
-    name:"Office Assistant",
-    salary:7000,
-    education:35,
-    xp:30
-  },
-  {
-    name:"Junior Developer",
-    salary:10000,
-    education:50,
-    xp:40
-  },
-  {
-    name:"Business Assistant",
-    salary:12000,
-    education:60,
-    xp:45
-  }
+const HOMES = [
+    { name:"Single Room", price:20000, maintenance:150 },
+    { name:"Shared Apartment", price:35000, maintenance:220 },
+    { name:"2-Bedroom House", price:70000, maintenance:350 },
+    { name:"3-Bedroom House", price:120000, maintenance:500 },
+    { name:"Duplex", price:250000, maintenance:900 }
 ];
 
-const businessTypes = [
-  {
-    name:"Food Spot",
-    cost:10000,
-    income:1800,
-    expense:500,
-    location:"Kawo"
-  },
-  {
-    name:"Clothing Shop",
-    cost:25000,
-    income:3500,
-    expense:900,
-    location:"Kaduna Central"
-  },
-  {
-    name:"Phone & Accessories Shop",
-    cost:40000,
-    income:5000,
-    expense:1300,
-    location:"Kawo"
-  },
-  {
-    name:"Tech Hub",
-    cost:75000,
-    income:8500,
-    expense:2200,
-    location:"Unguwan Rimi"
-  },
-  {
-    name:"Transport Business",
-    cost:100000,
-    income:11000,
-    expense:3500,
-    location:"Sabon Tasha"
-  },
-  {
-    name:"Business Enterprise",
-    cost:200000,
-    income:22000,
-    expense:6500,
-    location:"Kaduna Central"
-  }
+const VEHICLES = [
+    { name:"Personal Bike", price:12000, fuel:100, travel:100 },
+    { name:"Small Car", price:45000, fuel:100, travel:180 },
+    { name:"Sedan", price:75000, fuel:100, travel:160 },
+    { name:"SUV", price:120000, fuel:100, travel:200 }
 ];
 
-const homeTypes = [
-  {
-    name:"Single Room",
-    cost:20000,
-    maintenance:150
-  },
-  {
-    name:"Shared Apartment",
-    cost:35000,
-    maintenance:220
-  },
-  {
-    name:"2-Bedroom",
-    cost:70000,
-    maintenance:350
-  },
-  {
-    name:"3-Bedroom",
-    cost:120000,
-    maintenance:500
-  },
-  {
-    name:"Duplex",
-    cost:250000,
-    maintenance:900
-  },
-  {
-    name:"Luxury Mansion",
-    cost:500000,
-    maintenance:1800
-  }
+const ITEMS = [
+    { name:"Basic Phone", price:5000 },
+    { name:"Smartphone", price:25000 },
+    { name:"Laptop", price:65000 },
+    { name:"Tablet", price:40000 },
+    { name:"Headphones", price:8000 },
+    { name:"School Books", price:4000 },
+    { name:"Backpack", price:6000 },
+    { name:"Meal Pack", price:1200 },
+    { name:"Groceries", price:3000 },
+    { name:"Notebook", price:1500 }
 ];
 
-const vehicleTypes = [
-  {
-    name:"Personal Bike",
-    cost:12000,
-    fuel:120,
-    maintenance:150,
-    travel:100,
-    speed:2
-  },
-  {
-    name:"Small Car",
-    cost:45000,
-    fuel:90,
-    maintenance:300,
-    travel:180,
-    speed:3
-  },
-  {
-    name:"Sedan",
-    cost:75000,
-    fuel:85,
-    maintenance:450,
-    travel:160,
-    speed:4
-  },
-  {
-    name:"SUV",
-    cost:120000,
-    fuel:75,
-    maintenance:650,
-    travel:200,
-    speed:5
-  },
-  {
-    name:"Van",
-    cost:160000,
-    fuel:70,
-    maintenance:850,
-    travel:220,
-    speed:4
-  },
-  {
-    name:"Premium Car",
-    cost:250000,
-    fuel:65,
-    maintenance:1200,
-    travel:150,
-    speed:6
-  }
+const BUSINESSES = [
+    { name:"Food Spot", price:10000, income:1800, expense:500, location:"Kawo" },
+    { name:"Clothing Shop", price:25000, income:3500, expense:900, location:"Kaduna Central" },
+    { name:"Phone Shop", price:40000, income:5000, expense:1300, location:"Kawo" },
+    { name:"Tech Hub", price:75000, income:8500, expense:2200, location:"Unguwan Rimi" }
 ];
 
-const itemTypes = [
-  {name:"Basic Phone",buy:5000,sell:3000,weight:1},
-  {name:"Smartphone",buy:25000,sell:17000,weight:1},
-  {name:"Laptop",buy:65000,sell:45000,weight:2},
-  {name:"Tablet",buy:40000,sell:27000,weight:2},
-  {name:"Headphones",buy:8000,sell:5000,weight:1},
-  {name:"School Books",buy:4000,sell:2200,weight:2},
-  {name:"Backpack",buy:6000,sell:4000,weight:1},
-  {name:"Meal Pack",buy:1200,sell:500,weight:1},
-  {name:"Groceries",buy:3000,sell:1800,weight:2},
-  {name:"Household Supplies",buy:2500,sell:1300,weight:2},
-  {name:"Business Supplies",buy:5000,sell:3000,weight:3},
-  {name:"Notebook",buy:1500,sell:800,weight:1}
+const PEOPLE = [
+    { name:"Aisha", role:"Student", trust:0 },
+    { name:"Musa", role:"Shopkeeper", trust:0 },
+    { name:"Zara", role:"Neighbour", trust:0 },
+    { name:"Sadiq", role:"Mechanic", trust:0 },
+    { name:"Maryam", role:"Student", trust:0 },
+    { name:"Daniel", role:"Recruiter", trust:0 }
 ];
 
-const people = [
-  {
-    name:"Aisha",
-    role:"Student"
-  },
-  {
-    name:"Musa",
-    role:"Shopkeeper"
-  },
-  {
-    name:"Zara",
-    role:"Neighbour"
-  },
-  {
-    name:"Sadiq",
-    role:"Mechanic"
-  },
-  {
-    name:"Maryam",
-    role:"Student"
-  },
-  {
-    name:"Daniel",
-    role:"Job Recruiter"
-  }
-];
 
-function defaults(){
+/* =========================
+   DEFAULT GAME
+========================= */
 
-  return {
-    money:15000,
-    health:100,
-    mood:70,
-    energy:80,
-    education:50,
-    reputation:0,
+function defaultGame() {
+    return {
+        money:15000,
+        health:100,
+        mood:70,
+        energy:80,
+        education:50,
+        reputation:0,
 
-    day:1,
-    location:"Barnawa",
+        day:1,
+        location:"Barnawa",
 
-    inventory:[],
-    storage:[],
-    
-    vehicles:[],
-    selectedVehicle:null,
+        career:null,
+        careerXP:0,
+        careerLevel:1,
 
-    properties:[],
-    currentHome:null,
+        home:null,
+        vehicles:[],
+        activeVehicle:null,
 
-    career:null,
-    careerXP:0,
-    careerLevel:1,
+        inventory:[],
+        businesses:[],
 
-    businesses:[],
+        people:JSON.parse(JSON.stringify(PEOPLE)),
 
-    npcTrust:{},
+        log:[
+            "Day 1: Welcome to Kaduna Life.",
+            "You started with ₦15,000."
+        ]
+    };
+}
 
-    opportunities:[],
+let game = defaultGame();
 
-    financeLog:[],
-    log:[],
 
-    dailyIncome:0,
-    dailyExpenses:0,
+/* =========================
+   HELPERS
+========================= */
 
-    totalIncome:0,
-    totalExpenses:0,
+function money(n) {
+    return "₦" + Math.max(0, Math.round(n)).toLocaleString("en-NG");
+}
 
-    goals:{
-      firstJob:false,
-      firstHome:false,
-      firstVehicle:false,
-      tenThousand:false,
-      fiftyThousand:false,
-      businessOwner:false
+function clamp(n, min, max) {
+    return Math.max(min, Math.min(max, n));
+}
+
+function addLog(text) {
+    game.log.unshift("Day " + game.day + ": " + text);
+
+    if (game.log.length > 80) {
+        game.log.length = 80;
     }
-  };
 }
 
-let game = defaults();
+function spend(amount) {
+    if (game.money < amount) {
+        alert("You don't have enough money.");
+        return false;
+    }
 
-function clone(obj){
-  return JSON.parse(JSON.stringify(obj));
+    game.money -= amount;
+    return true;
 }
 
-function money(n){
-  return "₦" + Math.max(0,Math.floor(n)).toLocaleString("en-NG");
+function earn(amount) {
+    game.money += amount;
 }
 
-function clamp(n,min,max){
-  return Math.max(min,Math.min(max,n));
+function openModal(id) {
+    document.getElementById(id).style.display = "block";
 }
 
-function addLog(text){
-  game.log.unshift(
-    "Day " + game.day + " — " + text
-  );
-
-  if(game.log.length > 80){
-    game.log.length = 80;
-  }
+function closeModal(id) {
+    document.getElementById(id).style.display = "none";
 }
 
-function addFinance(text,amount){
 
-  game.financeLog.unshift({
-    day:game.day,
-    text:text,
-    amount:amount
-  });
+/* =========================
+   SAVE / LOAD
+========================= */
 
-  if(amount > 0){
-    game.dailyIncome += amount;
-    game.totalIncome += amount;
-  }
-
-  if(amount < 0){
-    game.dailyExpenses += Math.abs(amount);
-    game.totalExpenses += Math.abs(amount);
-  }
-
-  if(game.financeLog.length > 100){
-    game.financeLog.length = 100;
-  }
+function saveGame() {
+    try {
+        localStorage.setItem(SAVE_KEY, JSON.stringify(game));
+        addLog("Game saved.");
+        render();
+        alert("Game saved successfully.");
+    } catch (error) {
+        alert("Could not save the game.");
+    }
 }
 
-function earn(amount,reason){
+function loadGame() {
+    try {
+        const saved = localStorage.getItem(SAVE_KEY);
 
-  if(amount <= 0) return;
+        if (!saved) {
+            alert("No saved game found.");
+            return;
+        }
 
-  game.money += amount;
+        const loaded = JSON.parse(saved);
 
-  addFinance(reason,amount);
-  addLog("💰 +" + money(amount) + " — " + reason);
+        game = {
+            ...defaultGame(),
+            ...loaded
+        };
+
+        if (!Array.isArray(game.inventory)) game.inventory = [];
+        if (!Array.isArray(game.vehicles)) game.vehicles = [];
+        if (!Array.isArray(game.businesses)) game.businesses = [];
+        if (!Array.isArray(game.log)) game.log = [];
+        if (!Array.isArray(game.people)) {
+            game.people = JSON.parse(JSON.stringify(PEOPLE));
+        }
+
+        render();
+
+        alert("Game loaded.");
+    } catch (error) {
+        alert("The save file is damaged. Starting a clean game.");
+        game = defaultGame();
+        render();
+    }
 }
 
-function spend(amount,reason){
-
-  if(amount <= 0) return true;
-
-  if(game.money < amount){
-
-    addLog(
-      "❌ Not enough money for " +
-      reason +
-      " (" +
-      money(amount) +
-      " needed)"
+function newGame() {
+    const okay = confirm(
+        "Start a new game?\n\nYour current progress will be erased."
     );
 
-    return false;
-  }
+    if (!okay) return;
 
-  game.money -= amount;
+    game = defaultGame();
+    localStorage.removeItem(SAVE_KEY);
+    saveSilently();
+    render();
 
-  addFinance(reason,-amount);
-
-  addLog(
-    "💸 -" +
-    money(amount) +
-    " — " +
-    reason
-  );
-
-  return true;
+    alert("New Kaduna Life started.");
 }
 
-function inventoryWeight(){
-
-  return game.inventory.reduce(
-    (total,item)=>total + (item.weight || 0),
-    0
-  );
+function saveSilently() {
+    localStorage.setItem(SAVE_KEY, JSON.stringify(game));
 }
 
-function addItem(name){
 
-  const item = itemTypes.find(
-    x=>x.name === name
-  );
+/* =========================
+   CAREER
+========================= */
 
-  if(!item) return false;
+function openJobs() {
+    const list = document.getElementById("jobsList");
 
-  if(
-    inventoryWeight() +
-    item.weight >
-    20
-  ){
+    list.innerHTML = "";
 
-    addLog(
-      "🎒 Inventory full. You need more storage."
-    );
+    JOBS.forEach((job, index) => {
 
-    return false;
-  }
+        const canApply = game.education >= job.education;
 
-  const existing =
-    game.inventory.find(
-      x=>x.name === name
-    );
+        const card = document.createElement("div");
+        card.className = "card";
 
-  if(existing){
-    existing.qty++;
-  }else{
-    game.inventory.push({
-      name:item.name,
-      qty:1,
-      weight:item.weight
+        card.innerHTML = `
+            <div class="card-title">${job.name}</div>
+            <div class="muted">
+                Salary: ${money(job.salary)}<br>
+                Education needed: ${job.education}<br>
+                XP per work: ${job.xp}
+            </div>
+            <button
+                class="${canApply ? "" : "gold"}"
+                onclick="applyForJob(${index})">
+                ${canApply ? "Apply" : "Need More Education"}
+            </button>
+        `;
+
+        list.appendChild(card);
     });
-  }
 
-  return true;
+    openModal("jobsModal");
 }
 
-function removeItem(name){
-
-  const existing =
-    game.inventory.find(
-      x=>x.name === name
-    );
-
-  if(!existing) return false;
-
-  existing.qty--;
-
-  if(existing.qty <= 0){
-    game.inventory =
-      game.inventory.filter(
-        x=>x.name !== name
-      );
-  }
-
-  return true;
-}
-
-function buyItem(name){
-
-  const item =
-    itemTypes.find(
-      x=>x.name === name
-    );
-
-  if(!item) return;
-
-  if(
-    inventoryWeight() +
-    item.weight >
-    20
-  ){
-
-    addLog(
-      "🎒 Cannot buy " +
-      name +
-      ". Inventory capacity reached."
-    );
-
-    render();
-    return;
-  }
-
-  if(!spend(
-    item.buy,
-    "Bought " + item.name
-  )){
-
-    render();
-    return;
-  }
-
-  addItem(item.name);
-
-  addLog(
-    "🛒 Added " +
-    item.name +
-    " to inventory."
-  );
-
-  render();
-}
-
-function sellItem(name){
-
-  const item =
-    itemTypes.find(
-      x=>x.name === name
-    );
-
-  if(!item) return;
-
-  if(!removeItem(name)){
-
-    addLog(
-      "❌ You don't have " +
-      name
-    );
-
-    render();
-    return;
-  }
-
-  earn(
-    item.sell,
-    "Sold " + item.name
-  );
-
-  render();
-}
-
-function applyJob(index){
-
-  const job = jobs[index];
-
-  if(!job) return;
-
-  if(game.education < job.education){
-
-    addLog(
-      "🎓 You need " +
-      job.education +
-      " education for " +
-      job.name
-    );
-
-    render();
-    return;
-  }
-
-  game.career = job.name;
-  game.careerXP = 0;
-  game.careerLevel = 1;
-
-  game.goals.firstJob = true;
-
-  addLog(
-    "💼 You got hired as a " +
-    job.name +
-    "!"
-  );
-
-  render();
-  saveGame(false);
-}
-
-function getCurrentJob(){
-
-  if(!game.career) return null;
-
-  return jobs.find(
-    x=>x.name === game.career
-  );
-}
-
-function work(){
-
-  const job = getCurrentJob();
-
-  if(!job){
-
-    showJobs();
-    return;
-  }
-
-  if(game.energy < 15){
-
-    addLog(
-      "⚡ You're too tired to work."
-    );
-
-    render();
-    return;
-  }
-
-  game.energy -= 15;
-
-  const salary =
-    Math.floor(
-      job.salary *
-      (1 + ((game.careerLevel - 1) * 0.15))
-    );
-
-  earn(
-    salary,
-    "Salary — " + job.name
-  );
-
-  game.careerXP += job.xp;
-
-  game.reputation =
-    clamp(
-      game.reputation + 3,
-      0,
-      100
-    );
-
-  addLog(
-    "💼 Worked as " +
-    job.name +
-    " and earned " +
-    money(salary) +
-    "."
-  );
-
-  checkPromotion();
-
-  render();
-  saveGame(false);
-}
-
-function checkPromotion(){
-
-  const job = getCurrentJob();
-
-  if(!job) return;
-
-  const needed =
-    game.careerLevel * 100;
-
-  if(game.careerXP >= needed){
-
-    game.careerXP -= needed;
-
-    game.careerLevel++;
-
-    const bonus =
-      1000 *
-      game.careerLevel;
-
-    earn(
-      bonus,
-      "Promotion bonus"
-    );
-
-    addLog(
-      "📈 PROMOTED! Career Level " +
-      game.careerLevel
-    );
-  }
-}
-
-function showJobs(){
-
-  let html =
-    "<div class='small'>Choose a career:</div>";
-
-  jobs.forEach((job,index)=>{
-
-    const locked =
-      game.education <
-      job.education;
-
-    html += `
-      <div class="item">
-        <div class="item-title">
-          💼 ${job.name}
-        </div>
-
-        <div class="small">
-          Salary: ${money(job.salary)}
-          · Education: ${job.education}
-        </div>
-
-        <button
-          onclick="applyJob(${index})"
-          ${locked ? "disabled" : ""}
-        >
-          ${locked ? "🔒 Education Required" : "Apply"}
-        </button>
-      </div>
-    `;
-  });
-
-  document.getElementById(
-    "career"
-  ).innerHTML = html;
-}
-
-function buyBusiness(index){
-
-  const type =
-    businessTypes[index];
-
-  if(!type) return;
-
-  if(game.money < type.cost){
-
-    addLog(
-      "❌ You need " +
-      money(type.cost) +
-      " to start this business."
-    );
-
-    render();
-    return;
-  }
-
-  if(!spend(
-    type.cost,
-    "Started " + type.name
-  )) return;
-
-  game.businesses.push({
-    name:type.name,
-    location:type.location,
-    income:type.income,
-    expense:type.expense,
-    level:1
-  });
-
-  game.goals.businessOwner = true;
-
-  addLog(
-    "🏪 Started " +
-    type.name +
-    " in " +
-    type.location
-  );
-
-  render();
-  saveGame(false);
-}
-
-function upgradeBusiness(index){
-
-  const business =
-    game.businesses[index];
-
-  if(!business) return;
-
-  const cost =
-    5000 *
-    business.level;
-
-  if(!spend(
-    cost,
-    "Upgraded " + business.name
-  )){
-
-    render();
-    return;
-  }
-
-  business.level++;
-
-  business.income =
-    Math.floor(
-      business.income * 1.25
-    );
-
-  business.expense =
-    Math.floor(
-      business.expense * 1.15
-    );
-
-  addLog(
-    "📈 " +
-    business.name +
-    " upgraded to Level " +
-    business.level
-  );
-
-  render();
-  saveGame(false);
-}
-
-function buyHome(index){
-
-  const home =
-    homeTypes[index];
-
-  if(!home) return;
-
-  if(game.money < home.cost){
-
-    addLog(
-      "❌ You need " +
-      money(home.cost) +
-      " for this home."
-    );
-
-    render();
-    return;
-  }
-
-  if(!spend(
-    home.cost,
-    "Bought " + home.name
-  )) return;
-
-  game.properties.push({
-    name:home.name,
-    value:home.cost,
-    maintenance:home.maintenance
-  });
-
-  if(!game.currentHome){
-    game.currentHome =
-      game.properties.length - 1;
-  }
-
-  game.goals.firstHome = true;
-
-  addLog(
-    "🏠 Bought a " +
-    home.name
-  );
-
-  render();
-  saveGame(false);
-}
-
-function setHome(index){
-
-  if(!game.properties[index]) return;
-
-  game.currentHome = index;
-
-  addLog(
-    "🏠 Current home set to " +
-    game.properties[index].name
-  );
-
-  render();
-  saveGame(false);
-}
-
-function restAtHome(){
-
-  if(!game.properties.length){
-
-    addLog(
-      "🏠 You don't own a home yet."
-    );
-
-    render();
-    return;
-  }
-
-  game.energy =
-    clamp(
-      game.energy + 35,
-      0,
-      100
-    );
-
-  game.mood =
-    clamp(
-      game.mood + 6,
-      0,
-      100
-    );
-
-  addLog(
-    "😴 Rested at home. Energy restored."
-  );
-
-  render();
-}
-
-function buyVehicle(index){
-
-  const vehicle =
-    vehicleTypes[index];
-
-  if(!vehicle) return;
-
-  if(game.money < vehicle.cost){
-
-    addLog(
-      "❌ You need " +
-      money(vehicle.cost) +
-      " for this vehicle."
-    );
-
-    render();
-    return;
-  }
-
-  if(!spend(
-    vehicle.cost,
-    "Bought " + vehicle.name
-  )) return;
-
-  game.vehicles.push({
-    name:vehicle.name,
-    fuel:100,
-    maxFuel:100,
-    fuelEfficiency:vehicle.fuel,
-    maintenance:vehicle.maintenance,
-    travelCost:vehicle.travel,
-    speed:vehicle.speed,
-    level:1
-  });
-
-  if(
-    game.selectedVehicle === null
-  ){
-    game.selectedVehicle =
-      game.vehicles.length - 1;
-  }
-
-  game.goals.firstVehicle = true;
-
-  addLog(
-    "🚗 Bought a " +
-    vehicle.name
-  );
-
-  render();
-  saveGame(false);
-}
-
-function selectVehicle(index){
-
-  if(!game.vehicles[index]) return;
-
-  game.selectedVehicle = index;
-
-  addLog(
-    "🚗 Now using " +
-    game.vehicles[index].name
-  );
-
-  render();
-  saveGame(false);
-}
-
-function refuel(){
-
-  const vehicle =
-    game.vehicles[
-      game.selectedVehicle
-    ];
-
-  if(!vehicle){
-
-    addLog(
-      "🚶 You don't own a vehicle."
-    );
-
-    render();
-    return;
-  }
-
-  if(vehicle.fuel >= 100){
-
-    addLog(
-      "⛽ Your fuel tank is already full."
-    );
-
-    render();
-    return;
-  }
-
-  if(!spend(
-    1000,
-    "Vehicle refuel"
-  )){
-
-    render();
-    return;
-  }
-
-  vehicle.fuel = 100;
-
-  addLog(
-    "⛽ Vehicle refueled."
-  );
-
-  render();
-}
-
-function upgradeVehicle(){
-
-  const vehicle =
-    game.vehicles[
-      game.selectedVehicle
-    ];
-
-  if(!vehicle){
-
-    addLog(
-      "🚶 You don't own a vehicle."
-    );
-
-    render();
-    return;
-  }
-
-  const cost =
-    5000 *
-    vehicle.level;
-
-  if(!spend(
-    cost,
-    "Vehicle upgrade"
-  )){
-
-    render();
-    return;
-  }
-
-  vehicle.level++;
-
-  vehicle.speed++;
-
-  vehicle.fuelEfficiency =
-    Math.max(
-      40,
-      vehicle.fuelEfficiency - 3
-    );
-
-  vehicle.travelCost =
-    Math.max(
-      80,
-      vehicle.travelCost - 10
-    );
-
-  addLog(
-    "⬆️ Vehicle upgraded to Level " +
-    vehicle.level
-  );
-
-  render();
-}
-
-function travel(location){
-
-  if(location === game.location){
-
-    addLog(
-      "📍 You're already in " +
-      location
-    );
-
-    render();
-    return;
-  }
-
-  const vehicle =
-    game.vehicles[
-      game.selectedVehicle
-    ];
-
-  if(vehicle){
-
-    if(vehicle.fuel < 10){
-
-      addLog(
-        "⛽ Not enough fuel to travel."
-      );
-
-      render();
-      return;
-    }
-
-    if(game.money < vehicle.travelCost){
-
-      addLog(
-        "💸 You need " +
-        money(vehicle.travelCost) +
-        " for this trip."
-      );
-
-      render();
-      return;
-    }
-
-    vehicle.fuel -= 10;
-
-    spend(
-      vehicle.travelCost,
-      "Travel to " + location
-    );
-
-    game.energy =
-      clamp(
-        game.energy - 4,
-        0,
-        100
-      );
-
-  }else{
-
-    if(!spend(
-      500,
-      "Walking to " + location
-    )){
-
-      render();
-      return;
-    }
-
-    game.energy =
-      clamp(
-        game.energy - 7,
-        0,
-        100
-      );
-  }
-
-  game.location = location;
-
-  addLog(
-    "📍 Travelled to " +
-    location
-  );
-
-  render();
-  saveGame(false);
-}
-
-function eat(){
-
-  if(!spend(
-    500,
-    "Meal"
-  )){
-
-    render();
-    return;
-  }
-
-  game.health =
-    clamp(
-      game.health + 10,
-      0,
-      100
-    );
-
-  game.energy =
-    clamp(
-      game.energy + 8,
-      0,
-      100
-    );
-
-  addLog(
-    "🍛 You ate a meal."
-  );
-
-  render();
-}
-
-function buyGroceries(){
-
-  if(
-    inventoryWeight() + 2 >
-    20
-  ){
-
-    addLog(
-      "🎒 Not enough inventory space for groceries."
-    );
-
-    render();
-    return;
-  }
-
-  if(!spend(
-    1500,
-    "Groceries"
-  )){
-
-    render();
-    return;
-  }
-
-  addItem("Groceries");
-
-  addLog(
-    "🛍️ Bought groceries."
-  );
-
-  render();
-}
-
-function study(){
-
-  if(game.energy < 10){
-
-    addLog(
-      "⚡ You're too tired to study."
-    );
-
-    render();
-    return;
-  }
-
-  game.energy -= 10;
-
-  game.education =
-    clamp(
-      game.education + 4,
-      0,
-      100
-    );
-
-  addLog(
-    "📚 Studied and improved education."
-  );
-
-  render();
-}
-
-function hangout(){
-
-  if(!spend(
-    300,
-    "Hangout"
-  )){
-
-    render();
-    return;
-  }
-
-  game.energy =
-    clamp(
-      game.energy - 5,
-      0,
-      100
-    );
-
-  game.mood =
-    clamp(
-      game.mood + 12,
-      0,
-      100
-    );
-
-  game.reputation =
-    clamp(
-      game.reputation + 1,
-      0,
-      100
-    );
-
-  addLog(
-    "😎 Had a good hangout."
-  );
-
-  render();
-}
-
-function rest(){
-
-  game.energy =
-    clamp(
-      game.energy + 25,
-      0,
-      100
-    );
-
-  game.mood =
-    clamp(
-      game.mood + 4,
-      0,
-      100
-    );
-
-  addLog(
-    "😴 You rested."
-  );
-
-  render();
-}
-
-function talk(index){
-
-  const person =
-    people[index];
-
-  if(!person) return;
-
-  const current =
-    game.npcTrust[
-      person.name
-    ] || 0;
-
-  game.npcTrust[
-    person.name
-  ] =
-    clamp(
-      current + 1,
-      0,
-      100
-    );
-
-  game.mood =
-    clamp(
-      game.mood + 3,
-      0,
-      100
-    );
-
-  addLog(
-    "🗣️ Talked to " +
-    person.name +
-    ". Trust increased."
-  );
-
-  render();
-}
-
-function explore(){
-
-  const events = [
-
-    {
-      text:"You helped someone find their way.",
-      money:500,
-      mood:5,
-      rep:2
-    },
-
-    {
-      text:"You discovered a small opportunity.",
-      money:1000,
-      mood:3,
-      rep:1
-    },
-
-    {
-      text:"You found nothing useful today.",
-      money:0,
-      mood:-1,
-      rep:0
-    },
-
-    {
-      text:"A local shop offered you a small reward for helping.",
-      money:750,
-      mood:4,
-      rep:2
-    }
-  ];
-
-  const event =
-    events[
-      Math.floor(
-        Math.random() *
-        events.length
-      )
-    ];
-
-  if(event.money > 0){
-
-    earn(
-      event.money,
-      "Exploration reward"
-    );
-  }
-
-  game.mood =
-    clamp(
-      game.mood + event.mood,
-      0,
-      100
-    );
-
-  game.reputation =
-    clamp(
-      game.reputation + event.rep,
-      0,
-      100
-    );
-
-  game.opportunities.unshift(
-    event.text
-  );
-
-  if(
-    game.opportunities.length > 20
-  ){
-    game.opportunities.length = 20;
-  }
-
-  addLog(
-    "🧭 " +
-    event.text
-  );
-
-  render();
-}
-
-function processDailyEconomy(){
-
-  game.dailyIncome = 0;
-  game.dailyExpenses = 0;
-
-  let businessIncome = 0;
-  let businessExpenses = 0;
-
-  game.businesses.forEach(
-    business=>{
-
-      const income =
-        business.income *
-        business.level;
-
-      const expense =
-        business.expense *
-        business.level;
-
-      earn(
-        income,
-        business.name +
-        " daily revenue"
-      );
-
-      spend(
-        expense,
-        business.name +
-        " operating expenses"
-      );
-
-      businessIncome += income;
-      businessExpenses += expense;
-    }
-  );
-
-  let homeExpense = 0;
-
-  if(
-    game.properties.length
-  ){
-
-    game.properties.forEach(
-      property=>{
-
-        homeExpense +=
-          property.maintenance;
-      }
-    );
-
-    spend(
-      homeExpense,
-      "Home maintenance"
-    );
-  }
-
-  let vehicleExpense = 0;
-
-  game.vehicles.forEach(
-    vehicle=>{
-
-      vehicleExpense +=
-        vehicle.maintenance;
-    }
-  );
-
-  if(vehicleExpense > 0){
-
-    spend(
-      vehicleExpense,
-      "Vehicle maintenance"
-    );
-  }
-
-  return {
-    businessIncome,
-    businessExpenses,
-    homeExpense,
-    vehicleExpense
-  };
-}
-
-function randomDailyEvent(){
-
-  if(Math.random() > 0.35){
-    return;
-  }
-
-  const events = [
-
-    {
-      text:"A peaceful day in Kaduna.",
-      money:0,
-      mood:4,
-      health:0
-    },
-
-    {
-      text:"You received a small community reward.",
-      money:750,
-      mood:5,
-      health:0
-    },
-
-    {
-      text:"A busy day left you exhausted.",
-      money:0,
-      mood:-3,
-      health:-2
-    },
-
-    {
-      text:"You met someone who gave you useful advice.",
-      money:0,
-      mood:6,
-      health:0
-    }
-  ];
-
-  const event =
-    events[
-      Math.floor(
-        Math.random() *
-        events.length
-      )
-    ];
-
-  if(event.money > 0){
-
-    earn(
-      event.money,
-      "Daily event reward"
-    );
-  }
-
-  game.mood =
-    clamp(
-      game.mood + event.mood,
-      0,
-      100
-    );
-
-  game.health =
-    clamp(
-      game.health + event.health,
-      0,
-      100
-    );
-
-  addLog(
-    "🎲 " +
-    event.text
-  );
-}
-
-function checkGoals(){
-
-  const rewards = [];
-
-  if(
-    game.money >= 10000 &&
-    !game.goals.tenThousand
-  ){
-
-    game.goals.tenThousand = true;
-
-    rewards.push(
-      "🎯 Reached ₦10,000"
-    );
-  }
-
-  if(
-    game.money >= 50000 &&
-    !game.goals.fiftyThousand
-  ){
-
-    game.goals.fiftyThousand = true;
-
-    rewards.push(
-      "🏆 Reached ₦50,000"
-    );
-  }
-
-  rewards.forEach(
-    x=>addLog(x + "!");
-  );
-}
-
-function endDay(){
-
-  const before =
-    game.money;
-
-  const summary =
-    processDailyEconomy();
-
-  randomDailyEvent();
-
-  game.day++;
-
-  game.energy =
-    clamp(
-      game.energy + 20,
-      0,
-      100
-    );
-
-  game.health =
-    clamp(
-      game.health + 5,
-      0,
-      100
-    );
-
-  game.mood =
-    clamp(
-      game.mood + 3,
-      0,
-      100
-    );
-
-  checkGoals();
-
-  const after =
-    game.money;
-
-  const change =
-    after - before;
-
-  addLog(
-    "🌅 Day " +
-    (game.day - 1) +
-    " ended. Net cash change: " +
-    (change >= 0 ? "+" : "") +
-    money(change)
-  );
-
-  alert(
-    "🌅 DAY SUMMARY\n\n" +
-
-    "Business income: " +
-    money(summary.businessIncome) +
-    "\n" +
-
-    "Business expenses: " +
-    money(summary.businessExpenses) +
-    "\n" +
-
-    "Home maintenance: " +
-    money(summary.homeExpense) +
-    "\n" +
-
-    "Vehicle maintenance: " +
-    money(summary.vehicleExpense) +
-    "\n\n" +
-
-    "Cash change: " +
-    (change >= 0 ? "+" : "") +
-    money(change) +
-    "\n\n" +
-
-    "New Day: " +
-    game.day
-  );
-
-  render();
-  saveGame(false);
-}
-
-function calculateNetWorth(){
-
-  let value =
-    game.money;
-
-  game.properties.forEach(
-    property=>{
-      value += property.value;
-    }
-  );
-
-  game.vehicles.forEach(
-    vehicle=>{
-      const original =
-        vehicleTypes.find(
-          x=>x.name === vehicle.name
+function applyForJob(index) {
+    const job = JOBS[index];
+
+    if (game.education < job.education) {
+        alert(
+            "You need at least " +
+            job.education +
+            " education for this job."
         );
-
-      if(original){
-        value +=
-          original.cost +
-          ((vehicle.level - 1) * 5000);
-      }
+        return;
     }
-  );
 
-  game.businesses.forEach(
-    business=>{
+    game.career = {
+        name:job.name,
+        salary:job.salary,
+        xp:job.xp
+    };
 
-      const original =
-        businessTypes.find(
-          x=>x.name === business.name
-        );
+    game.careerXP = 0;
+    game.careerLevel = 1;
 
-      if(original){
+    game.reputation += 2;
 
-        value +=
-          original.cost *
-          business.level;
-      }
-    }
-  );
+    addLog("You got a job as a " + job.name + ".");
 
-  game.inventory.forEach(
-    item=>{
-
-      const original =
-        itemTypes.find(
-          x=>x.name === item.name
-        );
-
-      if(original){
-
-        value +=
-          original.sell *
-          item.qty;
-      }
-    }
-  );
-
-  return value;
+    closeModal("jobsModal");
+    render();
 }
 
-function renderStats(){
+function work() {
 
-  document.getElementById(
-    "stats"
-  ).innerHTML = `
+    if (!game.career) {
+        alert("You need to find a job first.");
+        openJobs();
+        return;
+    }
 
-    <div class="stat">
-      💰 Money
-      <strong class="money">
-        ${money(game.money)}
-      </strong>
-    </div>
+    if (game.energy < 15) {
+        alert("You're too tired to work. Rest first.");
+        return;
+    }
 
-    <div class="stat">
-      ❤️ Health
-      <strong>
-        ${game.health}
-      </strong>
+    game.energy -= 15;
 
-      <div class="bar">
-        <span style="width:${game.health}%"></span>
-      </div>
-    </div>
+    const baseSalary = game.career.salary;
+    const bonus = (game.careerLevel - 1) * 500;
+    const pay = baseSalary + bonus;
 
-    <div class="stat">
-      😊 Mood
-      <strong>
-        ${game.mood}
-      </strong>
+    earn(pay);
 
-      <div class="bar">
-        <span style="width:${game.mood}%"></span>
-      </div>
-    </div>
+    game.careerXP += game.career.xp;
+    game.reputation += 1;
 
-    <div class="stat">
-      ⚡ Energy
-      <strong>
-        ${game.energy}
-      </strong>
+    let promoted = false;
 
-      <div class="bar">
-        <span style="width:${game.energy}%"></span>
-      </div>
-    </div>
+    const requiredXP = game.careerLevel * 100;
 
-    <div class="stat">
-      🎓 Education
-      <strong>
-        ${game.education}
-      </strong>
+    if (game.careerXP >= requiredXP) {
+        game.careerXP -= requiredXP;
+        game.careerLevel++;
+        game.reputation += 3;
+        earn(game.careerLevel * 500);
 
-      <div class="bar">
-        <span style="width:${game.education}%"></span>
-      </div>
-    </div>
+        promoted = true;
+    }
 
-    <div class="stat">
-      ⭐ Reputation
-      <strong>
-        ${game.reputation}
-      </strong>
-    </div>
-
-    <div class="stat">
-      📅 Day
-      <strong>
-        ${game.day}
-      </strong>
-    </div>
-
-    <div class="stat">
-      📍 Location
-      <strong>
-        ${game.location}
-      </strong>
-    </div>
-  `;
-}
-
-function renderFinance(){
-
-  const net =
-    calculateNetWorth();
-
-  document.getElementById(
-    "finance"
-  ).innerHTML = `
-
-    <div class="stat">
-      💵 Cash
-      <strong class="money">
-        ${money(game.money)}
-      </strong>
-    </div>
-
-    <div class="stat">
-      💎 Net Worth
-      <strong>
-        ${money(net)}
-      </strong>
-    </div>
-
-    <div class="stat">
-      📈 Today's Income
-      <strong class="good">
-        ${money(game.dailyIncome)}
-      </strong>
-    </div>
-
-    <div class="stat">
-      🧾 Today's Expenses
-      <strong class="bad">
-        ${money(game.dailyExpenses)}
-      </strong>
-    </div>
-
-    <div class="stat">
-      📊 Lifetime Income
-      <strong>
-        ${money(game.totalIncome)}
-      </strong>
-    </div>
-
-    <div class="stat">
-      📉 Lifetime Expenses
-      <strong>
-        ${money(game.totalExpenses)}
-      </strong>
-    </div>
-  `;
-}
-
-function renderCareer(){
-
-  const job =
-    getCurrentJob();
-
-  if(!job){
-
-    document.getElementById(
-      "career"
-    ).innerHTML = `
-
-      <div class="item">
-        <div class="item-title">
-          Unemployed
-        </div>
-
-        <div class="small">
-          Level 1 · XP 0 · Salary ₦0
-        </div>
-
-        <button onclick="showJobs()">
-          🔎 Find A Job
-        </button>
-      </div>
-    `;
-
-    return;
-  }
-
-  const needed =
-    game.careerLevel * 100;
-
-  const salary =
-    Math.floor(
-      job.salary *
-      (1 + ((game.careerLevel - 1) * 0.15))
+    addLog(
+        "You worked as a " +
+        game.career.name +
+        " and earned " +
+        money(pay) +
+        "."
     );
 
-  document.getElementById(
-    "career"
-  ).innerHTML = `
+    if (promoted) {
+        addLog(
+            "🎉 Promotion! You reached career level " +
+            game.careerLevel +
+            "."
+        );
+    }
 
-    <div class="item">
-
-      <div class="item-title">
-        💼 ${job.name}
-      </div>
-
-      <div class="small">
-        Level ${game.careerLevel}
-        · XP ${game.careerXP}/${needed}
-      </div>
-
-      <div class="small">
-        Current salary:
-        <span class="money">
-          ${money(salary)}
-        </span>
-      </div>
-
-      <div class="bar">
-        <span
-          style="width:${Math.min(
-            100,
-            (game.careerXP / needed) * 100
-          )}%"
-        ></span>
-      </div>
-
-      <button onclick="work()">
-        💼 Go To Work
-      </button>
-
-      <button
-        class="secondary"
-        onclick="showJobs()"
-      >
-        🔎 Change Career
-      </button>
-
-    </div>
-  `;
+    render();
 }
 
-function renderBusinesses(){
 
-  let html = "";
+/* =========================
+   DAILY ACTIONS
+========================= */
 
-  game.businesses.forEach(
-    (business,index)=>{
+function eat() {
 
-      const profit =
-        (business.income -
-        business.expense) *
-        business.level;
+    if (!spend(500)) return;
 
-      html += `
-        <div class="item">
+    game.health = clamp(game.health + 10, 0, 100);
+    game.energy = clamp(game.energy + 8, 0, 100);
 
-          <div class="item-title">
-            🏪 ${business.name}
-          </div>
+    addLog("You ate a meal.");
 
-          <div class="small">
-            📍 ${business.location}
-          </div>
-
-          <div class="small">
-            Level ${business.level}
-          </div>
-
-          <div class="small good">
-            Daily revenue:
-            ${money(
-              business.income *
-              business.level
-            )}
-          </div>
-
-          <div class="small bad">
-            Daily expenses:
-            ${money(
-              business.expense *
-              business.level
-            )}
-          </div>
-
-          <div class="small">
-            Daily profit:
-            <span class="${
-              profit >= 0
-              ? "good"
-              : "bad"
-            }">
-              ${money(profit)}
-            </span>
-          </div>
-
-          <button
-            onclick="upgradeBusiness(${index})"
-          >
-            ⬆️ Upgrade
-          </button>
-
-        </div>
-      `;
-    }
-  );
-
-  html += `
-    <div class="small">
-      Start a new business:
-    </div>
-  `;
-
-  businessTypes.forEach(
-    (business,index)=>{
-
-      html += `
-        <div class="item">
-
-          <div class="item-title">
-            ${business.name}
-          </div>
-
-          <div class="small">
-            Cost: ${money(business.cost)}
-            · Location: ${business.location}
-          </div>
-
-          <button
-            onclick="buyBusiness(${index})"
-            ${game.money < business.cost
-              ? "disabled"
-              : ""}
-          >
-            🏪 Start Business
-          </button>
-
-        </div>
-      `;
-    }
-  );
-
-  document.getElementById(
-    "businesses"
-  ).innerHTML = html;
+    render();
 }
 
-function renderHomes(){
+function study() {
 
-  let html = "";
+    if (game.energy < 10) {
+        alert("You need more energy.");
+        return;
+    }
 
-  if(game.properties.length){
+    game.energy -= 10;
+    game.education += 4;
 
-    html += `
-      <div class="small">
-        Owned homes:
-      </div>
-    `;
+    addLog("You studied and improved your education.");
 
-    game.properties.forEach(
-      (home,index)=>{
+    render();
+}
 
-        const active =
-          game.currentHome === index;
+function hangout() {
 
-        html += `
-          <div class="item">
+    if (!spend(300)) return;
 
-            <div class="item-title">
-              🏠 ${home.name}
-              ${
-                active
-                ? `<span class="badge">
-                     CURRENT
-                   </span>`
-                : ""
-              }
+    if (game.energy < 5) {
+        alert("You're too tired.");
+        game.money += 300;
+        return;
+    }
+
+    game.energy -= 5;
+    game.mood = clamp(game.mood + 12, 0, 100);
+    game.reputation += 1;
+
+    addLog("You hung out and had a good time.");
+
+    render();
+}
+
+function rest() {
+
+    game.energy = clamp(game.energy + 25, 0, 100);
+    game.mood = clamp(game.mood + 4, 0, 100);
+
+    addLog("You rested.");
+
+    render();
+}
+
+function explore() {
+
+    if (game.energy < 10) {
+        alert("You need at least 10 energy.");
+        return;
+    }
+
+    game.energy -= 10;
+
+    const events = [
+        "You discovered a quiet spot in the city.",
+        "You met someone who gave you useful advice.",
+        "You found a new opportunity.",
+        "You explored the area and learned something new.",
+        "You had an interesting day outside."
+    ];
+
+    const event = events[
+        Math.floor(Math.random() * events.length)
+    ];
+
+    game.mood = clamp(game.mood + 3, 0, 100);
+
+    addLog(event);
+
+    render();
+}
+
+
+/* =========================
+   HOME
+========================= */
+
+function openHomes() {
+
+    const list = document.getElementById("homesList");
+
+    list.innerHTML = "";
+
+    HOMES.forEach((home, index) => {
+
+        const owned = game.home &&
+                      game.home.name === home.name;
+
+        const card = document.createElement("div");
+
+        card.className = "card";
+
+        card.innerHTML = `
+            <div class="card-title">${home.name}</div>
+            <div class="muted">
+                Price: ${money(home.price)}<br>
+                Daily maintenance: ${money(home.maintenance)}
             </div>
-
-            <div class="small">
-              Value: ${money(home.value)}
-              · Maintenance:
-              ${money(home.maintenance)}/day
-            </div>
-
-            <button
-              onclick="setHome(${index})"
-              ${active ? "disabled" : ""}
-            >
-              ${active
-                ? "✅ Current Home"
-                : "🏠 Set Current Home"}
+            <button onclick="buyHome(${index})">
+                ${owned ? "Current Home" : "Buy / Select"}
             </button>
-
-          </div>
         `;
-      }
-    );
 
-    html += `
-      <button onclick="restAtHome()">
-        😴 Rest At Home
-      </button>
-    `;
-  }
+        list.appendChild(card);
+    });
 
-  html += `
-    <div class="small">
-      Available homes:
-    </div>
-  `;
-
-  homeTypes.forEach(
-    (home,index)=>{
-
-      html += `
-        <div class="item">
-
-          <div class="item-title">
-            🏠 ${home.name}
-          </div>
-
-          <div class="small">
-            Cost: ${money(home.cost)}
-            · Maintenance:
-            ${money(home.maintenance)}/day
-          </div>
-
-          <button
-            onclick="buyHome(${index})"
-            ${game.money < home.cost
-              ? "disabled"
-              : ""}
-          >
-            🏠 Buy Home
-          </button>
-
-        </div>
-      `;
-    }
-  );
-
-  document.getElementById(
-    "homes"
-  ).innerHTML = html;
+    openModal("homesModal");
 }
 
-function renderVehicles(){
+function buyHome(index) {
 
-  let html = "";
+    const home = HOMES[index];
 
-  if(game.vehicles.length){
-
-    game.vehicles.forEach(
-      (vehicle,index)=>{
-
-        const active =
-          game.selectedVehicle === index;
-
-        html += `
-          <div class="item">
-
-            <div class="item-title">
-              🚗 ${vehicle.name}
-              ${
-                active
-                ? `<span class="badge">
-                    ACTIVE
-                   </span>`
-                : ""
-              }
-            </div>
-
-            <div class="small">
-              Level ${vehicle.level}
-              · Speed ${vehicle.speed}
-            </div>
-
-            <div class="small">
-              ⛽ Fuel:
-              ${vehicle.fuel}/100
-            </div>
-
-            <div class="small">
-              Maintenance:
-              ${money(vehicle.maintenance)}/day
-            </div>
-
-            <div class="small">
-              Travel:
-              ${money(vehicle.travelCost)}
-            </div>
-
-            <button
-              onclick="selectVehicle(${index})"
-              ${active ? "disabled" : ""}
-            >
-              ${
-                active
-                ? "✅ Active Vehicle"
-                : "🚗 Use Vehicle"
-              }
-            </button>
-
-          </div>
-        `;
-      }
-    );
-
-    html += `
-      <button onclick="refuel()">
-        ⛽ Refuel — ₦1,000
-      </button>
-
-      <button
-        class="secondary"
-        onclick="upgradeVehicle()"
-      >
-        ⬆️ Upgrade Active Vehicle
-      </button>
-    `;
-  }
-
-  html += `
-    <div class="small">
-      Vehicle Market:
-    </div>
-  `;
-
-  vehicleTypes.forEach(
-    (vehicle,index)=>{
-
-      html += `
-        <div class="item">
-
-          <div class="item-title">
-            🚗 ${vehicle.name}
-          </div>
-
-          <div class="small">
-            Cost: ${money(vehicle.cost)}
-            · Speed ${vehicle.speed}
-          </div>
-
-          <div class="small">
-            Fuel efficiency:
-            ${vehicle.fuel}
-          </div>
-
-          <button
-            onclick="buyVehicle(${index})"
-            ${game.money < vehicle.cost
-              ? "disabled"
-              : ""}
-          >
-            🚗 Buy Vehicle
-          </button>
-
-        </div>
-      `;
+    if (game.home && game.home.name === home.name) {
+        alert("This is already your current home.");
+        return;
     }
-  );
 
-  document.getElementById(
-    "vehicles"
-  ).innerHTML = html;
+    if (!spend(home.price)) return;
+
+    game.home = {
+        name:home.name,
+        price:home.price,
+        maintenance:home.maintenance
+    };
+
+    addLog("You bought " + home.name + ".");
+
+    closeModal("homesModal");
+    render();
 }
 
-function renderInventory(){
+function homeRest() {
 
-  let html = `
-    <div class="small">
-      Capacity:
-      ${inventoryWeight()} / 20
-    </div>
-  `;
+    if (!game.home) {
+        alert("You don't own a home yet.");
+        openHomes();
+        return;
+    }
 
-  if(!game.inventory.length){
+    game.energy = clamp(game.energy + 35, 0, 100);
+    game.health = clamp(game.health + 5, 0, 100);
 
-    html += `
-      <div class="item">
-        🎒 Your inventory is empty.
-      </div>
-    `;
-  }
+    addLog("You rested at your " + game.home.name + ".");
 
-  game.inventory.forEach(
-    item=>{
+    render();
+}
 
-      const original =
-        itemTypes.find(
-          x=>x.name === item.name
+
+/* =========================
+   VEHICLES
+========================= */
+
+function openVehicles() {
+
+    const list = document.getElementById("vehiclesList");
+
+    list.innerHTML = "";
+
+    VEHICLES.forEach((vehicle, index) => {
+
+        const owned = game.vehicles.some(
+            v => v.name === vehicle.name
         );
 
-      html += `
-        <div class="item">
+        const card = document.createElement("div");
 
-          <div class="item-title">
-            ${item.name}
-            ×${item.qty}
-          </div>
+        card.className = "card";
 
-          <div class="small">
-            Weight:
-            ${item.weight * item.qty}
-          </div>
+        card.innerHTML = `
+            <div class="card-title">${vehicle.name}</div>
+            <div class="muted">
+                Price: ${money(vehicle.price)}<br>
+                Travel cost: ${money(vehicle.travel)}
+            </div>
+            <button onclick="buyVehicle(${index})">
+                ${owned ? "Use Vehicle" : "Buy Vehicle"}
+            </button>
+        `;
 
-          <button
-            onclick="sellItem('${item.name}')"
-          >
-            💰 Sell
-          </button>
+        list.appendChild(card);
+    });
 
-        </div>
-      `;
+    openModal("vehiclesModal");
+}
+
+function buyVehicle(index) {
+
+    const vehicle = VEHICLES[index];
+
+    const existing = game.vehicles.find(
+        v => v.name === vehicle.name
+    );
+
+    if (existing) {
+        game.activeVehicle = existing.name;
+        addLog("You selected your " + existing.name + ".");
+        closeModal("vehiclesModal");
+        render();
+        return;
     }
-  );
 
-  html += `
-    <div class="small">
-      Item Market:
-    </div>
-  `;
+    if (!spend(vehicle.price)) return;
 
-  itemTypes.forEach(
-    item=>{
+    const newVehicle = {
+        name:vehicle.name,
+        price:vehicle.price,
+        fuel:100,
+        travel:vehicle.travel
+    };
 
-      html += `
-        <div class="item">
+    game.vehicles.push(newVehicle);
+    game.activeVehicle = newVehicle.name;
 
-          <div class="item-title">
-            ${item.name}
-          </div>
+    addLog("You bought a " + vehicle.name + ".");
 
-          <div class="small">
-            Buy:
-            ${money(item.buy)}
-            · Sell:
-            ${money(item.sell)}
-            · Weight:
-            ${item.weight}
-          </div>
+    closeModal("vehiclesModal");
+    render();
+}
 
-          <button
-            onclick="buyItem('${item.name}')"
-            ${game.money < item.buy
-              ? "disabled"
-              : ""}
-          >
-            🛒 Buy
-          </button>
+function refuel() {
 
-        </div>
-      `;
+    if (!game.activeVehicle) {
+        alert("You don't have a vehicle selected.");
+        openVehicles();
+        return;
     }
-  );
 
-  document.getElementById(
-    "inventory"
-  ).innerHTML = html;
+    if (!spend(1000)) return;
+
+    const vehicle = game.vehicles.find(
+        v => v.name === game.activeVehicle
+    );
+
+    if (!vehicle) return;
+
+    vehicle.fuel = 100;
+
+    addLog("You refueled your " + vehicle.name + ".");
+
+    render();
 }
 
-function renderDailyActions(){
 
-  document.getElementById(
-    "dailyActions"
-  ).innerHTML = `
+/* =========================
+   TRAVEL
+========================= */
 
-    <div class="grid">
+function travel(destination) {
 
-      <div class="item">
-        <div class="item-title">
-          🍛 Food
-        </div>
-
-        <div class="small">
-          Restore health and energy.
-        </div>
-
-        <button onclick="eat()">
-          🍛 Eat Meal — ₦500
-        </button>
-      </div>
-
-      <div class="item">
-        <div class="item-title">
-          🛒 Groceries
-        </div>
-
-        <div class="small">
-          Add groceries to inventory.
-        </div>
-
-        <button onclick="buyGroceries()">
-          🛍️ Buy Groceries — ₦1,500
-        </button>
-      </div>
-
-      <div class="item">
-        <div class="item-title">
-          📚 Study
-        </div>
-
-        <div class="small">
-          Improve education.
-        </div>
-
-        <button onclick="study()">
-          🎓 Study
-        </button>
-      </div>
-
-      <div class="item">
-        <div class="item-title">
-          🎉 Hangout
-        </div>
-
-        <div class="small">
-          Improve mood and reputation.
-        </div>
-
-        <button onclick="hangout()">
-          😎 Hangout — ₦300
-        </button>
-      </div>
-
-      <div class="item">
-        <div class="item-title">
-          😴 Rest
-        </div>
-
-        <div class="small">
-          Recover energy.
-        </div>
-
-        <button onclick="rest()">
-          😴 Rest
-        </button>
-      </div>
-
-      <div class="item">
-        <div class="item-title">
-          🧭 Explore
-        </div>
-
-        <div class="small">
-          Discover random opportunities.
-        </div>
-
-        <button onclick="explore()">
-          🧭 Explore Kaduna
-        </button>
-      </div>
-
-    </div>
-  `;
-}
-
-function renderGoals(){
-
-  const net =
-    calculateNetWorth();
-
-  const goals = [
-
-    {
-      title:"💼 Get your first job",
-      done:game.goals.firstJob
-    },
-
-    {
-      title:"🏠 Buy your first home",
-      done:game.goals.firstHome
-    },
-
-    {
-      title:"🚗 Buy your first vehicle",
-      done:game.goals.firstVehicle
-    },
-
-    {
-      title:"💰 Reach ₦10,000 cash",
-      done:game.goals.tenThousand
-    },
-
-    {
-      title:"💎 Reach ₦50,000 cash",
-      done:game.goals.fiftyThousand
-    },
-
-    {
-      title:"🏪 Become a business owner",
-      done:game.goals.businessOwner
+    if (destination === game.location) {
+        alert("You're already here.");
+        return;
     }
-  ];
 
-  document.getElementById(
-    "goals"
-  ).innerHTML = goals.map(
-    goal=>`
-
-      <div class="item goal">
-
-        <div>
-          ${goal.title}
-        </div>
-
-        <div>
-          ${
-            goal.done
-            ? `<span class="badge">
-                ✅ COMPLETE
-               </span>`
-            : `<span class="badge">
-                ⏳ IN PROGRESS
-               </span>`
-          }
-        </div>
-
-      </div>
-    `
-  ).join("");
-}
-
-function renderMap(){
-
-  document.getElementById(
-    "map"
-  ).innerHTML =
-    locations.map(
-      location=>`
-
-        <button
-          onclick="travel('${location}')"
-          ${
-            location === game.location
-            ? "disabled"
-            : ""
-          }
-        >
-          📍 ${location}
-        </button>
-
-      `
-    ).join("");
-}
-
-function renderQuickActions(){
-
-  document.getElementById(
-    "quickActions"
-  ).innerHTML = `
-
-    <button onclick="work()">
-      💼 Work
-    </button>
-
-    <button onclick="study()">
-      📚 Study
-    </button>
-
-    <button onclick="eat()">
-      🍛 Eat
-    </button>
-
-    <button onclick="rest()">
-      😴 Rest
-    </button>
-
-    <button onclick="hangout()">
-      😎 Hangout
-    </button>
-
-    <button onclick="explore()">
-      🧭 Explore
-    </button>
-
-    <button
-      class="warning"
-      onclick="endDay()"
-    >
-      🌅 End Day
-    </button>
-
-    <button
-      class="secondary"
-      onclick="saveGame(true)"
-    >
-      💾 Save
-    </button>
-  `;
-}
-
-function renderPeople(){
-
-  let html = "";
-
-  people.forEach(
-    (person,index)=>{
-
-      const trust =
-        game.npcTrust[
-          person.name
-        ] || 0;
-
-      html += `
-        <div class="item">
-
-          <div class="item-title">
-            👤 ${person.name}
-          </div>
-
-          <div class="small">
-            ${person.role}
-            · Trust ${trust}
-          </div>
-
-          <button
-            onclick="talk(${index})"
-          >
-            🗣️ Talk
-          </button>
-
-        </div>
-      `;
+    if (game.energy < 5) {
+        alert("You need at least 5 energy to travel.");
+        return;
     }
-  );
 
-  document.getElementById(
-    "people"
-  ).innerHTML = html;
-}
+    if (game.activeVehicle) {
 
-function renderOpportunities(){
+        const vehicle = game.vehicles.find(
+            v => v.name === game.activeVehicle
+        );
 
-  if(!game.opportunities.length){
+        if (!vehicle) {
+            game.activeVehicle = null;
+        } else {
 
-    document.getElementById(
-      "opportunities"
-    ).innerHTML = `
-      <div class="item">
-        No opportunities discovered yet.
-        Try exploring Kaduna.
-      </div>
-    `;
-
-    return;
-  }
-
-  document.getElementById(
-    "opportunities"
-  ).innerHTML =
-    game.opportunities.map(
-      opportunity=>`
-
-        <div class="item">
-          🎯 ${opportunity}
-        </div>
-
-      `
-    ).join("");
-}
-
-function renderFinanceHistory(){
-
-  if(!game.financeLog.length){
-
-    document.getElementById(
-      "financeHistory"
-    ).innerHTML = `
-      <div class="log-entry">
-        No financial activity yet.
-      </div>
-    `;
-
-    return;
-  }
-
-  document.getElementById(
-    "financeHistory"
-  ).innerHTML =
-    game.financeLog.map(
-      entry=>`
-
-        <div class="log-entry">
-
-          Day ${entry.day} —
-          ${entry.text}
-
-          <span class="${
-            entry.amount >= 0
-            ? "good"
-            : "bad"
-          }">
-
-            ${
-              entry.amount >= 0
-              ? "+"
-              : ""
+            if (vehicle.fuel < 10) {
+                alert("Your vehicle needs fuel.");
+                return;
             }
 
-            ${money(entry.amount)}
+            if (game.money < vehicle.travel) {
+                alert("You don't have enough money for this trip.");
+                return;
+            }
 
-          </span>
+            game.money -= vehicle.travel;
+            vehicle.fuel -= 10;
+        }
 
-        </div>
-      `
-    ).join("");
-}
+    } else {
 
-function renderLog(){
-
-  document.getElementById(
-    "lifeLog"
-  ).innerHTML =
-    game.log.map(
-      entry=>`
-
-        <div class="log-entry">
-          ${entry}
-        </div>
-
-      `
-    ).join("");
-}
-
-function render(){
-
-  renderStats();
-  renderFinance();
-  renderCareer();
-  renderBusinesses();
-  renderHomes();
-  renderVehicles();
-  renderInventory();
-  renderDailyActions();
-  renderGoals();
-  renderMap();
-  renderQuickActions();
-  renderPeople();
-  renderOpportunities();
-  renderFinanceHistory();
-  renderLog();
-}
-
-function normalizeGame(data){
-
-  const fresh =
-    defaults();
-
-  if(!data || typeof data !== "object"){
-    return fresh;
-  }
-
-  const merged =
-    Object.assign(
-      fresh,
-      data
-    );
-
-  const numberFields = [
-    "money",
-    "health",
-    "mood",
-    "energy",
-    "education",
-    "reputation",
-    "day",
-    "careerXP",
-    "careerLevel",
-    "dailyIncome",
-    "dailyExpenses",
-    "totalIncome",
-    "totalExpenses"
-  ];
-
-  numberFields.forEach(
-    key=>{
-
-      if(
-        typeof merged[key] !==
-        "number" ||
-        !Number.isFinite(
-          merged[key]
-        )
-      ){
-
-        merged[key] =
-          fresh[key];
-      }
+        if (!spend(500)) return;
     }
-  );
 
-  merged.money =
-    Math.max(
-      0,
-      Math.floor(merged.money)
-    );
+    game.energy -= 5;
+    game.location = destination;
 
-  merged.health =
-    clamp(
-      merged.health,
-      0,
-      100
-    );
+    addLog("You travelled to " + destination + ".");
 
-  merged.mood =
-    clamp(
-      merged.mood,
-      0,
-      100
-    );
-
-  merged.energy =
-    clamp(
-      merged.energy,
-      0,
-      100
-    );
-
-  merged.education =
-    clamp(
-      merged.education,
-      0,
-      100
-    );
-
-  merged.reputation =
-    clamp(
-      merged.reputation,
-      0,
-      100
-    );
-
-  if(
-    !locations.includes(
-      merged.location
-    )
-  ){
-    merged.location =
-      "Barnawa";
-  }
-
-  if(!Array.isArray(merged.inventory)){
-    merged.inventory = [];
-  }
-
-  if(!Array.isArray(merged.storage)){
-    merged.storage = [];
-  }
-
-  if(!Array.isArray(merged.vehicles)){
-    merged.vehicles = [];
-  }
-
-  if(!Array.isArray(merged.properties)){
-    merged.properties = [];
-  }
-
-  if(!Array.isArray(merged.businesses)){
-    merged.businesses = [];
-  }
-
-  if(!Array.isArray(merged.opportunities)){
-    merged.opportunities = [];
-  }
-
-  if(!Array.isArray(merged.financeLog)){
-    merged.financeLog = [];
-  }
-
-  if(!Array.isArray(merged.log)){
-    merged.log = [];
-  }
-
-  if(
-    !merged.npcTrust ||
-    typeof merged.npcTrust !== "object"
-  ){
-    merged.npcTrust = {};
-  }
-
-  if(
-    !merged.goals ||
-    typeof merged.goals !== "object"
-  ){
-    merged.goals = clone(
-      fresh.goals
-    );
-  }
-
-  return merged;
+    render();
 }
 
-function loadGame(){
 
-  const keys = [
-    SAVE_KEY,
-    "kadunaLifeV16",
-    "kadunaLifeV15_1",
-    "kadunaLifeV15.1",
-    "kadunaLifeV15",
-    "kadunaLifeV14",
-    "kadunaLifeV13",
-    "kadunaLifeV12",
-    "kadunaLifeV11",
-    "kadunaLifeV10",
-    "kadunaLifeV8"
-  ];
+/* =========================
+   INVENTORY
+========================= */
 
-  for(
-    const key of keys
-  ){
+function openItems() {
 
-    try{
+    const list = document.getElementById("itemsList");
 
-      const saved =
-        localStorage.getItem(key);
+    list.innerHTML = "";
 
-      if(saved){
+    ITEMS.forEach((item, index) => {
 
-        const parsed =
-          JSON.parse(saved);
+        const card = document.createElement("div");
 
-        game =
-          normalizeGame(
-            parsed
-          );
+        card.className = "card";
 
-        localStorage.setItem(
-          SAVE_KEY,
-          JSON.stringify(game)
+        card.innerHTML = `
+            <div class="card-title">${item.name}</div>
+            <div class="muted">
+                Price: ${money(item.price)}
+            </div>
+            <button onclick="buyItem(${index})">
+                Buy Item
+            </button>
+        `;
+
+        list.appendChild(card);
+    });
+
+    openModal("itemsModal");
+}
+
+function buyItem(index) {
+
+    const item = ITEMS[index];
+
+    if (game.inventory.length >= 20) {
+        alert("Your inventory is full.");
+        return;
+    }
+
+    if (!spend(item.price)) return;
+
+    game.inventory.push({
+        name:item.name,
+        price:item.price
+    });
+
+    addLog("You bought " + item.name + ".");
+
+    closeModal("itemsModal");
+    render();
+}
+
+
+/* =========================
+   BUSINESSES
+========================= */
+
+function openBusinesses() {
+
+    const list = document.getElementById("businessChoices");
+
+    list.innerHTML = "";
+
+    BUSINESSES.forEach((business, index) => {
+
+        const owned = game.businesses.some(
+            b => b.name === business.name
         );
 
+        const card = document.createElement("div");
+
+        card.className = "card";
+
+        card.innerHTML = `
+            <div class="card-title">${business.name}</div>
+            <div class="muted">
+                Price: ${money(business.price)}<br>
+                Daily income: ${money(business.income)}<br>
+                Daily expenses: ${money(business.expense)}<br>
+                Location: ${business.location}
+            </div>
+
+            <button onclick="buyBusiness(${index})">
+                ${owned ? "Already Owned" : "Start Business"}
+            </button>
+        `;
+
+        list.appendChild(card);
+    });
+
+    openModal("businessModal");
+}
+
+function buyBusiness(index) {
+
+    const business = BUSINESSES[index];
+
+    if (game.businesses.some(
+        b => b.name === business.name
+    )) {
+        alert("You already own this business.");
         return;
-      }
-
-    }catch(error){
-
-      console.log(
-        "Save load error:",
-        error
-      );
-    }
-  }
-
-  game =
-    defaults();
-
-  saveGame(false);
-}
-
-function saveGame(showMessage){
-
-  try{
-
-    localStorage.setItem(
-      SAVE_KEY,
-      JSON.stringify(game)
-    );
-
-    if(showMessage){
-
-      addLog(
-        "💾 Game saved successfully."
-      );
-
-      render();
     }
 
-  }catch(error){
+    if (!spend(business.price)) return;
 
-    alert(
-      "Save failed. Please try again."
-    );
-  }
-}
+    game.businesses.push({
+        name:business.name,
+        price:business.price,
+        income:business.income,
+        expense:business.expense,
+        location:business.location
+    });
 
-function repairSave(){
-
-  game =
-    normalizeGame(game);
-
-  saveGame(false);
-
-  addLog(
-    "🛠️ Save data repaired."
-  );
-
-  render();
-}
-
-function newGame(){
-
-  const confirmReset =
-    confirm(
-      "Start a completely new Kaduna Life game?"
+    addLog(
+        "You started " +
+        business.name +
+        " in " +
+        business.location +
+        "."
     );
 
-  if(!confirmReset) return;
-
-  localStorage.removeItem(
-    SAVE_KEY
-  );
-
-  game =
-    defaults();
-
-  addLog(
-    "🌱 New Kaduna Life started."
-  );
-
-  saveGame(false);
-  render();
+    closeModal("businessModal");
+    render();
 }
 
-loadGame();
 
-if(!game.log.length){
+/* =========================
+   PEOPLE
+========================= */
 
-  addLog(
-    "🌱 Welcome to Kaduna Life!"
-  );
+function talkToPerson(index) {
 
-  addLog(
-    "💰 Start with ₦15,000."
-  );
+    const person = game.people[index];
 
-  addLog(
-    "🎯 Build your career, home, business and wealth."
-  );
+    if (!person) return;
+
+    if (game.energy < 3) {
+        alert("You're too tired to talk.");
+        return;
+    }
+
+    game.energy -= 3;
+
+    person.trust += 1;
+    game.mood = clamp(game.mood + 3, 0, 100);
+
+    addLog(
+        "You talked with " +
+        person.name +
+        ". Trust is now " +
+        person.trust +
+        "."
+    );
+
+    render();
 }
 
-render();
 
-setInterval(
-  ()=>saveGame(false),
-  30000
-);
+/* =========================
+   END DAY
+========================= */
+
+function endDay() {
+
+    let income = 0;
+    let expenses = 0;
+
+    /* BUSINESS MONEY */
+    game.businesses.forEach(business => {
+        income += business.income;
+        expenses += business.expense;
+    });
+
+    /* HOME MAINTENANCE */
+    if (game.home) {
+        expenses += game.home.maintenance;
+    }
+
+    /* VEHICLE MAINTENANCE */
+    game.vehicles.forEach(vehicle => {
+        expenses += 100;
+    });
+
+    const net = income - expenses;
+
+    game.money += net;
+
+    if (income > 0) {
+        addLog(
+            "Businesses generated " +
+            money(income) +
+            "."
+        );
+    }
+
+    if (expenses > 0) {
+        addLog(
+            "Daily expenses cost " +
+            money(expenses) +
+            "."
+        );
+    }
+
+    game.day++;
+
+    game.energy = clamp(game.energy + 20, 0, 100);
+    game.health = clamp(game.health + 5, 0, 100);
+    game.mood = clamp(game.mood + 3, 0, 100);
+
+    if (Math.random() < 0.3) {
+
+        const events = [
+            "You received useful advice from someone.",
+            "You discovered something interesting around Kaduna.",
+            "You had a peaceful day.",
+            "You met someone who may help you later."
+        ];
+
+        const event = events[
+            Math.floor(Math.random() * events.length)
+        ];
+
+        addLog(event);
+    }
+
+    addLog("A new day begins.");
+
+    render();
+}
+
+
+/* =========================
+   RENDER
+========================= */
+
+function render() {
+
+    document.getElementById("money").textContent =
+        money(game.money);
+
+    document.getElementById("health").textContent =
+        game.health;
+
+    document.getElementById("mood").textContent =
+        game.mood;
+
+    document.getElementById("energy").textContent =
+        game.energy;
+
+    document.getElementById("education").textContent =
+        game.education;
+
+    document.getElementById("reputation").textContent =
+        game.reputation;
+
+    document.getElementById("day").textContent =
+        game.day;
+
+    document.getElementById("location").textContent =
+        game.location;
+
+
+    /* CAREER */
+
+    if (game.career) {
+
+        document.getElementById("careerName").textContent =
+            game.career.name;
+
+    } else {
+
+        document.getElementById("careerName").textContent =
+            "Unemployed";
+    }
+
+    document.getElementById("careerLevel").textContent =
+        game.careerLevel;
+
+    document.getElementById("careerXP").textContent =
+        game.careerXP;
+
+
+    /* HOME */
+
+    if (game.home) {
+
+        document.getElementById("homeName").textContent =
+            game.home.name;
+
+        document.getElementById("homeDetails").textContent =
+            "Maintenance: " +
+            money(game.home.maintenance) +
+            " per day.";
+
+    } else {
+
+        document.getElementById("homeName").textContent =
+            "No Home";
+
+        document.getElementById("homeDetails").textContent =
+            "You currently don't own a home.";
+    }
+
+
+    /* VEHICLE */
+
+    if (game.activeVehicle) {
+
+        const vehicle = game.vehicles.find(
+            v => v.name === game.activeVehicle
+        );
+
+        if (vehicle) {
+
+            document.getElementById("vehicleName").textContent =
+                vehicle.name;
+
+            document.getElementById("vehicleDetails").textContent =
+                "Fuel: " +
+                vehicle.fuel +
+                "% · Travel: " +
+                money(vehicle.travel);
+        }
+
+    } else {
+
+        document.getElementById("vehicleName").textContent =
+            "Walking";
+
+        document.getElementById("vehicleDetails").textContent =
+            "No vehicle selected.";
+    }
+
+
+    /* INVENTORY */
+
+    document.getElementById("inventoryCount").textContent =
+        game.inventory.length;
+
+    const inventoryList =
+        document.getElementById("inventoryList");
+
+    if (game.inventory.length === 0) {
+
+        inventoryList.textContent =
+            "Your inventory is empty.";
+
+    } else {
+
+        inventoryList.innerHTML =
+            game.inventory
+                .map(item => "• " + item.name)
+                .join("<br>");
+    }
+
+
+    /* BUSINESSES */
+
+    const businessList =
+        document.getElementById("businessList");
+
+    if (game.businesses.length === 0) {
+
+        businessList.innerHTML =
+            `<div class="card muted">
+                You don't own a business yet.
+            </div>`;
+
+    } else {
+
+        businessList.innerHTML =
+            game.businesses
+                .map(b => `
+                    <div class="card">
+                        <div class="card-title">
+                            ${b.name}
+                        </div>
+                        <div class="muted">
+                            ${b.location}<br>
+                            Income: ${money(b.income)} / day<br>
+                            Expenses: ${money(b.expense)} / day
+                        </div>
+                    </div>
+                `)
+                .join("");
+    }
+
+
+    /* PEOPLE */
+
+    const peopleList =
+        document.getElementById("peopleList");
+
+    peopleList.innerHTML =
+        game.people
+            .map((person, index) => `
+                <div class="card">
+                    <div class="row">
+                        <div>
+                            <div class="card-title">
+                                ${person.name}
+                            </div>
+
+                            <div class="muted">
+                                ${person.role} ·
+                                Trust ${person.trust}
+                            </div>
+                        </div>
+
+                        <button onclick="talkToPerson(${index})">
+                            Talk
+                        </button>
+                    </div>
+                </div>
+            `)
+            .join("");
+
+
+    /* FINANCES */
+
+    const propertyValue =
+        game.home ? game.home.price : 0;
+
+    const vehicleValue =
+        game.vehicles.reduce(
+            (sum, v) => sum + v.price,
+            0
+        );
+
+    const businessValue =
+        game.businesses.reduce(
+            (sum, b) => sum + b.price,
+            0
+        );
+
+    const inventoryValue =
+        game.inventory.reduce(
+            (sum, item) => sum + item.price,
+            0
+        );
+
+    const netWorth =
+        game.money +
+        propertyValue +
+        vehicleValue +
+        businessValue +
+        inventoryValue;
+
+    document.getElementById("cashSummary").textContent =
+        money(game.money);
+
+    document.getElementById("propertyValue").textContent =
+        money(propertyValue);
+
+    document.getElementById("vehicleValue").textContent =
+        money(vehicleValue);
+
+    document.getElementById("businessValue").textContent =
+        money(businessValue);
+
+    document.getElementById("inventoryValue").textContent =
+        money(inventoryValue);
+
+    document.getElementById("netWorth").textContent =
+        money(netWorth);
+
+
+    /* LOG */
+
+    document.getElementById("log").innerHTML =
+        game.log
+            .map(entry =>
+                `<div class="log-item">${entry}</div>`
+            )
+            .join("");
+
+
+    saveSilently();
+}
+
+
+/* =========================
+   START GAME
+========================= */
+
+document.addEventListener("DOMContentLoaded", function() {
+    render();
+});
 
 </script>
 
 </body>
 </html>
+```
