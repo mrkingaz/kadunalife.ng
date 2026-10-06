@@ -1,0 +1,3388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Kaduna Life — V23</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  background:#08111f;
+  color:#f4f7fb;
+  line-height:1.5;
+}
+
+button,
+select,
+input{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+  border:0;
+}
+
+header{
+  background:linear-gradient(135deg,#10243f,#0b5c4b);
+  padding:22px 16px;
+  position:sticky;
+  top:0;
+  z-index:20;
+  box-shadow:0 5px 20px rgba(0,0,0,.3);
+}
+
+.header-inner{
+  max-width:1200px;
+  margin:auto;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+}
+
+.logo{
+  font-size:25px;
+  font-weight:900;
+}
+
+.version{
+  font-size:12px;
+  opacity:.75;
+  margin-top:2px;
+}
+
+.money{
+  font-weight:900;
+  color:#72f0b0;
+}
+
+.container{
+  width:min(1200px,94%);
+  margin:20px auto 50px;
+}
+
+.hero{
+  background:linear-gradient(145deg,#12243a,#0e1928);
+  border:1px solid #203650;
+  border-radius:20px;
+  padding:22px;
+  margin-bottom:18px;
+}
+
+.hero h1{
+  font-size:30px;
+  margin-bottom:5px;
+}
+
+.hero p{
+  color:#aebbd0;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin:15px 0;
+}
+
+.stat{
+  background:#101d2d;
+  border:1px solid #20334a;
+  padding:15px;
+  border-radius:15px;
+}
+
+.stat small{
+  display:block;
+  color:#8293ab;
+  margin-bottom:4px;
+}
+
+.stat strong{
+  font-size:20px;
+}
+
+section{
+  background:#0e1a29;
+  border:1px solid #20334a;
+  border-radius:18px;
+  padding:18px;
+  margin:18px 0;
+}
+
+section h2{
+  font-size:20px;
+  margin-bottom:13px;
+}
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:12px;
+}
+
+.card{
+  background:#122237;
+  border:1px solid #263d57;
+  border-radius:15px;
+  padding:15px;
+}
+
+.card h3{
+  margin-bottom:7px;
+}
+
+.muted{
+  color:#8ea0b8;
+}
+
+.small{
+  font-size:13px;
+}
+
+.row{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+
+button{
+  background:#1d9b70;
+  color:white;
+  padding:10px 13px;
+  border-radius:10px;
+  font-weight:700;
+  transition:.15s;
+}
+
+button:hover{
+  transform:translateY(-1px);
+  filter:brightness(1.1);
+}
+
+button.secondary{
+  background:#24364d;
+}
+
+button.warning{
+  background:#a66b16;
+}
+
+button.danger{
+  background:#923b48;
+}
+
+button:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+  transform:none;
+}
+
+.badge{
+  display:inline-block;
+  padding:4px 8px;
+  border-radius:20px;
+  background:#1d9b70;
+  font-size:12px;
+  margin:2px;
+}
+
+.badge.blue{
+  background:#2468a8;
+}
+
+.badge.gold{
+  background:#a26a17;
+}
+
+.progress{
+  height:9px;
+  background:#09121f;
+  border-radius:20px;
+  overflow:hidden;
+  margin:8px 0;
+}
+
+.progress div{
+  height:100%;
+  background:linear-gradient(90deg,#20b67d,#6ce9a9);
+}
+
+.event{
+  background:linear-gradient(145deg,#182d45,#102237);
+  border:1px solid #2d5272;
+  border-radius:18px;
+  padding:20px;
+}
+
+.event-icon{
+  font-size:42px;
+}
+
+.choice{
+  text-align:left;
+  width:100%;
+  margin-top:10px;
+  background:#162b42;
+  border:1px solid #2b4c69;
+}
+
+.choice:hover{
+  background:#1c3853;
+}
+
+.choice-title{
+  display:block;
+  font-weight:900;
+  margin-bottom:3px;
+}
+
+.choice-desc{
+  display:block;
+  color:#9eb0c6;
+  font-size:13px;
+}
+
+.log{
+  max-height:300px;
+  overflow:auto;
+}
+
+.log p{
+  padding:8px 0;
+  border-bottom:1px solid #1c2c3e;
+  font-size:14px;
+}
+
+.mission{
+  border-left:4px solid #1d9b70;
+  padding:12px;
+  background:#122237;
+  border-radius:8px;
+  margin-bottom:10px;
+}
+
+.done{
+  opacity:.6;
+  border-left-color:#6b7280;
+}
+
+.modal-bg{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.72);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:100;
+  padding:18px;
+}
+
+.modal{
+  width:min(520px,100%);
+  background:#0e1b2a;
+  border:1px solid #29425d;
+  border-radius:20px;
+  padding:22px;
+  max-height:90vh;
+  overflow:auto;
+}
+
+input,select{
+  width:100%;
+  background:#091523;
+  color:white;
+  border:1px solid #2a4059;
+  border-radius:10px;
+  padding:11px;
+  margin:6px 0 12px;
+}
+
+.toast{
+  position:fixed;
+  right:15px;
+  bottom:15px;
+  background:#13263b;
+  border:1px solid #31506d;
+  padding:13px 16px;
+  border-radius:12px;
+  z-index:200;
+  display:none;
+  max-width:330px;
+}
+
+footer{
+  text-align:center;
+  color:#708198;
+  padding:25px;
+}
+
+@media(max-width:850px){
+  .grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
+@media(max-width:520px){
+  .grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .hero h1{
+    font-size:25px;
+  }
+
+  .header-inner{
+    align-items:flex-start;
+  }
+
+  .money{
+    font-size:14px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="header-inner">
+    <div>
+      <div class="logo">🏙️ Kaduna Life</div>
+      <div class="version">V23 — Major Life Events</div>
+    </div>
+
+    <div class="money" id="headerMoney">₦0</div>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="hero">
+    <h1 id="heroTitle">Your Kaduna Story</h1>
+    <p id="heroText">
+      Your choices shape what happens next.
+    </p>
+
+    <div class="row" style="margin-top:12px">
+      <span class="badge" id="dayBadge">Day 1</span>
+      <span class="badge blue" id="timeBadge">Morning</span>
+      <span class="badge gold" id="locationBadge">Barnawa</span>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="stat">
+      <small>💰 Money</small>
+      <strong id="moneyStat">₦0</strong>
+    </div>
+
+    <div class="stat">
+      <small>❤️ Health</small>
+      <strong id="healthStat">100</strong>
+    </div>
+
+    <div class="stat">
+      <small>😊 Mood</small>
+      <strong id="moodStat">70</strong>
+    </div>
+
+    <div class="stat">
+      <small>⚡ Energy</small>
+      <strong id="energyStat">80</strong>
+    </div>
+
+    <div class="stat">
+      <small>📚 Education</small>
+      <strong id="educationStat">50</strong>
+    </div>
+
+    <div class="stat">
+      <small>⭐ Reputation</small>
+      <strong id="repStat">0</strong>
+    </div>
+
+    <div class="stat">
+      <small>💼 Career Level</small>
+      <strong id="careerStat">1</strong>
+    </div>
+
+    <div class="stat">
+      <small>💎 Net Worth</small>
+      <strong id="netWorthStat">₦0</strong>
+    </div>
+  </div>
+
+  <section>
+    <h2>📖 Your Life Story</h2>
+
+    <div class="card">
+      <h3 id="characterName">Your Character</h3>
+      <p id="characterInfo" class="muted"></p>
+
+      <div style="margin-top:10px">
+        <span class="badge" id="chapterBadge">Chapter 1</span>
+        <span class="badge blue" id="personalityBadge">Unknown</span>
+      </div>
+
+      <div class="progress">
+        <div id="storyProgress" style="width:0%"></div>
+      </div>
+
+      <p id="storyText" class="small muted"></p>
+    </div>
+  </section>
+
+  <section>
+    <h2>🎭 Current Life Event</h2>
+    <div id="eventArea"></div>
+  </section>
+
+  <section>
+    <h2>🚩 Your Major Decisions</h2>
+    <div id="decisionsArea" class="cards"></div>
+  </section>
+
+  <section>
+    <h2>📋 Life Missions</h2>
+    <div id="missionsArea"></div>
+  </section>
+
+  <section>
+    <h2>🏆 Achievements</h2>
+    <div id="achievementsArea" class="cards"></div>
+  </section>
+
+  <section>
+    <h2>🏪 Business Empire</h2>
+    <div id="businessArea"></div>
+  </section>
+
+  <section>
+    <h2>👥 Social Circle</h2>
+    <div id="peopleArea" class="cards"></div>
+  </section>
+
+  <section>
+    <h2>💼 Career</h2>
+    <div id="careerArea"></div>
+  </section>
+
+  <section>
+    <h2>📚 Education</h2>
+    <div class="cards">
+
+      <div class="card">
+        <h3>📖 Study</h3>
+        <p class="muted small">
+          Improve your education level.
+        </p>
+
+        <button onclick="study()">
+          Study
+        </button>
+      </div>
+
+      <div class="card">
+        <h3>🧠 Learn Skill</h3>
+        <p class="muted small">
+          Invest time into learning.
+        </p>
+
+        <button onclick="learnSkill()">
+          Learn
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <h2>🏠 Home</h2>
+    <div id="homeArea"></div>
+  </section>
+
+  <section>
+    <h2>🚗 Transportation</h2>
+    <div id="vehicleArea"></div>
+  </section>
+
+  <section>
+    <h2>🌍 Kaduna World</h2>
+
+    <div class="cards">
+
+      <div class="card">
+        <h3>📍 Travel</h3>
+
+        <select id="travelSelect"></select>
+
+        <button onclick="travel()">
+          Travel
+        </button>
+      </div>
+
+      <div class="card">
+        <h3>🍽️ Rest & Eat</h3>
+
+        <p class="muted small">
+          Recover some energy and improve your mood.
+        </p>
+
+        <button onclick="eat()">
+          Eat Meal — ₦500
+        </button>
+      </div>
+
+      <div class="card">
+        <h3>🌳 Take A Break</h3>
+
+        <button onclick="park()">
+          Visit Park
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <h2>📦 Inventory</h2>
+    <div id="inventoryArea"></div>
+  </section>
+
+  <section>
+    <h2>💰 Financial Overview</h2>
+    <div id="financeArea"></div>
+  </section>
+
+  <section>
+    <h2>⚡ Daily Actions</h2>
+
+    <div class="row">
+      <button onclick="work()">💼 Work</button>
+      <button onclick="talkRandom()">👋 Talk</button>
+      <button onclick="explore()">🗺️ Explore</button>
+      <button onclick="rest()">😴 Rest</button>
+      <button onclick="advanceTime()">⏰ Advance Time</button>
+      <button class="warning" onclick="endDay()">🌙 End Day</button>
+    </div>
+  </section>
+
+  <section>
+    <h2>📝 Life Log</h2>
+
+    <div class="log" id="logArea"></div>
+  </section>
+
+  <section>
+    <h2>🎮 Game Controls</h2>
+
+    <div class="row">
+      <button onclick="createCharacter()">
+        👤 Create Character
+      </button>
+
+      <button class="secondary" onclick="saveGame()">
+        💾 Save
+      </button>
+
+      <button class="secondary" onclick="exportSave()">
+        📤 Export Save
+      </button>
+
+      <button class="danger" onclick="newGame()">
+        🔄 New Game
+      </button>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  Kaduna Life V23 • Your choices shape your story 🏙️
+</footer>
+
+<div class="modal-bg" id="modalBg">
+  <div class="modal" id="modal"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+
+/* =========================================================
+   KADUNA LIFE V23
+   ========================================================= */
+
+const SAVE_KEY = "kadunaLifeV23";
+const OLD_SAVE = "kadunaLifeV22";
+
+const locations = [
+  "Barnawa",
+  "Kaduna Central",
+  "Kawo",
+  "Sabon Tasha",
+  "Unguwan Rimi",
+  "Malali",
+  "Kaduna North",
+  "Rigasa",
+  "Kasuwan Magani",
+  "Television",
+  "GRA",
+  "Mando",
+  "Trikania",
+  "Tudun Wada",
+  "Kakuri"
+];
+
+const times = [
+  "Morning",
+  "Late Morning",
+  "Afternoon",
+  "Evening",
+  "Night"
+];
+
+const jobs = [
+  {
+    name:"Shop Assistant",
+    salary:2500,
+    education:0,
+    xp:15
+  },
+  {
+    name:"Driver",
+    salary:4000,
+    education:10,
+    xp:20
+  },
+  {
+    name:"Computer Assistant",
+    salary:5500,
+    education:25,
+    xp:25
+  },
+  {
+    name:"Office Assistant",
+    salary:7000,
+    education:35,
+    xp:30
+  },
+  {
+    name:"Junior Developer",
+    salary:10000,
+    education:50,
+    xp:40
+  },
+  {
+    name:"Business Assistant",
+    salary:12000,
+    education:60,
+    xp:45
+  }
+];
+
+const businessTypes = [
+  {
+    name:"Food Spot",
+    price:10000,
+    income:1800,
+    expense:500,
+    location:"Kawo",
+    category:"Food"
+  },
+  {
+    name:"Clothing Shop",
+    price:25000,
+    income:3500,
+    expense:900,
+    location:"Kaduna Central",
+    category:"Fashion"
+  },
+  {
+    name:"Phone Shop",
+    price:40000,
+    income:5000,
+    expense:1300,
+    location:"Kawo",
+    category:"Technology"
+  },
+  {
+    name:"Tech Hub",
+    price:75000,
+    income:8500,
+    expense:2200,
+    location:"Unguwan Rimi",
+    category:"Technology"
+  },
+  {
+    name:"Mini Supermarket",
+    price:90000,
+    income:10500,
+    expense:3000,
+    location:"Barnawa",
+    category:"Retail"
+  },
+  {
+    name:"Restaurant",
+    price:120000,
+    income:14500,
+    expense:4200,
+    location:"GRA",
+    category:"Food"
+  },
+  {
+    name:"Printing Centre",
+    price:60000,
+    income:7200,
+    expense:1700,
+    location:"Kaduna Central",
+    category:"Services"
+  },
+  {
+    name:"Computer Centre",
+    price:100000,
+    income:12000,
+    expense:2800,
+    location:"Mando",
+    category:"Technology"
+  }
+];
+
+const items = [
+  ["Basic Phone",5000],
+  ["Smartphone",25000],
+  ["Laptop",65000],
+  ["Tablet",40000],
+  ["Headphones",8000],
+  ["School Books",4000],
+  ["Backpack",6000],
+  ["Meal Pack",1200],
+  ["Groceries",3000],
+  ["Notebook",1500]
+];
+
+const homes = [
+  ["Single Room",20000,150],
+  ["Shared Apartment",35000,220],
+  ["2-Bedroom House",70000,350],
+  ["3-Bedroom House",120000,500],
+  ["Duplex",250000,900]
+];
+
+const vehicles = [
+  ["Personal Bike",12000,100],
+  ["Small Car",45000,180],
+  ["Sedan",75000,160],
+  ["SUV",120000,200]
+];
+
+const peopleTemplate = [
+  ["Aisha","Student","academic"],
+  ["Musa","Shopkeeper","ambitious"],
+  ["Zara","Neighbour","social"],
+  ["Sadiq","Mechanic","practical"],
+  ["Maryam","Student","academic"],
+  ["Daniel","Recruiter","ambitious"],
+  ["Fatima","Shop Assistant","social"],
+  ["Ibrahim","Driver","explorer"],
+  ["Hassan","Business Owner","entrepreneur"],
+  ["Sarah","Teacher","academic"]
+];
+
+/* =========================================================
+   LIFE EVENTS
+   ========================================================= */
+
+const events = [
+
+{
+  id:"opportunity",
+  title:"A New Opportunity",
+  icon:"🌟",
+  minDay:1,
+  text:"Someone in your area tells you about an opportunity that could help your future.",
+  choices:[
+    {
+      title:"Take the opportunity",
+      desc:"Spend energy and reputation to chase it.",
+      effects:{money:2500,energy:-15,reputation:6},
+      decision:"You chose to chase opportunities."
+    },
+    {
+      title:"Focus on your current plans",
+      desc:"Keep your resources for now.",
+      effects:{mood:4},
+      decision:"You chose stability over a new opportunity."
+    }
+  ]
+},
+
+{
+  id:"career",
+  title:"Career Connection",
+  icon:"💼",
+  minDay:2,
+  text:"You meet someone who knows about a possible job opening.",
+  condition:()=>state.education>=20,
+  choices:[
+    {
+      title:"Follow up",
+      desc:"Put some effort into the connection.",
+      effects:{careerXP:25,reputation:5,energy:-8},
+      decision:"You followed up on a career opportunity."
+    },
+    {
+      title:"Keep your current path",
+      desc:"Stay focused on your existing career.",
+      effects:{mood:3},
+      decision:"You stayed focused on your current career."
+    }
+  ]
+},
+
+{
+  id:"education",
+  title:"Learning Opportunity",
+  icon:"📚",
+  minDay:2,
+  text:"A useful learning opportunity becomes available.",
+  choices:[
+    {
+      title:"Take the lesson",
+      desc:"Spend energy improving your skills.",
+      effects:{education:8,energy:-12},
+      decision:"You invested in your education."
+    },
+    {
+      title:"Save your energy",
+      desc:"Skip the opportunity for now.",
+      effects:{money:500,mood:2},
+      decision:"You decided to save your energy."
+    }
+  ]
+},
+
+{
+  id:"community",
+  title:"Community Project",
+  icon:"🤝",
+  minDay:3,
+  text:"People nearby are organizing a small community project.",
+  choices:[
+    {
+      title:"Help out",
+      desc:"Give your time to the community.",
+      effects:{reputation:10,mood:8,energy:-15},
+      decision:"You helped your community."
+    },
+    {
+      title:"Stay focused",
+      desc:"Keep working on your own goals.",
+      effects:{careerXP:10},
+      decision:"You stayed focused on personal goals."
+    }
+  ]
+},
+
+{
+  id:"business",
+  title:"Business Idea",
+  icon:"🏪",
+  minDay:3,
+  text:"You notice an opportunity that could improve one of your businesses.",
+  condition:()=>state.businesses.length>0,
+  choices:[
+    {
+      title:"Invest in the idea",
+      desc:"Spend ₦2,000 to test it.",
+      effects:{money:-2000,reputation:8},
+      decision:"You invested in a business idea."
+    },
+    {
+      title:"Wait and observe",
+      desc:"Don't risk your money yet.",
+      effects:{businessReputation:3},
+      decision:"You decided to observe the market first."
+    }
+  ]
+},
+
+{
+  id:"friend",
+  title:"A Friend Needs Help",
+  icon:"👥",
+  minDay:3,
+  condition:()=>state.people.length>0,
+  text:"Someone in your social circle could use some encouragement.",
+  choices:[
+    {
+      title:"Be there for them",
+      desc:"Spend some energy helping.",
+      effects:{mood:8,reputation:5,energy:-8},
+      decision:"You supported someone in your circle."
+    },
+    {
+      title:"Give them space",
+      desc:"Respect their independence.",
+      effects:{mood:2},
+      decision:"You gave your friend some space."
+    }
+  ]
+},
+
+{
+  id:"home",
+  title:"Home Decision",
+  icon:"🏠",
+  minDay:4,
+  condition:()=>state.home!==null,
+  text:"You notice something around your home that needs attention.",
+  choices:[
+    {
+      title:"Take care of it",
+      desc:"Spend ₦500 improving your living situation.",
+      effects:{money:-500,mood:8,reputation:2},
+      decision:"You invested in your home."
+    },
+    {
+      title:"Leave it for later",
+      desc:"Save your money.",
+      effects:{money:200,mood:-2},
+      decision:"You postponed a home improvement."
+    }
+  ]
+},
+
+{
+  id:"setback",
+  title:"A Difficult Day",
+  icon:"🌧️",
+  minDay:5,
+  text:"Something doesn't go according to plan.",
+  choices:[
+    {
+      title:"Stay positive",
+      desc:"Accept the setback and keep moving.",
+      effects:{mood:5,careerXP:10},
+      decision:"You stayed resilient after a setback."
+    },
+    {
+      title:"Take a break",
+      desc:"Give yourself time to recover.",
+      effects:{health:5,energy:15,mood:3},
+      decision:"You chose recovery over pushing harder."
+    }
+  ]
+},
+
+{
+  id:"bigchance",
+  title:"A Bigger Chance",
+  icon:"🚀",
+  minDay:7,
+  condition:()=>state.reputation>=20 || state.education>=60,
+  text:"Your growing reputation has opened a more serious opportunity.",
+  choices:[
+    {
+      title:"Go for it",
+      desc:"Take a major step forward.",
+      effects:{money:5000,reputation:15,careerXP:35,energy:-20},
+      decision:"You took a major opportunity."
+    },
+    {
+      title:"Prepare first",
+      desc:"Build yourself before making the jump.",
+      effects:{education:5,careerXP:15},
+      decision:"You chose preparation before the big move."
+    }
+  ]
+},
+
+{
+  id:"turningpoint",
+  title:"A Turning Point",
+  icon:"🔀",
+  minDay:10,
+  condition:()=>state.reputation>=35,
+  text:"People are starting to notice your progress. You need to decide what kind of future you want.",
+  choices:[
+    {
+      title:"Build a career",
+      desc:"Put your energy into professional growth.",
+      effects:{careerXP:50,reputation:10},
+      decision:"You decided to prioritize your career."
+    },
+    {
+      title:"Build a business",
+      desc:"Focus on becoming an entrepreneur.",
+      effects:{reputation:12,money:3000},
+      decision:"You decided to prioritize entrepreneurship."
+    },
+    {
+      title:"Build your community",
+      desc:"Use your reputation to help others.",
+      effects:{reputation:20,mood:10},
+      decision:"You decided to prioritize community."
+    }
+  ]
+}
+
+];
+
+/* =========================================================
+   MISSIONS
+   ========================================================= */
+
+const missionTemplates = [
+  {
+    id:"event1",
+    title:"Experience Life",
+    desc:"Complete your first major life event.",
+    type:"events",
+    target:1,
+    reward:2000
+  },
+  {
+    id:"event3",
+    title:"Life Keeps Moving",
+    desc:"Complete 3 major life events.",
+    type:"events",
+    target:3,
+    reward:4000
+  },
+  {
+    id:"event5",
+    title:"Decision Maker",
+    desc:"Complete 5 major life events.",
+    type:"events",
+    target:5,
+    reward:6000
+  },
+  {
+    id:"choices3",
+    title:"Choose Your Path",
+    desc:"Make 3 important life decisions.",
+    type:"choices",
+    target:3,
+    reward:5000
+  },
+  {
+    id:"reputation50",
+    title:"Known In Kaduna",
+    desc:"Reach 50 reputation.",
+    type:"reputation",
+    target:50,
+    reward:7500
+  },
+  {
+    id:"wealth100k",
+    title:"Financial Progress",
+    desc:"Reach ₦100,000 net worth.",
+    type:"networth",
+    target:100000,
+    reward:10000
+  },
+  {
+    id:"education75",
+    title:"Keep Learning",
+    desc:"Reach 75 education.",
+    type:"education",
+    target:75,
+    reward:6000
+  }
+];
+
+/* =========================================================
+   ACHIEVEMENTS
+   ========================================================= */
+
+const achievementTemplates = [
+  ["First Decision","Complete your first major event.","events",1],
+  ["Life Explorer","Complete 5 major events.","events",5],
+  ["Decision Maker","Make 5 important choices.","choices",5],
+  ["Resilient","Complete 3 events after Day 5.","lateEvents",3],
+  ["Known Name","Reach 50 reputation.","reputation",50],
+  ["Scholar","Reach 75 education.","education",75],
+  ["Growing Wealth","Reach ₦100,000 net worth.","networth",100000],
+  ["Community Star","Reach 75 reputation.","reputation",75],
+  ["Experienced","Reach Day 20.","day",20]
+];
+
+/* =========================================================
+   STATE
+   ========================================================= */
+
+let state = {
+
+  characterCreated:false,
+
+  character:{
+    name:"Kaduna Resident",
+    age:18,
+    location:"Barnawa",
+    educationBackground:"Self Learner",
+    personality:"Explorer",
+    story:"Your Kaduna story is just beginning.",
+    avatar:"👤"
+  },
+
+  money:15000,
+  health:100,
+  mood:70,
+  energy:80,
+  education:50,
+  reputation:0,
+
+  day:1,
+  timeIndex:0,
+  location:"Barnawa",
+
+  career:null,
+  careerXP:0,
+  careerLevel:1,
+
+  home:null,
+
+  vehicles:[],
+  activeVehicle:null,
+
+  inventory:[],
+  businesses:[],
+
+  people:[],
+
+  visitedLocations:["Barnawa"],
+
+  stats:{
+    workCount:0,
+    studyCount:0,
+    talkCount:0,
+    travelCount:0,
+    itemCount:0,
+    parkCount:0,
+    businessCount:0,
+    homeCount:0,
+    eventCount:0,
+    choiceCount:0,
+    lateEventCount:0,
+    hangoutCount:0
+  },
+
+  eventHistory:[],
+  decisions:[],
+  eventCooldown:0,
+  currentEvent:null,
+
+  chapter:1,
+
+  completedMissions:[],
+  claimedAchievements:[],
+
+  log:[
+    "Welcome to Kaduna Life V23.",
+    "Your choices will now shape your story."
+  ],
+
+  lastBusinessDay:0
+};
+
+/* =========================================================
+   UTILITIES
+   ========================================================= */
+
+function money(n){
+  return "₦"+Math.floor(n).toLocaleString();
+}
+
+function clamp(v,min,max){
+  return Math.max(min,Math.min(max,v));
+}
+
+function log(msg){
+  state.log.unshift("Day "+state.day+": "+msg);
+
+  if(state.log.length>80){
+    state.log=state.log.slice(0,80);
+  }
+}
+
+function toast(msg){
+  const el=document.getElementById("toast");
+
+  el.textContent=msg;
+  el.style.display="block";
+
+  clearTimeout(window.toastTimer);
+
+  window.toastTimer=setTimeout(()=>{
+    el.style.display="none";
+  },2500);
+}
+
+function spend(cost){
+  if(state.money<cost){
+    toast("Not enough money.");
+    return false;
+  }
+
+  state.money-=cost;
+  return true;
+}
+
+function changeStat(key,value){
+  if(typeof state[key]!=="number") return;
+
+  if(["health","mood","energy","education"].includes(key)){
+    state[key]=clamp(state[key]+value,0,100);
+  }else{
+    state[key]+=value;
+  }
+}
+
+/* =========================================================
+   SAVE / MIGRATION
+   ========================================================= */
+
+function normalizePeople(){
+  if(!Array.isArray(state.people) || state.people.length===0){
+    state.people=peopleTemplate.map(p=>({
+      name:p[0],
+      role:p[1],
+      personality:p[2],
+      trust:0,
+      mood:50,
+      lastTalkDay:0,
+      location:locations[Math.floor(Math.random()*locations.length)]
+    }));
+  }
+}
+
+function normalizeBusinesses(){
+
+  if(!Array.isArray(state.businesses)){
+    state.businesses=[];
+  }
+
+  state.businesses=state.businesses.map(b=>{
+
+    return {
+      ...b,
+
+      level:Number(b.level||1),
+      reputation:Number(b.reputation||0),
+      customers:Number(b.customers||0),
+      satisfaction:Number(
+        b.satisfaction===undefined ? 70 : b.satisfaction
+      ),
+      stock:Number(b.stock===undefined ? 50 : b.stock),
+      marketing:Number(b.marketing||0),
+      employees:Number(b.employees||0),
+      upgrades:Number(b.upgrades||0),
+      totalRevenue:Number(b.totalRevenue||0),
+      totalExpenses:Number(b.totalExpenses||0),
+      daysOpen:Number(b.daysOpen||0)
+    };
+
+  });
+}
+
+function migrateV22(){
+
+  const old=localStorage.getItem(OLD_SAVE);
+
+  if(!old) return false;
+
+  try{
+
+    const oldState=JSON.parse(old);
+
+    state={
+      ...state,
+      ...oldState,
+
+      stats:{
+        ...state.stats,
+        ...(oldState.stats||{})
+      },
+
+      character:{
+        ...state.character,
+        ...(oldState.character||{})
+      },
+
+      eventHistory:[],
+      decisions:[],
+      eventCooldown:0,
+      currentEvent:null,
+      chapter:1,
+
+      completedMissions:oldState.completedMissions||[],
+      claimedAchievements:oldState.claimedAchievements||[]
+    };
+
+    normalizePeople();
+    normalizeBusinesses();
+
+    log("Your V22 life has continued into V23.");
+    return true;
+
+  }catch(e){
+
+    console.error(e);
+    return false;
+  }
+}
+
+function saveGame(show=true){
+
+  normalizePeople();
+  normalizeBusinesses();
+
+  localStorage.setItem(
+    SAVE_KEY,
+    JSON.stringify(state)
+  );
+
+  if(show){
+    toast("Game saved.");
+  }
+}
+
+function loadGame(){
+
+  const saved=localStorage.getItem(SAVE_KEY);
+
+  if(saved){
+
+    try{
+      state={
+        ...state,
+        ...JSON.parse(saved),
+
+        stats:{
+          ...state.stats,
+          ...(JSON.parse(saved).stats||{})
+        },
+
+        character:{
+          ...state.character,
+          ...(JSON.parse(saved).character||{})
+        }
+      };
+
+    }catch(e){
+      console.error(e);
+    }
+
+  }else{
+
+    migrateV22();
+
+  }
+
+  normalizePeople();
+  normalizeBusinesses();
+}
+
+function newGame(){
+
+  if(!confirm("Start a new Kaduna Life? Your current V23 save will be deleted.")){
+    return;
+  }
+
+  localStorage.removeItem(SAVE_KEY);
+
+  location.reload();
+}
+
+/* =========================================================
+   CHARACTER
+   ========================================================= */
+
+function createCharacter(){
+
+  const modal=document.getElementById("modalBg");
+  const box=document.getElementById("modal");
+
+  box.innerHTML=`
+
+    <h2>👤 Create Your Character</h2>
+
+    <label>Name</label>
+    <input id="charName" value="${state.character.name}">
+
+    <label>Age</label>
+    <input id="charAge" type="number" min="16" max="80"
+      value="${state.character.age}">
+
+    <label>Starting Area</label>
+    <select id="charLocation">
+      ${locations.map(x=>`
+        <option ${x===state.location?"selected":""}>${x}</option>
+      `).join("")}
+    </select>
+
+    <label>Background</label>
+    <select id="charEducation">
+      <option>Student</option>
+      <option>Self Learner</option>
+      <option>Tech Learner</option>
+      <option>Local Resident</option>
+    </select>
+
+    <label>Personality</label>
+    <select id="charPersonality">
+      <option>Ambitious</option>
+      <option>Social</option>
+      <option>Academic</option>
+      <option>Entrepreneur</option>
+      <option>Explorer</option>
+    </select>
+
+    <div class="row" style="margin-top:10px">
+      <button onclick="finishCharacter()">Create</button>
+      <button class="secondary" onclick="closeModal()">Cancel</button>
+    </div>
+  `;
+
+  modal.style.display="flex";
+}
+
+function finishCharacter(){
+
+  const name=document.getElementById("charName").value.trim()||"Kaduna Resident";
+  const age=clamp(
+    Number(document.getElementById("charAge").value)||18,
+    16,
+    80
+  );
+
+  const location=document.getElementById("charLocation").value;
+  const background=document.getElementById("charEducation").value;
+  const personality=document.getElementById("charPersonality").value;
+
+  state.characterCreated=true;
+
+  state.character={
+    ...state.character,
+    name,
+    age,
+    location,
+    educationBackground:background,
+    personality,
+    story:`${name} begins a new chapter in Kaduna.`
+  };
+
+  state.location=location;
+
+  state.visitedLocations=[
+    ...new Set([location,...state.visitedLocations])
+  ];
+
+  if(background==="Student"){
+    state.education=clamp(state.education+10,0,100);
+  }
+
+  if(background==="Tech Learner"){
+    state.education=clamp(state.education+8,0,100);
+  }
+
+  if(background==="Local Resident"){
+    state.reputation+=5;
+  }
+
+  if(personality==="Social"){
+    state.mood=clamp(state.mood+10,0,100);
+  }
+
+  if(personality==="Academic"){
+    state.education=clamp(state.education+10,0,100);
+  }
+
+  if(personality==="Entrepreneur"){
+    state.reputation+=5;
+  }
+
+  if(personality==="Explorer"){
+    state.mood=clamp(state.mood+8,0,100);
+  }
+
+  log(`You created ${name}.`);
+  closeModal();
+  saveGame(false);
+  render();
+}
+
+function closeModal(){
+  document.getElementById("modalBg").style.display="none";
+}
+
+/* =========================================================
+   LIFE EVENTS
+   ========================================================= */
+
+function availableEvents(){
+
+  return events.filter(e=>{
+
+    if(state.day<e.minDay) return false;
+
+    if(state.eventHistory.includes(e.id)){
+
+      // allow repeatable events only after enough time
+      if(
+        !["setback","friend","community","business"].includes(e.id)
+      ){
+        return false;
+      }
+
+    }
+
+    if(e.condition && !e.condition()){
+      return false;
+    }
+
+    return true;
+
+  });
+}
+
+function triggerEvent(force=false){
+
+  if(state.currentEvent){
+    return;
+  }
+
+  if(!force && state.eventCooldown>0){
+    return;
+  }
+
+  const pool=availableEvents();
+
+  if(pool.length===0){
+    toast("No major event is available right now.");
+    return;
+  }
+
+  const event=pool[Math.floor(Math.random()*pool.length)];
+
+  state.currentEvent=event;
+
+  log(`A major event appeared: ${event.title}.`);
+
+  render();
+}
+
+function chooseEvent(index){
+
+  if(!state.currentEvent) return;
+
+  const event=state.currentEvent;
+  const choice=event.choices[index];
+
+  if(!choice) return;
+
+  const effects=choice.effects||{};
+
+  Object.keys(effects).forEach(key=>{
+
+    if(key==="careerXP"){
+      state.careerXP+=effects[key];
+      checkPromotion();
+      return;
+    }
+
+    if(key==="businessReputation"){
+
+      state.businesses.forEach(b=>{
+        b.reputation+=effects[key];
+      });
+
+      return;
+    }
+
+    changeStat(key,effects[key]);
+
+  });
+
+  state.stats.eventCount++;
+  state.stats.choiceCount++;
+
+  if(state.day>5){
+    state.stats.lateEventCount++;
+  }
+
+  state.eventHistory.push(event.id);
+  state.decisions.push({
+    day:state.day,
+    event:event.title,
+    choice:choice.decision
+  });
+
+  state.eventCooldown=2;
+  state.currentEvent=null;
+
+  log(choice.decision);
+
+  toast("Your choice has been recorded.");
+
+  updateChapter();
+  checkMissions();
+  checkAchievements();
+
+  saveGame(false);
+  render();
+}
+
+function updateChapter(){
+
+  let newChapter=1;
+
+  if(state.day>=5) newChapter=2;
+  if(state.day>=10) newChapter=3;
+  if(state.day>=20) newChapter=4;
+  if(state.reputation>=75) newChapter=5;
+
+  if(newChapter>state.chapter){
+
+    state.chapter=newChapter;
+
+    log(`You entered Chapter ${newChapter} of your Kaduna story.`);
+    toast(`📖 Chapter ${newChapter} unlocked!`);
+
+  }
+}
+
+/* =========================================================
+   MISSIONS
+   ========================================================= */
+
+function missionProgress(m){
+
+  switch(m.type){
+
+    case"events":
+      return state.stats.eventCount;
+
+    case"choices":
+      return state.stats.choiceCount;
+
+    case"reputation":
+      return state.reputation;
+
+    case"networth":
+      return netWorth();
+
+    case"education":
+      return state.education;
+
+    default:
+      return 0;
+  }
+}
+
+function checkMissions(){
+
+  missionTemplates.forEach(m=>{
+
+    if(state.completedMissions.includes(m.id)){
+      return;
+    }
+
+    if(missionProgress(m)>=m.target){
+
+      state.completedMissions.push(m.id);
+      state.money+=m.reward;
+
+      log(
+        `Mission complete: ${m.title}. Reward ${money(m.reward)}.`
+      );
+
+      toast(`📋 Mission complete: ${m.title}`);
+
+    }
+
+  });
+
+}
+
+function renderMissions(){
+
+  const el=document.getElementById("missionsArea");
+
+  el.innerHTML=missionTemplates.map(m=>{
+
+    const done=state.completedMissions.includes(m.id);
+    const progress=Math.min(m.target,missionProgress(m));
+
+    return `
+      <div class="mission ${done?"done":""}">
+        <strong>${done?"✅":"📌"} ${m.title}</strong>
+
+        <p class="muted small">${m.desc}</p>
+
+        <div class="progress">
+          <div style="width:${(progress/m.target)*100}%"></div>
+        </div>
+
+        <div class="small">
+          ${progress.toLocaleString()} / ${m.target.toLocaleString()}
+          ${done?" • Complete":""}
+        </div>
+      </div>
+    `;
+
+  }).join("");
+}
+
+/* =========================================================
+   ACHIEVEMENTS
+   ========================================================= */
+
+function achievementProgress(a){
+
+  switch(a[2]){
+
+    case"events":
+      return state.stats.eventCount;
+
+    case"choices":
+      return state.stats.choiceCount;
+
+    case"lateEvents":
+      return state.stats.lateEventCount;
+
+    case"reputation":
+      return state.reputation;
+
+    case"education":
+      return state.education;
+
+    case"networth":
+      return netWorth();
+
+    case"day":
+      return state.day;
+
+    default:
+      return 0;
+  }
+}
+
+function checkAchievements(){
+
+  achievementTemplates.forEach(a=>{
+
+    const id=a[0];
+
+    if(state.claimedAchievements.includes(id)){
+      return;
+    }
+
+    if(achievementProgress(a)>=a[3]){
+
+      state.claimedAchievements.push(id);
+
+      state.money+=1500;
+      state.reputation+=5;
+
+      log(
+        `Achievement unlocked: ${id}.`
+      );
+
+      toast(`🏆 Achievement: ${id}`);
+
+    }
+
+  });
+
+}
+
+function renderAchievements(){
+
+  const el=document.getElementById("achievementsArea");
+
+  el.innerHTML=achievementTemplates.map(a=>{
+
+    const done=state.claimedAchievements.includes(a[0]);
+    const progress=Math.min(a[3],achievementProgress(a));
+
+    return `
+      <div class="card">
+        <h3>${done?"🏆":"🔒"} ${a[0]}</h3>
+
+        <p class="muted small">${a[1]}</p>
+
+        <div class="progress">
+          <div style="width:${(progress/a[3])*100}%"></div>
+        </div>
+
+        <span class="badge">
+          ${progress.toLocaleString()} / ${a[3].toLocaleString()}
+        </span>
+      </div>
+    `;
+
+  }).join("");
+}
+
+/* =========================================================
+   CAREER
+   ========================================================= */
+
+function chooseJob(){
+
+  const available=jobs.filter(
+    j=>state.education>=j.education
+  );
+
+  if(!available.length){
+    toast("Improve your education first.");
+    return;
+  }
+
+  const box=document.getElementById("modal");
+  const bg=document.getElementById("modalBg");
+
+  box.innerHTML=`
+    <h2>💼 Choose A Career</h2>
+
+    ${jobs.map((j,i)=>`
+
+      <div class="card" style="margin:8px 0">
+
+        <h3>${j.name}</h3>
+
+        <p class="small muted">
+          Salary: ${money(j.salary)} / shift
+        </p>
+
+        <p class="small muted">
+          Education required: ${j.education}
+        </p>
+
+        <button
+          ${state.education<j.education?"disabled":""}
+          onclick="selectJob(${i})">
+          ${state.education<j.education?"🔒 Locked":"Choose Job"}
+        </button>
+
+      </div>
+
+    `).join("")}
+
+    <button class="secondary" onclick="closeModal()">
+      Close
+    </button>
+  `;
+
+  bg.style.display="flex";
+}
+
+function selectJob(index){
+
+  const job=jobs[index];
+
+  if(state.education<job.education){
+    return;
+  }
+
+  state.career=job.name;
+  state.careerXP=0;
+  state.careerLevel=1;
+
+  log(`You started working as a ${job.name}.`);
+
+  closeModal();
+  saveGame(false);
+  render();
+}
+
+function work(){
+
+  if(!state.career){
+    chooseJob();
+    return;
+  }
+
+  if(state.energy<10){
+    toast("You're too tired to work.");
+    return;
+  }
+
+  const job=jobs.find(j=>j.name===state.career);
+
+  if(!job) return;
+
+  state.money+=job.salary;
+  state.energy-=10;
+  state.mood=clamp(state.mood+1,0,100);
+
+  state.careerXP+=job.xp;
+  state.stats.workCount++;
+
+  log(
+    `You worked as a ${job.name} and earned ${money(job.salary)}.`
+  );
+
+  checkPromotion();
+  checkMissions();
+  checkAchievements();
+
+  saveGame(false);
+  render();
+}
+
+function checkPromotion(){
+
+  const needed=state.careerLevel*100;
+
+  if(state.careerXP>=needed){
+
+    state.careerXP-=needed;
+    state.careerLevel++;
+
+    state.money+=2000;
+    state.reputation+=5;
+
+    log(
+      `Career promotion! You reached Level ${state.careerLevel}.`
+    );
+
+    toast("💼 Career level increased!");
+
+  }
+}
+
+/* =========================================================
+   EDUCATION
+   ========================================================= */
+
+function study(){
+
+  if(state.energy<12){
+    toast("Not enough energy.");
+    return;
+  }
+
+  state.energy-=12;
+  state.education=clamp(state.education+5,0,100);
+  state.stats.studyCount++;
+
+  log("You studied and improved your education.");
+
+  checkMissions();
+  checkAchievements();
+
+  saveGame(false);
+  render();
+}
+
+function learnSkill(){
+
+  if(state.energy<15){
+    toast("Not enough energy.");
+    return;
+  }
+
+  state.energy-=15;
+  state.education=clamp(state.education+7,0,100);
+  state.careerXP+=10;
+
+  checkPromotion();
+
+  log("You spent time learning a useful skill.");
+
+  checkMissions();
+  checkAchievements();
+
+  saveGame(false);
+  render();
+}
+
+/* =========================================================
+   TRAVEL
+   ========================================================= */
+
+function travel(){
+
+  const destination=document.getElementById("travelSelect").value;
+
+  if(destination===state.location){
+    toast("You're already here.");
+    return;
+  }
+
+  if(state.energy<5){
+    toast("Not enough energy to travel.");
+    return;
+  }
+
+  state.energy-=5;
+
+  if(state.activeVehicle){
+
+    const vehicle=state.vehicles.find(
+      v=>v.name===state.activeVehicle
+    );
+
+    if(vehicle){
+      if(vehicle.fuel<=0){
+        toast("Your vehicle needs fuel.");
+        state.energy+=5;
+        return;
+      }
+
+      vehicle.fuel-=10;
+    }
+
+  }else{
+
+    if(!spend(50)){
+      state.energy+=5;
+      return;
+    }
+
+  }
+
+  state.location=destination;
+
+  state.visitedLocations=[
+    ...new Set([...state.visitedLocations,destination])
+  ];
+
+  state.stats.travelCount++;
+
+  log(`You travelled to ${destination}.`);
+
+  checkMissions();
+  checkAchievements();
+
+  saveGame(false);
+  render();
+}
+
+/* =========================================================
+   SOCIAL
+   ========================================================= */
+
+function talkRandom(){
+
+  normalizePeople();
+
+  const nearby=state.people.filter(
+    p=>p.location===state.location
+  );
+
+  const person=
+    nearby[Math.floor(Math.random()*nearby.length)]
+    || state.people[Math.floor(Math.random()*state.people.length)];
+
+  if(!person){
+    toast("No one is around.");
+    return;
+  }
+
+  talk(person.name);
+}
+
+function talk(name){
+
+  const p=state.people.find(x=>x.name===name);
+
+  if(!p) return;
+
+  if(p.lastTalkDay===state.day){
+    toast(`You already talked to ${p.name} today.`);
+    return;
+  }
+
+  if(state.energy<4){
+    toast("Not enough energy.");
+    return;
+  }
+
+  state.energy-=4;
+
+  let gain=5;
+
+  if(
+    state.character.personality==="Social" &&
+    p.personality==="social"
+  ){
+    gain=8;
+  }
+
+  p.trust+=gain;
+  p.mood=clamp(p.mood+5,0,100);
+  p.lastTalkDay=state.day;
+
+  state.stats.talkCount++;
+  state.mood=clamp(state.mood+4,0,100);
+  state.reputation+=1;
+
+  log(`You talked with ${p.name}. Trust +${gain}.`);
+
+  saveGame(false);
+  render();
+}
+
+/* =========================================================
+   BUSINESS
+   ========================================================= */
+
+function businessIncome(b){
+
+  const levelBonus=1+(b.level-1)*0.12;
+  const repBonus=1+b.reputation/500;
+  const marketingBonus=1+b.marketing*0.03;
+  const satisfactionBonus=.7+b.satisfaction/333;
+  const employeeBonus=1+b.employees*.04;
+
+  const stockBonus=
+    b.stock<=0
+      ? .25
+      : .7+b.stock/333;
+
+  return Math.max(
+    0,
+    Math.floor(
+      b.baseIncome*
+      levelBonus*
+      repBonus*
+      marketingBonus*
+      satisfactionBonus*
+      employeeBonus*
+      stockBonus
+    )
+  );
+}
+
+function businessExpense(b){
+
+  return Math.floor(
+    b.baseExpense+
+    b.employees*350+
+    b.marketing*200+
+    (b.level-1)*250
+  );
+}
+
+function buyBusiness(index){
+
+  const type=businessTypes[index];
+
+  if(!type) return;
+
+  if(state.businesses.length>=8){
+    toast("Your business empire is full.");
+    return;
+  }
+
+  if(!spend(type.price)){
+    return;
+  }
+
+  state.businesses.push({
+
+    name:type.name,
+    baseIncome:type.income,
+    baseExpense:type.expense,
+    price:type.price,
+    location:type.location,
+    category:type.category,
+
+    level:1,
+    reputation:0,
+    customers:0,
+    satisfaction:70,
+    stock:50,
+    marketing:0,
+    employees:0,
+    upgrades:0,
+    totalRevenue:0,
+    totalExpenses:0,
+    daysOpen:0
+
+  });
+
+  state.stats.businessCount++;
+
+  log(`You opened ${type.name} in ${type.location}.`);
+
+  checkMissions();
+  checkAchievements();
+
+  saveGame(false);
+  render();
+}
+
+function upgradeBusiness(index){
+
+  const b=state.businesses[index];
+
+  if(!b) return;
+
+  if(b.level>=5){
+    toast("This business is already Level 5.");
+    return;
+  }
+
+  const cost=Math.floor(
+    b.price*(.35+b.level*.15)
+  );
+
+  if(!spend(cost)){
+    return;
+  }
+
+  b.level++;
+  b.upgrades++;
+  b.reputation+=10;
+  b.satisfaction=clamp(b.satisfaction+5,0,100);
+  b.stock+=20;
+
+  log(`${b.name} upgraded to Level ${b.level}.`);
+
+  saveGame(false);
+  render();
+}
+
+function marketBusiness(index){
+
+  const b=state.businesses[index];
+
+  if(!b) return;
+
+  if(!spend(1000)){
+    return;
+  }
+
+  if(b.marketing>=5){
+    toast("Marketing is already at maximum.");
+    state.money+=1000;
+    return;
+  }
+
+  b.marketing++;
+  b.reputation+=5;
+  b.satisfaction=clamp(b.satisfaction+3,0,100);
+
+  log(`You ran a marketing campaign for ${b.name}.`);
+
+  saveGame(false);
+  render();
+}
+
+function hireEmployee(index){
+
+  const b=state.businesses[index];
+
+  if(!b) return;
+
+  if(b.employees>=5){
+    toast("Maximum employees reached.");
+    return;
+  }
+
+  if(!spend(2500)){
+    return;
+  }
+
+  b.employees++;
+  b.satisfaction=clamp(b.satisfaction+5,0,100);
+  b.reputation+=3;
+
+  log(`You hired an employee for ${b.name}.`);
+
+  saveGame(false);
+  render();
+}
+
+function restockBusiness(index){
+
+  const b=state.businesses[index];
+
+  if(!b) return;
+
+  if(!spend(1500)){
+    return;
+  }
+
+  b.stock+=35;
+  b.satisfaction=clamp(b.satisfaction+4,0,100);
+
+  log(`${b.name} was restocked.`);
+
+  saveGame(false);
+  render();
+}
+
+function runBusinessDay(){
+
+  if(state.lastBusinessDay===state.day){
+    return;
+  }
+
+  state.lastBusinessDay=state.day;
+
+  state.businesses.forEach(b=>{
+
+    const revenue=businessIncome(b);
+    const expense=businessExpense(b);
+
+    const net=revenue-expense;
+
+    state.money+=net;
+
+    b.totalRevenue+=revenue;
+    b.totalExpenses+=expense;
+    b.daysOpen++;
+
+    const customers=
+      Math.max(
+        1,
+        Math.floor(
+          8+
+          b.level*5+
+          b.reputation/4+
+          b.marketing*3+
+          b.satisfaction/10+
+          b.employees*2+
+          Math.random()*8
+        )
+      );
+
+    b.customers+=customers;
+    b.stock-=Math.ceil(customers/2);
+
+    if(b.stock<0){
+      b.stock=0;
+      b.satisfaction=clamp(b.satisfaction-5,0,100);
+    }
+
+    const roll=Math.random();
+
+    if(roll<.15){
+
+      b.reputation+=4;
+      b.satisfaction=clamp(b.satisfaction+5,0,100);
+
+      log(`${b.name}: Busy day!`);
+
+    }else if(roll<.28){
+
+      b.satisfaction=clamp(b.satisfaction+8,0,100);
+
+      log(`${b.name}: Customers gave positive feedback.`);
+
+    }else if(roll<.38){
+
+      b.stock=Math.max(0,b.stock-20);
+      b.satisfaction=clamp(b.satisfaction-5,0,100);
+
+      log(`${b.name}: Supply problem affected the business.`);
+
+    }else if(roll<.46){
+
+      b.reputation+=6;
+      b.satisfaction=clamp(b.satisfaction+10,0,100);
+
+      log(`${b.name}: Great service boosted the business.`);
+
+    }
+
+    if(net>0){
+      log(`${b.name} made ${money(net)} today.`);
+    }else{
+      log(`${b.name} lost ${money(Math.abs(net))} today.`);
+    }
+
+  });
+
+  checkAchievements();
+}
+
+function renderBusiness(){
+
+  const el=document.getElementById("businessArea");
+
+  if(!state.businesses.length){
+
+    el.innerHTML=`
+      <div class="card">
+        <h3>No Businesses Yet</h3>
+        <p class="muted">
+          Build your first business from the market below.
+        </p>
+      </div>
+    `;
+
+  }else{
+
+    el.innerHTML=state.businesses.map((b,i)=>`
+
+      <div class="card" style="margin-bottom:12px">
+
+        <h3>🏪 ${b.name}</h3>
+
+        <span class="badge">
+          Level ${b.level}
+        </span>
+
+        <span class="badge blue">
+          ${b.category}
+        </span>
+
+        <p class="small muted">
+          📍 ${b.location}
+        </p>
+
+        <p>
+          💰 Daily revenue: ${money(businessIncome(b))}
+        </p>
+
+        <p>
+          📉 Daily expense: ${money(businessExpense(b))}
+        </p>
+
+        <p>
+          👥 Customers: ${b.customers}
+        </p>
+
+        <p>
+          📦 Stock: ${b.stock}
+        </p>
+
+        <p>
+          ⭐ Reputation: ${b.reputation}
+        </p>
+
+        <p>
+          😊 Satisfaction: ${Math.round(b.satisfaction)}%
+        </p>
+
+        <div class="row" style="margin-top:8px">
+
+          <button onclick="upgradeBusiness(${i})">
+            ⬆️ Upgrade
+          </button>
+
+          <button onclick="marketBusiness(${i})">
+            📣 Market
+          </button>
+
+          <button onclick="hireEmployee(${i})">
+            👤 Hire
+          </button>
+
+          <button onclick="restockBusiness(${i})">
+            📦 Restock
+          </button>
+
+        </div>
+
+      </div>
+
+    `).join("");
+  }
+
+  renderBusinessMarket();
+}
+
+function renderBusinessMarket(){
+
+  const market=document.createElement("div");
+
+  market.className="cards";
+
+  market.innerHTML=businessTypes.map((b,i)=>`
+
+    <div class="card">
+
+      <h3>${b.name}</h3>
+
+      <p class="small muted">
+        ${b.category} • ${b.location}
+      </p>
+
+      <p>
+        Price: <strong>${money(b.price)}</strong>
+      </p>
+
+      <p class="small muted">
+        Base income: ${money(b.income)}/day
+      </p>
+
+      <button onclick="buyBusiness(${i})">
+        Buy Business
+      </button>
+
+    </div>
+
+  `).join("");
+
+  const old=document.getElementById("businessArea");
+
+  old.appendChild(
+    document.createElement("hr")
+  );
+
+  old.appendChild(market);
+}
+
+/* =========================================================
+   HOME / VEHICLES / INVENTORY
+   ========================================================= */
+
+function renderHome(){
+
+  const el=document.getElementById("homeArea");
+
+  if(state.home){
+
+    el.innerHTML=`
+      <div class="card">
+        <h3>🏠 ${state.home.name}</h3>
+        <p>Maintenance: ${money(state.home.maintenance)} / day</p>
+        <span class="badge">Owned</span>
+      </div>
+    `;
+
+    return;
+  }
+
+  el.innerHTML=homes.map((h,i)=>`
+
+    <div class="card" style="margin-bottom:8px">
+
+      <h3>${h[0]}</h3>
+
+      <p class="small muted">
+        Price: ${money(h[1])}
+      </p>
+
+      <button onclick="buyHome(${i})">
+        Buy Home
+      </button>
+
+    </div>
+
+  `).join("");
+}
+
+function buyHome(index){
+
+  const h=homes[index];
+
+  if(!spend(h[1])){
+    return;
+  }
+
+  state.home={
+    name:h[0],
+    price:h[1],
+    maintenance:h[2]
+  };
+
+  state.stats.homeCount++;
+  state.reputation+=5;
+
+  log(`You bought a ${h[0]}.`);
+
+  checkMissions();
+  checkAchievements();
+
+  saveGame(false);
+  render();
+}
+
+function renderVehicles(){
+
+  const el=document.getElementById("vehicleArea");
+
+  let html="";
+
+  if(state.vehicles.length){
+
+    html+=state.vehicles.map((v,i)=>`
+
+      <div class="card" style="margin-bottom:8px">
+
+        <h3>🚗 ${v.name}</h3>
+
+        <p>
+          Fuel: ${v.fuel}
+        </p>
+
+        <span class="badge">
+          ${state.activeVehicle===v.name?"Active":"Owned"}
+        </span>
+
+        <button
+          class="secondary"
+          onclick="activateVehicle(${i})">
+          ${state.activeVehicle===v.name?"Active":"Use Vehicle"}
+        </button>
+
+      </div>
+
+    `).join("");
+
+  }
+
+  html+=vehicles.map((v,i)=>`
+
+    <div class="card" style="margin-bottom:8px">
+
+      <h3>${v[0]}</h3>
+
+      <p class="small muted">
+        Price: ${money(v[1])}
+      </p>
+
+      <button onclick="buyVehicle(${i})">
+        Buy
+      </button>
+
+    </div>
+
+  `).join("");
+
+  el.innerHTML=html;
+}
+
+function buyVehicle(index){
+
+  const v=vehicles[index];
+
+  if(!spend(v[1])){
+    return;
+  }
+
+  state.vehicles.push({
+    name:v[0],
+    price:v[1],
+    travel:v[2],
+    fuel:100
+  });
+
+  log(`You bought a ${v[0]}.`);
+
+  saveGame(false);
+  render();
+}
+
+function activateVehicle(index){
+
+  const v=state.vehicles[index];
+
+  if(!v) return;
+
+  state.activeVehicle=v.name;
+
+  log(`You are now using your ${v.name}.`);
+
+  saveGame(false);
+  render();
+}
+
+function renderInventory(){
+
+  const el=document.getElementById("inventoryArea");
+
+  el.innerHTML=state.inventory.length
+    ? state.inventory.map(i=>`
+        <span class="badge">${i}</span>
+      `).join("")
+    : `<p class="muted">Your inventory is empty.</p>`;
+}
+
+function buyItem(index){
+
+  const item=items[index];
+
+  if(state.inventory.length>=20){
+    toast("Inventory is full.");
+    return;
+  }
+
+  if(!spend(item[1])){
+    return;
+  }
+
+  state.inventory.push(item[0]);
+  state.stats.itemCount++;
+
+  log(`You bought ${item[0]}.`);
+
+  checkMissions();
+  checkAchievements();
+
+  saveGame(false);
+  render();
+}
+
+/* =========================================================
+   BASIC ACTIONS
+   ========================================================= */
+
+function eat(){
+
+  if(!spend(500)){
+    return;
+  }
+
+  state.energy=clamp(state.energy+10,0,100);
+  state.mood=clamp(state.mood+5,0,100);
+
+  log("You had a meal and recovered some energy.");
+
+  saveGame(false);
+  render();
+}
+
+function park(){
+
+  if(state.energy<5){
+    toast("Not enough energy.");
+    return;
+  }
+
+  state.energy-=5;
+  state.mood=clamp(state.mood+10,0,100);
+  state.stats.parkCount++;
+
+  log("You took some time to relax.");
+
+  saveGame(false);
+  render();
+}
+
+function explore(){
+
+  if(state.energy<8){
+    toast("Not enough energy.");
+    return;
+  }
+
+  const unseen=locations.filter(
+    x=>!state.visitedLocations.includes(x)
+  );
+
+  if(!unseen.length){
+    toast("You've explored all major areas.");
+    return;
+  }
+
+  state.energy-=8;
+
+  const place=
+    unseen[Math.floor(Math.random()*unseen.length)];
+
+  state.location=place;
+
+  state.visitedLocations.push(place);
+
+  state.reputation+=2;
+  state.stats.travelCount++;
+
+  log(`You explored ${place}.`);
+
+  checkMissions();
+  checkAchievements();
+
+  saveGame(false);
+  render();
+}
+
+function rest(){
+
+  state.energy=clamp(state.energy+25,0,100);
+  state.health=clamp(state.health+4,0,100);
+  state.mood=clamp(state.mood+3,0,100);
+
+  advanceTime();
+
+  log("You rested.");
+
+  saveGame(false);
+  render();
+}
+
+/* =========================================================
+   TIME
+   ========================================================= */
+
+function advanceTime(){
+
+  state.timeIndex++;
+
+  if(state.timeIndex>=times.length){
+
+    endDay(true);
+    return;
+  }
+
+  if(
+    state.eventCooldown>0
+  ){
+    state.eventCooldown--;
+  }
+
+  const chance=Math.random();
+
+  if(
+    !state.currentEvent &&
+    state.eventCooldown===0 &&
+    chance<0.38
+  ){
+    triggerEvent();
+  }
+
+  saveGame(false);
+  render();
+}
+
+function endDay(silent=false){
+
+  runBusinessDay();
+
+  if(state.home){
+
+    if(state.money>=state.home.maintenance){
+      state.money-=state.home.maintenance;
+    }else{
+      state.mood=clamp(state.mood-5,0,100);
+      log("You couldn't fully cover your home maintenance.");
+    }
+
+  }
+
+  state.vehicles.forEach(v=>{
+    v.fuel=Math.min(100,v.fuel+25);
+  });
+
+  state.energy=clamp(state.energy+45,0,100);
+  state.health=clamp(state.health+10,0,100);
+  state.mood=clamp(state.mood+5,0,100);
+
+  state.day++;
+  state.timeIndex=0;
+
+  state.eventCooldown=Math.max(
+    0,
+    state.eventCooldown-1
+  );
+
+  state.people.forEach(p=>{
+
+    p.location=
+      locations[Math.floor(Math.random()*locations.length)];
+
+    p.lastTalkDay=0;
+
+  });
+
+  updateChapter();
+
+  if(!silent){
+    log("A new day begins.");
+  }
+
+  checkMissions();
+  checkAchievements();
+
+  if(
+    !state.currentEvent &&
+    state.eventCooldown===0 &&
+    Math.random()<.75
+  ){
+    triggerEvent();
+  }
+
+  saveGame(false);
+  render();
+}
+
+/* =========================================================
+   FINANCES
+   ========================================================= */
+
+function netWorth(){
+
+  let total=state.money;
+
+  if(state.home){
+    total+=state.home.price;
+  }
+
+  state.vehicles.forEach(v=>{
+    total+=v.price;
+  });
+
+  state.businesses.forEach(b=>{
+    total+=b.price+(b.level-1)*Math.floor(b.price*.25);
+  });
+
+  state.inventory.forEach(name=>{
+    const item=items.find(x=>x[0]===name);
+    if(item) total+=item[1];
+  });
+
+  return Math.floor(total);
+}
+
+function renderFinance(){
+
+  const businessValue=state.businesses.reduce(
+    (sum,b)=>
+      sum+b.price+(b.level-1)*Math.floor(b.price*.25),
+    0
+  );
+
+  const vehicleValue=state.vehicles.reduce(
+    (sum,v)=>sum+v.price,
+    0
+  );
+
+  const homeValue=state.home?state.home.price:0;
+
+  document.getElementById("financeArea").innerHTML=`
+
+    <div class="cards">
+
+      <div class="card">
+        <h3>💵 Cash</h3>
+        <strong>${money(state.money)}</strong>
+      </div>
+
+      <div class="card">
+        <h3>🏠 Property</h3>
+        <strong>${money(homeValue)}</strong>
+      </div>
+
+      <div class="card">
+        <h3>🚗 Vehicles</h3>
+        <strong>${money(vehicleValue)}</strong>
+      </div>
+
+      <div class="card">
+        <h3>🏪 Businesses</h3>
+        <strong>${money(businessValue)}</strong>
+      </div>
+
+      <div class="card">
+        <h3>💎 Net Worth</h3>
+        <strong>${money(netWorth())}</strong>
+      </div>
+
+    </div>
+
+    <div class="card" style="margin-top:12px">
+
+      <h3>🛒 Buy Items</h3>
+
+      <div class="cards">
+
+        ${items.map((x,i)=>`
+
+          <div class="card">
+
+            <strong>${x[0]}</strong>
+
+            <p class="small muted">
+              ${money(x[1])}
+            </p>
+
+            <button onclick="buyItem(${i})">
+              Buy
+            </button>
+
+          </div>
+
+        `).join("")}
+
+      </div>
+
+    </div>
+  `;
+}
+
+/* =========================================================
+   RENDER
+   ========================================================= */
+
+function renderEvent(){
+
+  const el=document.getElementById("eventArea");
+
+  if(!state.currentEvent){
+
+    el.innerHTML=`
+
+      <div class="card">
+
+        <h3>🌤️ No major event right now</h3>
+
+        <p class="muted">
+          Keep living your life. New opportunities can appear as
+          your days, reputation, career and relationships develop.
+        </p>
+
+        <button onclick="triggerEvent(true)">
+          🎲 Look For An Event
+        </button>
+
+      </div>
+
+    `;
+
+    return;
+  }
+
+  const e=state.currentEvent;
+
+  el.innerHTML=`
+
+    <div class="event">
+
+      <div class="event-icon">${e.icon}</div>
+
+      <h2>${e.title}</h2>
+
+      <p class="muted">
+        ${e.text}
+      </p>
+
+      <div style="margin-top:12px">
+
+        ${e.choices.map((c,i)=>`
+
+          <button class="choice"
+            onclick="chooseEvent(${i})">
+
+            <span class="choice-title">
+              ${i+1}. ${c.title}
+            </span>
+
+            <span class="choice-desc">
+              ${c.desc}
+            </span>
+
+          </button>
+
+        `).join("")}
+
+      </div>
+
+    </div>
+  `;
+}
+
+function renderDecisions(){
+
+  const el=document.getElementById("decisionsArea");
+
+  if(!state.decisions.length){
+
+    el.innerHTML=`
+      <div class="card">
+        <h3>🚩 No major decisions yet</h3>
+        <p class="muted">
+          The choices you make during life events will appear here.
+        </p>
+      </div>
+    `;
+
+    return;
+  }
+
+  el.innerHTML=state.decisions
+    .slice(0,12)
+    .map(d=>`
+
+      <div class="card">
+
+        <span class="badge blue">
+          Day ${d.day}
+        </span>
+
+        <h3 style="margin-top:6px">
+          ${d.event}
+        </h3>
+
+        <p class="muted small">
+          ${d.choice}
+        </p>
+
+      </div>
+
+    `)
+    .join("");
+}
+
+function renderPeople(){
+
+  const el=document.getElementById("peopleArea");
+
+  normalizePeople();
+
+  el.innerHTML=state.people.map((p,i)=>`
+
+    <div class="card">
+
+      <h3>👤 ${p.name}</h3>
+
+      <p class="small muted">
+        ${p.role}
+      </p>
+
+      <span class="badge">
+        Trust ${p.trust}
+      </span>
+
+      <span class="badge blue">
+        ${p.personality}
+      </span>
+
+      <p class="small muted" style="margin-top:7px">
+        📍 ${p.location}
+      </p>
+
+      <button onclick="talk('${p.name}')">
+        👋 Talk
+      </button>
+
+    </div>
+
+  `).join("");
+}
+
+function renderCareer(){
+
+  const el=document.getElementById("careerArea");
+
+  if(!state.career){
+
+    el.innerHTML=`
+      <div class="card">
+
+        <h3>💼 No Career Yet</h3>
+
+        <p class="muted">
+          Your education can unlock better jobs.
+        </p>
+
+        <button onclick="chooseJob()">
+          Find A Job
+        </button>
+
+      </div>
+    `;
+
+    return;
+  }
+
+  const job=jobs.find(j=>j.name===state.career);
+
+  const required=state.careerLevel*100;
+
+  el.innerHTML=`
+
+    <div class="card">
+
+      <h3>💼 ${state.career}</h3>
+
+      <span class="badge">
+        Level ${state.careerLevel}
+      </span>
+
+      <p style="margin-top:8px">
+        Salary: ${money(job?job.salary:0)} / shift
+      </p>
+
+      <p class="small muted">
+        XP: ${state.careerXP} / ${required}
+      </p>
+
+      <div class="progress">
+        <div style="width:${Math.min(100,(state.careerXP/required)*100)}%"></div>
+      </div>
+
+      <button onclick="work()">
+        Work Shift
+      </button>
+
+      <button class="secondary" onclick="chooseJob()">
+        Change Career
+      </button>
+
+    </div>
+  `;
+}
+
+function renderTravel(){
+
+  const select=document.getElementById("travelSelect");
+
+  select.innerHTML=locations.map(x=>`
+    <option ${x===state.location?"selected":""}>
+      ${x}
+    </option>
+  `).join("");
+}
+
+function render(){
+
+  normalizePeople();
+  normalizeBusinesses();
+
+  document.getElementById("headerMoney").textContent=
+    money(state.money);
+
+  document.getElementById("moneyStat").textContent=
+    money(state.money);
+
+  document.getElementById("healthStat").textContent=
+    state.health;
+
+  document.getElementById("moodStat").textContent=
+    state.mood;
+
+  document.getElementById("energyStat").textContent=
+    state.energy;
+
+  document.getElementById("educationStat").textContent=
+    state.education;
+
+  document.getElementById("repStat").textContent=
+    state.reputation;
+
+  document.getElementById("careerStat").textContent=
+    state.careerLevel;
+
+  document.getElementById("netWorthStat").textContent=
+    money(netWorth());
+
+  document.getElementById("dayBadge").textContent=
+    "Day "+state.day;
+
+  document.getElementById("timeBadge").textContent=
+    times[state.timeIndex];
+
+  document.getElementById("locationBadge").textContent=
+    state.location;
+
+  document.getElementById("heroTitle").textContent=
+    state.character.name;
+
+  document.getElementById("heroText").textContent=
+    `Chapter ${state.chapter} • ${state.character.location}`;
+
+  document.getElementById("characterName").textContent=
+    `${state.character.avatar||"👤"} ${state.character.name}`;
+
+  document.getElementById("characterInfo").textContent=
+    `${state.character.age} years old • ${state.character.educationBackground} • ${state.character.personality}`;
+
+  document.getElementById("chapterBadge").textContent=
+    `Chapter ${state.chapter}`;
+
+  document.getElementById("personalityBadge").textContent=
+    state.character.personality;
+
+  const storyPct=
+    Math.min(
+      100,
+      state.day*3+
+      state.reputation*.25+
+      state.stats.eventCount*4
+    );
+
+  document.getElementById("storyProgress").style.width=
+    storyPct+"%";
+
+  document.getElementById("storyText").textContent=
+    state.character.story;
+
+  renderEvent();
+  renderDecisions();
+  renderMissions();
+  renderAchievements();
+  renderBusiness();
+  renderPeople();
+  renderCareer();
+  renderHome();
+  renderVehicles();
+  renderTravel();
+  renderInventory();
+  renderFinance();
+
+  document.getElementById("logArea").innerHTML=
+    state.log.map(x=>`<p>${x}</p>`).join("");
+
+  checkMissions();
+  checkAchievements();
+
+  saveGame(false);
+}
+
+/* =========================================================
+   EXPORT
+   ========================================================= */
+
+function exportSave(){
+
+  const data=btoa(
+    unescape(
+      encodeURIComponent(
+        JSON.stringify(state)
+      )
+    )
+  );
+
+  navigator.clipboard.writeText(data)
+    .then(()=>{
+      toast("Save data copied to clipboard.");
+    })
+    .catch(()=>{
+      prompt("Copy your save data:",data);
+    });
+}
+
+/* =========================================================
+   START
+   ========================================================= */
+
+loadGame();
+
+if(!state.characterCreated){
+
+  state.characterCreated=true;
+
+  normalizePeople();
+
+  state.character.story=
+    "You have arrived at a new chapter of your Kaduna life.";
+
+  log("Create your character to begin your personal story.");
+
+}
+
+render();
+
+</script>
+
+</body>
+</html>
