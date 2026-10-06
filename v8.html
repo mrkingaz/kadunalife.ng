@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kaduna Life — V8</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #10141c;
+    color: white;
+}
+
+header {
+    background: linear-gradient(135deg, #0b6b3a, #123c2a);
+    padding: 20px;
+    text-align: center;
+    border-bottom: 2px solid #1f9d61;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 30px;
+}
+
+header p {
+    margin: 6px 0 0;
+    color: #c9e8d7;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 15px;
+}
+
+.card {
+    background: #181e29;
+    border: 1px solid #293242;
+    border-radius: 16px;
+    padding: 18px;
+    margin-bottom: 15px;
+    box-shadow: 0 8px 25px rgba(0,0,0,.25);
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.stat {
+    background: #202735;
+    padding: 13px;
+    border-radius: 12px;
+}
+
+.stat-title {
+    font-size: 13px;
+    color: #aab4c3;
+}
+
+.stat-value {
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 4px;
+}
+
+.actions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+button {
+    border: none;
+    border-radius: 12px;
+    padding: 14px;
+    background: #16844d;
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #1da85f;
+}
+
+button:disabled {
+    background: #444;
+    color: #999;
+}
+
+.location {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #202735;
+    padding: 13px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+}
+
+.log {
+    max-height: 230px;
+    overflow-y: auto;
+}
+
+.log-entry {
+    padding: 10px;
+    border-bottom: 1px solid #293242;
+    color: #dce3ed;
+}
+
+.warning {
+    color: #ffcc66;
+}
+
+.good {
+    color: #67e69b;
+}
+
+.bad {
+    color: #ff7777;
+}
+
+footer {
+    text-align: center;
+    color: #707b8c;
+    padding: 25px;
+    font-size: 13px;
+}
+
+@media (max-width: 600px) {
+    .stats,
+    .actions {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🌆 KADUNA LIFE</h1>
+    <p>Your life. Your choices. Your Kaduna.</p>
+</header>
+
+<div class="container">
+
+    <div class="card">
+        <h2>👤 My Life</h2>
+
+        <div class="stats">
+
+            <div class="stat">
+                <div class="stat-title">💰 Money</div>
+                <div class="stat-value">₦<span id="money">25000</span></div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-title">❤️ Health</div>
+                <div class="stat-value"><span id="health">100</span>%</div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-title">😊 Mood</div>
+                <div class="stat-value"><span id="mood">80</span>%</div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-title">⚡ Energy</div>
+                <div class="stat-value"><span id="energy">100</span>%</div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-title">📚 Education</div>
+                <div class="stat-value"><span id="education">10</span></div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-title">📅 Day</div>
+                <div class="stat-value"><span id="day">1</span></div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="card">
+        <h2>📍 Current Location</h2>
+
+        <div class="location">
+            <span id="location">Barnawa</span>
+            <span>📍 Kaduna</span>
+        </div>
+
+        <div class="actions">
+            <button onclick="travel('Kaduna Central')">
+                🏙️ Kaduna Central
+            </button>
+
+            <button onclick="travel('Barnawa')">
+                🏘️ Barnawa
+            </button>
+
+            <button onclick="travel('Kawo')">
+                🏙️ Kawo
+            </button>
+
+            <button onclick="travel('Sabon Tasha')">
+                🏘️ Sabon Tasha
+            </button>
+        </div>
+    </div>
+
+
+    <div class="card">
+        <h2>🎯 What do you want to do?</h2>
+
+        <div class="actions">
+
+            <button onclick="work()">
+                💼 Go to Work
+            </button>
+
+            <button onclick="study()">
+                📚 Study
+            </button>
+
+            <button onclick="eat()">
+                🍛 Eat Food
+            </button>
+
+            <button onclick="rest()">
+                😴 Rest
+            </button>
+
+            <button onclick="hangout()">
+                🧑🏽‍🤝‍🧑🏽 Hang Out
+            </button>
+
+            <button onclick="explore()">
+                🗺️ Explore Kaduna
+            </button>
+
+        </div>
+    </div>
+
+
+    <div class="card">
+        <h2>🏠 Your Expenses</h2>
+
+        <div class="actions">
+
+            <button onclick="payRent()">
+                🏠 Pay Rent — ₦20,000
+            </button>
+
+            <button onclick="shopping()">
+                🛒 Buy Groceries — ₦5,000
+            </button>
+
+        </div>
+    </div>
+
+
+    <div class="card">
+        <h2>📜 Life Events</h2>
+
+        <div id="log" class="log">
+            <div class="log-entry">
+                🌅 You woke up in Kaduna. A new life begins...
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<footer>
+    Kaduna Life V8 • Built for the future 🌆
+</footer>
+
+
+<script>
+
+let game = JSON.parse(localStorage.getItem("kadunaLifeV8")) || {
+
+    money: 25000,
+    health: 100,
+    mood: 80,
+    energy: 100,
+    education: 10,
+    day: 1,
+    location: "Barnawa"
+
+};
+
+
+function saveGame() {
+
+    localStorage.setItem(
+        "kadunaLifeV8",
+        JSON.stringify(game)
+    );
+
+}
+
+
+function updateUI() {
+
+    document.getElementById("money").textContent =
+        Math.round(game.money);
+
+    document.getElementById("health").textContent =
+        game.health;
+
+    document.getElementById("mood").textContent =
+        game.mood;
+
+    document.getElementById("energy").textContent =
+        game.energy;
+
+    document.getElementById("education").textContent =
+        game.education;
+
+    document.getElementById("day").textContent =
+        game.day;
+
+    document.getElementById("location").textContent =
+        game.location;
+
+    saveGame();
+
+}
+
+
+function log(message, type = "") {
+
+    const logBox = document.getElementById("log");
+
+    const entry = document.createElement("div");
+
+    entry.className = "log-entry " + type;
+
+    entry.textContent = message;
+
+    logBox.prepend(entry);
+
+}
+
+
+function clampStats() {
+
+    game.health = Math.max(
+        0,
+        Math.min(100, game.health)
+    );
+
+    game.mood = Math.max(
+        0,
+        Math.min(100, game.mood)
+    );
+
+    game.energy = Math.max(
+        0,
+        Math.min(100, game.energy)
+    );
+
+    game.education = Math.max(
+        0,
+        Math.min(100, game.education)
+    );
+
+}
+
+
+function advanceDay() {
+
+    game.day++;
+
+    game.energy -= 10;
+
+    if (game.energy < 20) {
+
+        game.mood -= 5;
+
+        log(
+            "😩 You're getting exhausted. You need some rest.",
+            "warning"
+        );
+
+    }
+
+    randomEvent();
+
+    clampStats();
+
+    updateUI();
+
+}
+
+
+function randomEvent() {
+
+    const chance = Math.random();
+
+    if (chance < 0.15) {
+
+        const amount =
+            Math.floor(Math.random() * 5000) + 1000;
+
+        game.money += amount;
+
+        log(
+            "🎉 You received an unexpected ₦" +
+            amount.toLocaleString() +
+            "!",
+            "good"
+        );
+
+    }
+
+    else if (chance < 0.30) {
+
+        const amount =
+            Math.floor(Math.random() * 3000) + 500;
+
+        game.money -= amount;
+
+        log(
+            "💸 An unexpected expense cost you ₦" +
+            amount.toLocaleString() +
+            ".",
+            "bad"
+        );
+
+    }
+
+    else if (chance < 0.38) {
+
+        game.mood += 10;
+
+        log(
+            "😊 Something good happened today. Your mood improved!",
+            "good"
+        );
+
+    }
+
+}
+
+
+function work() {
+
+    if (game.energy < 20) {
+
+        log(
+            "⚠️ You're too tired to work.",
+            "warning"
+        );
+
+        return;
+
+    }
+
+    const salary =
+        5000 + (game.education * 100);
+
+    game.money += salary;
+
+    game.energy -= 25;
+
+    game.mood -= 5;
+
+    log(
+        "💼 You worked and earned ₦" +
+        Math.round(salary).toLocaleString() +
+        ".",
+        "good"
+    );
+
+    advanceDay();
+
+}
+
+
+function study() {
+
+    if (game.energy < 15) {
+
+        log(
+            "📚 You're too tired to study.",
+            "warning"
+        );
+
+        return;
+
+    }
+
+    game.education += 3;
+
+    game.energy -= 15;
+
+    game.mood -= 2;
+
+    log(
+        "📚 You studied. Your education level increased.",
+        "good"
+    );
+
+    advanceDay();
+
+}
+
+
+function eat() {
+
+    if (game.money < 1500) {
+
+        log(
+            "💸 You don't have enough money to buy food.",
+            "bad"
+        );
+
+        return;
+
+    }
+
+    game.money -= 1500;
+
+    game.health += 5;
+
+    game.energy += 15;
+
+    game.mood += 5;
+
+    log(
+        "🍛 You bought food and feel better.",
+        "good"
+    );
+
+    clampStats();
+
+    updateUI();
+
+}
+
+
+function rest() {
+
+    game.energy += 40;
+
+    game.health += 5;
+
+    game.mood += 5;
+
+    log(
+        "😴 You rested and recovered some energy.",
+        "good"
+    );
+
+    advanceDay();
+
+}
+
+
+function hangout() {
+
+    if (game.money < 1000) {
+
+        log(
+            "💸 You need ₦1,000 to hang out.",
+            "bad"
+        );
+
+        return;
+
+    }
+
+    if (game.energy < 15) {
+
+        log(
+            "😩 You're too tired to hang out.",
+            "warning"
+        );
+
+        return;
+
+    }
+
+    game.money -= 1000;
+
+    game.energy -= 15;
+
+    game.mood += 20;
+
+    log(
+        "🧑🏽‍🤝‍🧑🏽 You hung out with people and had a good time!",
+        "good"
+    );
+
+    advanceDay();
+
+}
+
+
+function explore() {
+
+    if (game.energy < 20) {
+
+        log(
+            "😩 You're too tired to explore.",
+            "warning"
+        );
+
+        return;
+
+    }
+
+    game.energy -= 20;
+
+    game.mood += 15;
+
+    const places = [
+        "Kaduna Central",
+        "Kawo",
+        "Barnawa",
+        "Sabon Tasha"
+    ];
+
+    const place =
+        places[Math.floor(Math.random() * places.length)];
+
+    game.location = place;
+
+    log(
+        "🗺️ You explored " +
+        place +
+        " and discovered something new!",
+        "good"
+    );
+
+    advanceDay();
+
+}
+
+
+function travel(place) {
+
+    if (game.location === place) {
+
+        log(
+            "📍 You're already in " + place + "."
+        );
+
+        return;
+
+    }
+
+    game.location = place;
+
+    game.energy -= 5;
+
+    log(
+        "🚕 You travelled to " + place + "."
+    );
+
+    clampStats();
+
+    updateUI();
+
+}
+
+
+function payRent() {
+
+    if (game.money < 20000) {
+
+        log(
+            "🏠 You don't have enough money to pay your rent.",
+            "bad"
+        );
+
+        return;
+
+    }
+
+    game.money -= 20000;
+
+    game.mood += 5;
+
+    log(
+        "🏠 Rent paid. You have a roof over your head.",
+        "good"
+    );
+
+    clampStats();
+
+    updateUI();
+
+}
+
+
+function shopping() {
+
+    if (game.money < 5000) {
+
+        log(
+            "🛒 You don't have enough money for groceries.",
+            "bad"
+        );
+
+        return;
+
+    }
+
+    game.money -= 5000;
+
+    game.health += 8;
+
+    log(
+        "🛒 You bought groceries for ₦5,000.",
+        "good"
+    );
+
+    clampStats();
+
+    updateUI();
+
+}
+
+
+updateUI();
+
+</script>
+
+</body>
+</html>
