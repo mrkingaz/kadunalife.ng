@@ -1,0 +1,4257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kaduna Life — V15.1</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  background:#0f172a;
+  color:#f8fafc;
+  padding:15px;
+}
+
+.container{
+  max-width:1100px;
+  margin:auto;
+}
+
+header{
+  background:linear-gradient(135deg,#16a34a,#15803d);
+  padding:22px;
+  border-radius:18px;
+  margin-bottom:15px;
+  box-shadow:0 8px 25px rgba(0,0,0,.25);
+}
+
+header h1{
+  font-size:28px;
+  margin-bottom:6px;
+}
+
+header p{
+  opacity:.9;
+}
+
+.panel{
+  background:#1e293b;
+  border-radius:16px;
+  padding:18px;
+  margin-bottom:15px;
+  box-shadow:0 5px 18px rgba(0,0,0,.2);
+}
+
+.panel h2{
+  margin-bottom:13px;
+  font-size:20px;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+}
+
+.stat{
+  background:#334155;
+  border-radius:12px;
+  padding:12px;
+}
+
+.stat small{
+  display:block;
+  color:#cbd5e1;
+  margin-bottom:4px;
+}
+
+.stat strong{
+  font-size:19px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+
+.card{
+  background:#334155;
+  border-radius:13px;
+  padding:14px;
+}
+
+.card h3{
+  margin-bottom:7px;
+}
+
+.card p{
+  color:#cbd5e1;
+  font-size:14px;
+  line-height:1.5;
+}
+
+button{
+  border:none;
+  border-radius:10px;
+  padding:11px 13px;
+  margin:5px 4px 0 0;
+  background:#22c55e;
+  color:#052e16;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+button:hover{
+  filter:brightness(1.08);
+}
+
+button.secondary{
+  background:#64748b;
+  color:#fff;
+}
+
+button.warning{
+  background:#f59e0b;
+  color:#451a03;
+}
+
+button.danger{
+  background:#ef4444;
+  color:#fff;
+}
+
+button.blue{
+  background:#38bdf8;
+  color:#082f49;
+}
+
+button.purple{
+  background:#a78bfa;
+  color:#2e1065;
+}
+
+button:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
+
+.map{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+
+.location{
+  min-height:95px;
+  background:#334155;
+  border:2px solid transparent;
+  border-radius:13px;
+  padding:13px;
+  cursor:pointer;
+}
+
+.location:hover{
+  border-color:#22c55e;
+}
+
+.location.active{
+  border-color:#facc15;
+  background:#3f4d28;
+}
+
+.location h3{
+  margin-bottom:5px;
+}
+
+.location small{
+  color:#cbd5e1;
+}
+
+.item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  background:#334155;
+  padding:12px;
+  border-radius:12px;
+  margin-bottom:8px;
+}
+
+.item-info{
+  flex:1;
+}
+
+.item-info strong{
+  display:block;
+  margin-bottom:3px;
+}
+
+.item-info small{
+  color:#cbd5e1;
+}
+
+.log{
+  max-height:280px;
+  overflow:auto;
+}
+
+.log-entry{
+  background:#334155;
+  border-left:3px solid #22c55e;
+  padding:9px;
+  margin-bottom:7px;
+  border-radius:7px;
+  font-size:14px;
+}
+
+.badge{
+  display:inline-block;
+  background:#475569;
+  padding:5px 8px;
+  border-radius:8px;
+  font-size:12px;
+  margin:2px;
+}
+
+.money{
+  color:#86efac;
+}
+
+.good{
+  color:#4ade80;
+}
+
+.bad{
+  color:#f87171;
+}
+
+.warning-text{
+  color:#fbbf24;
+}
+
+.progress{
+  height:8px;
+  background:#475569;
+  border-radius:20px;
+  overflow:hidden;
+  margin-top:7px;
+}
+
+.progress div{
+  height:100%;
+  background:#22c55e;
+}
+
+.notice{
+  background:#064e3b;
+  border:1px solid #10b981;
+  padding:12px;
+  border-radius:12px;
+  margin-bottom:15px;
+  line-height:1.5;
+}
+
+footer{
+  text-align:center;
+  color:#94a3b8;
+  padding:20px;
+  font-size:13px;
+}
+
+@media(max-width:800px){
+  .stats{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .grid{
+    grid-template-columns:1fr;
+  }
+
+  .map{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
+@media(max-width:500px){
+  body{
+    padding:9px;
+  }
+
+  header h1{
+    font-size:23px;
+  }
+
+  .map{
+    grid-template-columns:1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+  <h1>🏙️ Kaduna Life</h1>
+  <p>V15.1 — Inventory & Save Fix</p>
+</header>
+
+<div class="notice">
+  🎮 <strong>Welcome to Kaduna Life!</strong><br>
+  Build your career, make money, own businesses, buy homes, collect items,
+  get transportation and explore Kaduna.
+</div>
+
+<div class="panel">
+  <h2>📊 Player Stats</h2>
+
+  <div class="stats">
+
+    <div class="stat">
+      <small>💰 Money</small>
+      <strong id="money">₦0</strong>
+    </div>
+
+    <div class="stat">
+      <small>❤️ Health</small>
+      <strong id="health">0</strong>
+      <div class="progress">
+        <div id="healthBar"></div>
+      </div>
+    </div>
+
+    <div class="stat">
+      <small>😊 Mood</small>
+      <strong id="mood">0</strong>
+      <div class="progress">
+        <div id="moodBar"></div>
+      </div>
+    </div>
+
+    <div class="stat">
+      <small>⚡ Energy</small>
+      <strong id="energy">0</strong>
+      <div class="progress">
+        <div id="energyBar"></div>
+      </div>
+    </div>
+
+    <div class="stat">
+      <small>🎓 Education</small>
+      <strong id="education">0</strong>
+      <div class="progress">
+        <div id="educationBar"></div>
+      </div>
+    </div>
+
+    <div class="stat">
+      <small>⭐ Reputation</small>
+      <strong id="reputation">0</strong>
+    </div>
+
+    <div class="stat">
+      <small>📅 Day</small>
+      <strong id="day">1</strong>
+    </div>
+
+    <div class="stat">
+      <small>📍 Location</small>
+      <strong id="location">Barnawa</strong>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- INVENTORY -->
+
+<div class="panel">
+  <h2>🎒 My Inventory</h2>
+
+  <div id="inventory"></div>
+
+  <p id="inventoryWeight" style="margin-top:10px;color:#cbd5e1;"></p>
+</div>
+
+
+<!-- ITEM MARKET -->
+
+<div class="panel">
+  <h2>🛒 Item Market</h2>
+
+  <div id="itemMarket"></div>
+</div>
+
+
+<!-- HOME STORAGE -->
+
+<div class="panel">
+  <h2>📦 Home Storage</h2>
+
+  <div id="storage"></div>
+</div>
+
+
+<!-- TRANSPORTATION -->
+
+<div class="panel">
+  <h2>🚗 My Transportation</h2>
+
+  <div id="vehicles"></div>
+</div>
+
+
+<!-- VEHICLE MARKET -->
+
+<div class="panel">
+  <h2>🚘 Vehicle Market</h2>
+
+  <div id="vehicleMarket"></div>
+</div>
+
+
+<!-- HOMES -->
+
+<div class="panel">
+  <h2>🏠 My Home</h2>
+
+  <div id="homes"></div>
+</div>
+
+
+<!-- CAREER -->
+
+<div class="panel">
+  <h2>💼 Career</h2>
+
+  <div id="career"></div>
+</div>
+
+
+<!-- BUSINESSES -->
+
+<div class="panel">
+  <h2>🏪 Businesses</h2>
+
+  <div id="businesses"></div>
+</div>
+
+
+<!-- MAP -->
+
+<div class="panel">
+  <h2>🗺️ Kaduna Map</h2>
+
+  <div class="map" id="map"></div>
+</div>
+
+
+<!-- ACTIONS -->
+
+<div class="panel">
+  <h2>🎮 Actions</h2>
+
+  <button onclick="work()">💼 Work</button>
+  <button onclick="study()">📚 Study</button>
+  <button onclick="eat()">🍲 Eat</button>
+  <button onclick="rest()">😴 Rest</button>
+  <button onclick="hangout()">🎉 Hangout</button>
+  <button onclick="explore()">🔎 Explore</button>
+  <button onclick="runBusiness()">🏪 Run Business</button>
+  <button onclick="travel()">🚗 Travel</button>
+  <button onclick="homeAction()">🏠 Home Action</button>
+  <button onclick="nextDay()" class="purple">🌅 Next Day</button>
+  <button onclick="saveGame()" class="blue">💾 Save</button>
+</div>
+
+
+<!-- PEOPLE -->
+
+<div class="panel">
+  <h2>👥 People Nearby</h2>
+
+  <div id="people"></div>
+</div>
+
+
+<!-- OPPORTUNITIES -->
+
+<div class="panel">
+  <h2>🎯 Opportunities</h2>
+
+  <div id="opportunities"></div>
+</div>
+
+
+<!-- LIFE LOG -->
+
+<div class="panel">
+  <h2>📖 Life Log</h2>
+
+  <div class="log" id="log"></div>
+</div>
+
+
+<footer>
+  Kaduna Life V15.1 🎮<br>
+  Fictional game economy — built for fun.
+</footer>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   KADUNA LIFE V15.1
+   INVENTORY + SAVE FIX
+========================================================= */
+
+const SAVE_KEY = "kadunaLifeV15";
+
+const LOCATIONS = [
+  {
+    name:"Barnawa",
+    description:"Residential area with shops, homes and everyday activity."
+  },
+  {
+    name:"Kaduna Central",
+    description:"Busy central district with offices, businesses and shopping."
+  },
+  {
+    name:"Kawo",
+    description:"Busy commercial area with markets and transport activity."
+  },
+  {
+    name:"Sabon Tasha",
+    description:"Growing area with homes, businesses and transport."
+  },
+  {
+    name:"Unguwan Rimi",
+    description:"Popular area with homes, technology and business opportunities."
+  },
+  {
+    name:"Malali",
+    description:"Residential district with a quieter lifestyle."
+  }
+];
+
+
+/* =========================================================
+   ITEMS
+========================================================= */
+
+const ITEMS = {
+
+  basicPhone:{
+    name:"Basic Phone",
+    buy:5000,
+    sell:3000,
+    weight:1,
+    category:"Electronics"
+  },
+
+  smartphone:{
+    name:"Smartphone",
+    buy:25000,
+    sell:17000,
+    weight:1,
+    category:"Electronics"
+  },
+
+  laptop:{
+    name:"Laptop",
+    buy:65000,
+    sell:45000,
+    weight:2,
+    category:"Electronics"
+  },
+
+  tablet:{
+    name:"Tablet",
+    buy:40000,
+    sell:27000,
+    weight:2,
+    category:"Electronics"
+  },
+
+  headphones:{
+    name:"Headphones",
+    buy:8000,
+    sell:5000,
+    weight:1,
+    category:"Electronics"
+  },
+
+  schoolBooks:{
+    name:"School Books",
+    buy:4000,
+    sell:2200,
+    weight:2,
+    category:"Education"
+  },
+
+  backpack:{
+    name:"Backpack",
+    buy:6000,
+    sell:4000,
+    weight:1,
+    category:"Education"
+  },
+
+  mealPack:{
+    name:"Meal Pack",
+    buy:1200,
+    sell:500,
+    weight:1,
+    category:"Food"
+  },
+
+  groceries:{
+    name:"Groceries",
+    buy:3000,
+    sell:1800,
+    weight:2,
+    category:"Food"
+  },
+
+  householdSupplies:{
+    name:"Household Supplies",
+    buy:2500,
+    sell:1300,
+    weight:2,
+    category:"Home"
+  },
+
+  businessSupplies:{
+    name:"Business Supplies",
+    buy:5000,
+    sell:3000,
+    weight:3,
+    category:"Business"
+  },
+
+  notebook:{
+    name:"Notebook",
+    buy:1500,
+    sell:800,
+    weight:1,
+    category:"Education"
+  }
+
+};
+
+
+/* =========================================================
+   VEHICLES
+========================================================= */
+
+const VEHICLE_TYPES = [
+
+  {
+    id:"bike",
+    name:"Personal Bike",
+    price:12000,
+    fuel:120,
+    maintenance:150,
+    travelCost:100,
+    speed:2
+  },
+
+  {
+    id:"smallCar",
+    name:"Small Car",
+    price:45000,
+    fuel:90,
+    maintenance:300,
+    travelCost:180,
+    speed:3
+  },
+
+  {
+    id:"sedan",
+    name:"Sedan",
+    price:75000,
+    fuel:85,
+    maintenance:450,
+    travelCost:160,
+    speed:4
+  },
+
+  {
+    id:"suv",
+    name:"SUV",
+    price:120000,
+    fuel:75,
+    maintenance:650,
+    travelCost:200,
+    speed:5
+  },
+
+  {
+    id:"van",
+    name:"Van",
+    price:160000,
+    fuel:70,
+    maintenance:850,
+    travelCost:220,
+    speed:4
+  },
+
+  {
+    id:"premium",
+    name:"Premium Car",
+    price:250000,
+    fuel:65,
+    maintenance:1200,
+    travelCost:150,
+    speed:6
+  }
+
+];
+
+
+/* =========================================================
+   HOMES
+========================================================= */
+
+const HOME_TYPES = [
+
+  {
+    id:"room",
+    name:"Single Room",
+    price:30000,
+    rent:3000,
+    maintenance:500,
+    comfort:5,
+    location:"Barnawa"
+  },
+
+  {
+    id:"shared",
+    name:"Shared Apartment",
+    price:50000,
+    rent:5000,
+    maintenance:700,
+    comfort:8,
+    location:"Sabon Tasha"
+  },
+
+  {
+    id:"twoBed",
+    name:"2-Bedroom",
+    price:100000,
+    rent:9000,
+    maintenance:1200,
+    comfort:12,
+    location:"Malali"
+  },
+
+  {
+    id:"threeBed",
+    name:"3-Bedroom",
+    price:180000,
+    rent:15000,
+    maintenance:1800,
+    comfort:16,
+    location:"Unguwan Rimi"
+  },
+
+  {
+    id:"duplex",
+    name:"Duplex",
+    price:350000,
+    rent:28000,
+    maintenance:3500,
+    comfort:22,
+    location:"Malali"
+  },
+
+  {
+    id:"mansion",
+    name:"Luxury Mansion",
+    price:750000,
+    rent:60000,
+    maintenance:7000,
+    comfort:30,
+    location:"Unguwan Rimi"
+  }
+
+];
+
+
+/* =========================================================
+   CAREERS
+========================================================= */
+
+const CAREERS = [
+
+  {
+    id:"shopAssistant",
+    name:"Shop Assistant",
+    salary:2500,
+    education:10,
+    reputation:0
+  },
+
+  {
+    id:"driver",
+    name:"Driver",
+    salary:3500,
+    education:15,
+    reputation:2
+  },
+
+  {
+    id:"computerAssistant",
+    name:"Computer Assistant",
+    salary:4500,
+    education:25,
+    reputation:5
+  },
+
+  {
+    id:"officeAssistant",
+    name:"Office Assistant",
+    salary:6000,
+    education:35,
+    reputation:8
+  },
+
+  {
+    id:"juniorDeveloper",
+    name:"Junior Developer",
+    salary:9000,
+    education:50,
+    reputation:12
+  },
+
+  {
+    id:"businessAssistant",
+    name:"Business Assistant",
+    salary:12000,
+    education:60,
+    reputation:18
+  }
+
+];
+
+
+/* =========================================================
+   BUSINESSES
+========================================================= */
+
+const BUSINESS_TYPES = [
+
+  {
+    id:"foodSpot",
+    name:"Food Spot",
+    cost:10000,
+    income:1800,
+    expense:500,
+    location:"Kawo"
+  },
+
+  {
+    id:"clothingShop",
+    name:"Clothing Shop",
+    cost:25000,
+    income:3500,
+    expense:900,
+    location:"Kaduna Central"
+  },
+
+  {
+    id:"phoneShop",
+    name:"Phone & Accessories Shop",
+    cost:40000,
+    income:5000,
+    expense:1300,
+    location:"Kawo"
+  },
+
+  {
+    id:"techHub",
+    name:"Tech Hub",
+    cost:75000,
+    income:8500,
+    expense:2200,
+    location:"Unguwan Rimi"
+  },
+
+  {
+    id:"transportBusiness",
+    name:"Transport Business",
+    cost:100000,
+    income:11000,
+    expense:3500,
+    location:"Sabon Tasha"
+  },
+
+  {
+    id:"enterprise",
+    name:"Business Enterprise",
+    cost:200000,
+    income:22000,
+    expense:6500,
+    location:"Kaduna Central"
+  }
+
+];
+
+
+/* =========================================================
+   NPCS
+========================================================= */
+
+const DEFAULT_NPCS = [
+
+  {
+    id:"aisha",
+    name:"Aisha",
+    role:"Student",
+    location:"Barnawa",
+    friendship:0,
+    mood:70
+  },
+
+  {
+    id:"musa",
+    name:"Musa",
+    role:"Shopkeeper",
+    location:"Kawo",
+    friendship:0,
+    mood:65
+  },
+
+  {
+    id:"zara",
+    name:"Zara",
+    role:"Neighbour",
+    location:"Malali",
+    friendship:0,
+    mood:75
+  },
+
+  {
+    id:"sadiq",
+    name:"Sadiq",
+    role:"Mechanic",
+    location:"Sabon Tasha",
+    friendship:0,
+    mood:60
+  },
+
+  {
+    id:"maryam",
+    name:"Maryam",
+    role:"Student",
+    location:"Unguwan Rimi",
+    friendship:0,
+    mood:80
+  },
+
+  {
+    id:"daniel",
+    name:"Daniel",
+    role:"Job Recruiter",
+    location:"Kaduna Central",
+    friendship:0,
+    mood:70
+  }
+
+];
+
+
+/* =========================================================
+   DEFAULT STATE
+========================================================= */
+
+function defaultGame(){
+
+  return {
+
+    money:15000,
+
+    health:100,
+
+    mood:70,
+
+    energy:80,
+
+    education:50,
+
+    reputation:0,
+
+    day:1,
+
+    location:"Barnawa",
+
+    inventory:{},
+
+    storage:{},
+
+    vehicles:[],
+
+    selectedVehicle:null,
+
+    properties:[],
+
+    currentHome:null,
+
+    career:null,
+
+    careerXP:0,
+
+    careerLevel:1,
+
+    businesses:[],
+
+    npcs:JSON.parse(JSON.stringify(DEFAULT_NPCS)),
+
+    opportunities:[],
+
+    log:[]
+
+  };
+
+}
+
+
+let game = defaultGame();
+
+
+/* =========================================================
+   UTILITY
+========================================================= */
+
+function money(value){
+
+  return "₦" + Number(value || 0).toLocaleString();
+
+}
+
+
+function clamp(value,min,max){
+
+  return Math.max(min,Math.min(max,value));
+
+}
+
+
+function random(min,max){
+
+  return Math.floor(Math.random()*(max-min+1))+min;
+
+}
+
+
+function addLog(message){
+
+  if(!Array.isArray(game.log)){
+    game.log=[];
+  }
+
+  game.log.unshift(
+    "Day " + game.day + " — " + message
+  );
+
+  game.log=game.log.slice(0,80);
+
+}
+
+
+function spend(amount){
+
+  amount=Number(amount)||0;
+
+  if(game.money < amount){
+
+    addLog("❌ You don't have enough money.");
+
+    render();
+
+    return false;
+
+  }
+
+  game.money-=amount;
+
+  return true;
+
+}
+
+
+function gain(amount){
+
+  game.money+=Number(amount)||0;
+
+}
+
+
+function energyCost(amount){
+
+  game.energy=clamp(
+    game.energy-amount,
+    0,
+    100
+  );
+
+}
+
+
+function validLocation(location){
+
+  return LOCATIONS.some(
+    x=>x.name===location
+  );
+
+}
+
+
+/* =========================================================
+   SAVE / MIGRATION FIX
+========================================================= */
+
+function loadGame(){
+
+  const fresh=defaultGame();
+
+  const saveKeys=[
+
+    SAVE_KEY,
+
+    "kadunaLifeV15",
+
+    "kadunaLifeV14",
+
+    "kadunaLifeV13",
+
+    "kadunaLifeV12",
+
+    "kadunaLifeV11",
+
+    "kadunaLifeV10",
+
+    "kadunaLifeV8"
+
+  ];
+
+  let savedData=null;
+
+  let sourceKey=null;
+
+  for(const key of saveKeys){
+
+    try{
+
+      const raw=localStorage.getItem(key);
+
+      if(raw){
+
+        const parsed=JSON.parse(raw);
+
+        if(parsed && typeof parsed==="object"){
+
+          savedData=parsed;
+
+          sourceKey=key;
+
+          break;
+
+        }
+
+      }
+
+    }catch(error){
+
+      console.log("Save read error:",error);
+
+    }
+
+  }
+
+
+  if(!savedData){
+
+    game=fresh;
+
+    saveGame(false);
+
+    return;
+
+  }
+
+
+  game={
+
+    ...fresh,
+
+    ...savedData
+
+  };
+
+
+  /* IMPORTANT:
+     Use typeof checks rather than ||.
+     This prevents valid zero values from
+     accidentally breaking the save. */
+
+  if(typeof savedData.money!=="number" ||
+     !Number.isFinite(savedData.money)){
+
+    game.money=fresh.money;
+
+  }
+
+  if(typeof savedData.health!=="number" ||
+     !Number.isFinite(savedData.health)){
+
+    game.health=fresh.health;
+
+  }
+
+  if(typeof savedData.mood!=="number" ||
+     !Number.isFinite(savedData.mood)){
+
+    game.mood=fresh.mood;
+
+  }
+
+  if(typeof savedData.energy!=="number" ||
+     !Number.isFinite(savedData.energy)){
+
+    game.energy=fresh.energy;
+
+  }
+
+  if(typeof savedData.education!=="number" ||
+     !Number.isFinite(savedData.education)){
+
+    game.education=fresh.education;
+
+  }
+
+  if(typeof savedData.reputation!=="number" ||
+     !Number.isFinite(savedData.reputation)){
+
+    game.reputation=fresh.reputation;
+
+  }
+
+  if(typeof savedData.day!=="number" ||
+     !Number.isFinite(savedData.day) ||
+     savedData.day<1){
+
+    game.day=fresh.day;
+
+  }
+
+  if(!validLocation(game.location)){
+
+    game.location=fresh.location;
+
+  }
+
+
+  /* Inventory */
+
+  if(!game.inventory ||
+     typeof game.inventory!=="object" ||
+     Array.isArray(game.inventory)){
+
+    game.inventory={};
+
+  }
+
+
+  /* Storage */
+
+  if(!game.storage ||
+     typeof game.storage!=="object" ||
+     Array.isArray(game.storage)){
+
+    game.storage={};
+
+  }
+
+
+  /* Arrays */
+
+  if(!Array.isArray(game.vehicles)){
+
+    game.vehicles=[];
+
+  }
+
+  if(!Array.isArray(game.properties)){
+
+    game.properties=[];
+
+  }
+
+  if(!Array.isArray(game.businesses)){
+
+    game.businesses=[];
+
+  }
+
+  if(!Array.isArray(game.opportunities)){
+
+    game.opportunities=[];
+
+  }
+
+  if(!Array.isArray(game.log)){
+
+    game.log=[];
+
+  }
+
+  if(!Array.isArray(game.npcs) ||
+     game.npcs.length===0){
+
+    game.npcs=
+      JSON.parse(JSON.stringify(DEFAULT_NPCS));
+
+  }
+
+
+  /* Stats */
+
+  game.health=clamp(
+    game.health,
+    0,
+    100
+  );
+
+  game.mood=clamp(
+    game.mood,
+    0,
+    100
+  );
+
+  game.energy=clamp(
+    game.energy,
+    0,
+    100
+  );
+
+  game.education=clamp(
+    game.education,
+    0,
+    100
+  );
+
+
+  /* Career */
+
+  if(typeof game.careerXP!=="number"){
+
+    game.careerXP=0;
+
+  }
+
+  if(typeof game.careerLevel!=="number" ||
+     game.careerLevel<1){
+
+    game.careerLevel=1;
+
+  }
+
+
+  /* Vehicle repair */
+
+  game.vehicles=game.vehicles.map(vehicle=>({
+
+    ...vehicle,
+
+    fuel:clamp(
+      typeof vehicle.fuel==="number"
+        ? vehicle.fuel
+        : 100,
+      0,
+      100
+    ),
+
+    level:
+      typeof vehicle.level==="number" &&
+      vehicle.level>=1
+        ? vehicle.level
+        : 1
+
+  }));
+
+
+  if(
+    game.selectedVehicle &&
+    !game.vehicles.some(
+      v=>v.id===game.selectedVehicle
+    )
+  ){
+
+    game.selectedVehicle=null;
+
+  }
+
+
+  /* Property repair */
+
+  game.properties=game.properties.map(property=>({
+
+    ...property,
+
+    level:
+      typeof property.level==="number" &&
+      property.level>=1
+        ? property.level
+        : 1
+
+  }));
+
+
+  /* Business repair */
+
+  game.businesses=game.businesses.map(business=>({
+
+    ...business,
+
+    level:
+      typeof business.level==="number" &&
+      business.level>=1
+        ? business.level
+        : 1,
+
+    xp:
+      typeof business.xp==="number"
+        ? business.xp
+        : 0
+
+  }));
+
+
+  if(sourceKey!==SAVE_KEY){
+
+    addLog(
+      "🛠️ Your older save was successfully migrated to V15.1."
+    );
+
+  }
+
+
+  saveGame(false);
+
+}
+
+
+function saveGame(showMessage=true){
+
+  try{
+
+    localStorage.setItem(
+      SAVE_KEY,
+      JSON.stringify(game)
+    );
+
+    if(showMessage){
+
+      addLog("💾 Game saved successfully.");
+
+      render();
+
+    }
+
+  }catch(error){
+
+    alert(
+      "Could not save the game on this browser."
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   INVENTORY
+========================================================= */
+
+function inventoryWeight(){
+
+  let total=0;
+
+  for(const id in game.inventory){
+
+    const item=ITEMS[id];
+
+    if(item){
+
+      total+=
+        item.weight *
+        Number(game.inventory[id]||0);
+
+    }
+
+  }
+
+  return total;
+
+}
+
+
+function inventoryCapacity(){
+
+  return 20;
+
+}
+
+
+function buyItem(id){
+
+  const item=ITEMS[id];
+
+  if(!item)return;
+
+  if(
+    inventoryWeight()+item.weight >
+    inventoryCapacity()
+  ){
+
+    addLog("🎒 Your inventory is full.");
+
+    render();
+
+    return;
+
+  }
+
+
+  if(!spend(item.buy))return;
+
+
+  game.inventory[id]=
+    Number(game.inventory[id]||0)+1;
+
+
+  addLog(
+    "🛒 Bought " + item.name +
+    " for " + money(item.buy) + "."
+  );
+
+  saveGame(false);
+
+  render();
+
+}
+
+
+function sellItem(id){
+
+  const item=ITEMS[id];
+
+  if(!item)return;
+
+  if(!game.inventory[id] ||
+     game.inventory[id]<=0){
+
+    return;
+
+  }
+
+
+  game.inventory[id]--;
+
+  game.money+=item.sell;
+
+
+  if(game.inventory[id]<=0){
+
+    delete game.inventory[id];
+
+  }
+
+
+  addLog(
+    "💰 Sold " + item.name +
+    " for " + money(item.sell) + "."
+  );
+
+
+  saveGame(false);
+
+  render();
+
+}
+
+
+function useItem(id){
+
+  const item=ITEMS[id];
+
+  if(!item)return;
+
+  if(!game.inventory[id] ||
+     game.inventory[id]<=0){
+
+    return;
+
+  }
+
+
+  let used=false;
+
+
+  if(id==="mealPack"){
+
+    game.health=clamp(
+      game.health+12,
+      0,
+      100
+    );
+
+    game.energy=clamp(
+      game.energy+8,
+      0,
+      100
+    );
+
+    used=true;
+
+  }
+
+
+  if(id==="groceries"){
+
+    game.health=clamp(
+      game.health+8,
+      0,
+      100
+    );
+
+    game.mood=clamp(
+      game.mood+5,
+      0,
+      100
+    );
+
+    used=true;
+
+  }
+
+
+  if(id==="schoolBooks" ||
+     id==="notebook"){
+
+    game.education=clamp(
+      game.education+3,
+      0,
+      100
+    );
+
+    used=true;
+
+  }
+
+
+  if(id==="householdSupplies"){
+
+    game.mood=clamp(
+      game.mood+4,
+      0,
+      100
+    );
+
+    used=true;
+
+  }
+
+
+  if(id==="businessSupplies"){
+
+    game.reputation+=1;
+
+    used=true;
+
+  }
+
+
+  if(!used){
+
+    addLog(
+      "ℹ️ " + item.name +
+      " cannot be directly used yet."
+    );
+
+    render();
+
+    return;
+
+  }
+
+
+  game.inventory[id]--;
+
+  if(game.inventory[id]<=0){
+
+    delete game.inventory[id];
+
+  }
+
+
+  addLog(
+    "🎒 Used " + item.name + "."
+  );
+
+
+  saveGame(false);
+
+  render();
+
+}
+
+
+/* =========================================================
+   HOME STORAGE
+========================================================= */
+
+function storeItem(id){
+
+  if(!game.inventory[id] ||
+     game.inventory[id]<=0){
+
+    return;
+
+  }
+
+
+  game.inventory[id]--;
+
+  game.storage[id]=
+    Number(game.storage[id]||0)+1;
+
+
+  if(game.inventory[id]<=0){
+
+    delete game.inventory[id];
+
+  }
+
+
+  addLog(
+    "📦 Stored " + ITEMS[id].name +
+    " at home."
+  );
+
+
+  saveGame(false);
+
+  render();
+
+}
+
+
+function retrieveItem(id){
+
+  if(!game.storage[id] ||
+     game.storage[id]<=0){
+
+    return;
+
+  }
+
+
+  const item=ITEMS[id];
+
+  if(
+    inventoryWeight()+item.weight >
+    inventoryCapacity()
+  ){
+
+    addLog("🎒 Your inventory is full.");
+
+    render();
+
+    return;
+
+  }
+
+
+  game.storage[id]--;
+
+  game.inventory[id]=
+    Number(game.inventory[id]||0)+1;
+
+
+  if(game.storage[id]<=0){
+
+    delete game.storage[id];
+
+  }
+
+
+  addLog(
+    "📦 Retrieved " + item.name +
+    " from home."
+  );
+
+
+  saveGame(false);
+
+  render();
+
+}
+
+
+/* =========================================================
+   VEHICLES
+========================================================= */
+
+function buyVehicle(id){
+
+  const type=
+    VEHICLE_TYPES.find(
+      x=>x.id===id
+    );
+
+  if(!type)return;
+
+
+  if(!spend(type.price))return;
+
+
+  const vehicle={
+
+    id:
+      id+"_"+Date.now(),
+
+    typeId:id,
+
+    name:type.name,
+
+    fuel:100,
+
+    level:1
+
+  };
+
+
+  game.vehicles.push(vehicle);
+
+
+  if(!game.selectedVehicle){
+
+    game.selectedVehicle=vehicle.id;
+
+  }
+
+
+  addLog(
+    "🚗 Bought a " +
+    type.name +
+    " for " +
+    money(type.price) +
+    "."
+  );
+
+
+  saveGame(false);
+
+  render();
+
+}
+
+
+function selectedVehicle(){
+
+  return game.vehicles.find(
+    v=>v.id===game.selectedVehicle
+  );
+
+}
+
+
+function selectVehicle(id){
+
+  if(
+    !game.vehicles.some(
+      v=>v.id===id
+    )
+  )return;
+
+
+  game.selectedVehicle=id;
+
+  addLog("🚗 Transportation selected.");
+
+  saveGame(false);
+
+  render();
+
+}
+
+
+function refuelVehicle(id){
+
+  const vehicle=
+    game.vehicles.find(
+      v=>v.id===id
+    );
+
+  if(!vehicle)return;
+
+
+  const cost=1000;
+
+
+  if(!spend(cost))return;
+
+
+  vehicle.fuel=100;
+
+
+  addLog(
+    "⛽ Vehicle refuelled for " +
+    money(cost) + "."
+  );
+
+
+  saveGame(false);
+
+  render();
+
+}
+
+
+function upgradeVehicle(id){
+
+  const vehicle=
+    game.vehicles.find(
+      v=>v.id===id
+    );
+
+  if(!vehicle)return;
+
+
+  const cost=
+    5000 * vehicle.level;
+
+
+  if(!spend(cost))return;
+
+
+  vehicle.level++;
+
+
+  addLog(
+    "🔧 Vehicle upgraded to level " +
+    vehicle.level + "."
+  );
+
+
+  saveGame(false);
+
+  render();
+
+}
+
+
+/* =========================================================
+   HOMES
+========================================================= */
+
+function buyHome(id){
+
+  const type=
+    HOME_TYPES.find(
+      x=>x.id===id
+    );
+
+  if(!type)return;
+
+
+  if(!spend(type.price))return;
+
+
+  const property={
+
+    id:
+      id+"_"+Date.now(),
+
+    typeId:id,
+
+    name:type.name,
+
+    location:type.location,
+
+    level:1
+
+  };
+
+
+  game.properties.push(property);
+
+
+  if(!game.currentHome){
+
+    game.currentHome=property.id;
+
+  }
+
+
+  addLog(
+    "🏠 Bought " +
+    type.name +
+    " in " +
+    type.location +
+    "."
+  );
+
+
+  saveGame(false);
+
+  render();
+
+}
+
+
+function selectHome(id){
+
+  if(
+    !game.properties.some(
+      p=>p.id===id
+    )
+  )return;
+
+
+  game.currentHome=id;
+
+  addLog("🏠 Current home changed.");
+
+  saveGame(false);
+
+  render();
+
+}
+
+
+function upgradeHome(id){
+
+  const property=
+    game.properties.find(
+      p=>p.id===id
+    );
+
+  if(!property)return;
+
+
+  const cost=
+    10000 * property.level;
+
+
+  if(!spend(cost))return;
+
+
+  property.level++;
+
+
+  addLog(
+    "🏠 Home upgraded to level " +
+    property.level + "."
+  );
+
+
+  saveGame(false);
+
+  render();
+
+}
+
+
+/* =========================================================
+   CAREER
+========================================================= */
+
+function applyCareer(id){
+
+  const career=
+    CAREERS.find(
+      x=>x.id===id
+    );
+
+  if(!career)return;
+
+
+  if(game.education < career.education){
+
+    addLog(
+      "📚 You need at least " +
+      career.education +
+      " education."
+    );
+
+    render();
+
+    return;
+
+  }
+
+
+  if(game.reputation < career.reputation){
+
+    addLog(
+      "⭐ You need at least " +
+      career.reputation +
+      " reputation."
+    );
+
+    render();
+
+    return;
+
+  }
+
+
+  game.career=id;
+
+  game.careerXP=0;
+
+  game.careerLevel=1;
+
+
+  addLog(
+    "💼 You got a job as a " +
+    career.name + "."
+  );
+
+
+  saveGame(false);
+
+  render();
+
+}
+
+
+function quitCareer(){
+
+  if(!game.career)return;
+
+
+  const career=
+    CAREERS.find(
+      x=>x.id===game.career
+    );
+
+
+  addLog(
+    "💼 You left your job as a " +
+    career.name + "."
+  );
+
+
+  game.career=null;
+
+  game.careerXP=0;
+
+  game.careerLevel=1;
+
+
+  saveGame(false);
+
+  render();
+
+}
+
+
+/* =========================================================
+   BUSINESSES
+========================================================= */
+
+function buyBusiness(id){
+
+  const type=
+    BUSINESS_TYPES.find(
+      x=>x.id===id
+    );
+
+  if(!type)return;
+
+
+  if(!spend(type.cost))return;
+
+
+  game.businesses.push({
+
+    id:
+      id+"_"+Date.now(),
+
+    typeId:id,
+
+    name:type.name,
+
+    location:type.location,
+
+    level:1,
+
+    xp:0
+
+  });
+
+
+  game.reputation+=2;
+
+
+  addLog(
+    "🏪 Started " +
+    type.name +
+    " in " +
+    type.location + "."
+  );
+
+
+  saveGame(false);
+
+  render();
+
+}
+
+
+function runSpecificBusiness(id){
+
+  const business=
+    game.businesses.find(
+      b=>b.id===id
+    );
+
+  if(!business)return;
+
+
+  const type=
+    BUSINESS_TYPES.find(
+      x=>x.id===business.typeId
+    );
+
+  if(!type)return;
+
+
+  if(!spend(type.expense))return;
+
+
+  const income=
+    type.income *
+    business.level;
+
+
+  game.money+=income;
+
+
+  business.xp+=20;
+
+
+  if(
+    business.xp >=
+    business.level*100
+  ){
+
+    business.xp=0;
+
+    business.level++;
+
+    game.reputation+=2;
+
+    addLog(
+      "📈 " +
+      business.name +
+      " reached level " +
+      business.level + "!"
+    );
+
+  }
+
+
+  addLog(
+    "🏪 " +
+    business.name +
+    " made " +
+    money(income) +
+    " after expenses."
+  );
+
+
+  saveGame(false);
+
+  render();
+
+}
+
+
+function upgradeBusiness(id){
+
+  const business=
+    game.businesses.find(
+      b=>b.id===id
+    );
+
+  if(!business)return;
+
+
+  const cost=
+    15000*business.level;
+
+
+  if(!spend(cost))return;
+
+
+  business.level++;
+
+
+  addLog(
+    "📈 " +
+    business.name +
+    " upgraded to level " +
+    business.level + "."
+  );
+
+
+  saveGame(false);
+
+  render();
+
+}
+
+
+function runBusiness(){
+
+  if(game.businesses.length===0){
+
+    addLog(
+      "🏪 You don't own a business yet."
+    );
+
+    render();
+
+    return;
+
+  }
+
+
+  const business=
+    game.businesses[
+      random(0,game.businesses.length-1)
+    ];
+
+
+  runSpecificBusiness(business.id);
+
+}
+
+
+/* =========================================================
+   PLAYER ACTIONS
+========================================================= */
+
+function work(){
+
+  if(!game.career){
+
+    addLog(
+      "💼 You need a career before you can work."
+    );
+
+    render();
+
+    return;
+
+  }
+
+
+  const career=
+    CAREERS.find(
+      x=>x.id===game.career
+    );
+
+
+  if(game.energy < 15){
+
+    addLog(
+      "⚡ You are too tired to work."
+    );
+
+    render();
+
+    return;
+
+  }
+
+
+  const salary=
+    career.salary *
+    game.careerLevel;
+
+
+  game.money+=salary;
+
+  game.energy=clamp(
+    game.energy-15,
+    0,
+    100
+  );
+
+  game.mood=clamp(
+    game.mood-2,
+    0,
+    100
+  );
+
+  game.careerXP+=25;
+
+
+  if(
+    game.careerXP >=
+    game.careerLevel*100
+  ){
+
+    game.careerXP=0;
+
+    game.careerLevel++;
+
+    game.reputation+=2;
+
+    addLog(
+      "🎉 Promotion! Career level " +
+      game.careerLevel + "."
+    );
+
+  }
+
+
+  addLog(
+    "💼 Worked as a " +
+    career.name +
+    " and earned " +
+    money(salary) + "."
+  );
+
+
+  saveGame(false);
+
+  render();
+
+}
+
+
+function study(){
+
+  if(game.energy<10){
+
+    addLog(
+      "⚡ You need more energy to study."
+    );
+
+    render();
+
+    return;
+
+  }
+
+
+  game.education=clamp(
+    game.education+4,
+    0,
+    100
+  );
+
+  game.energy=clamp(
+    game.energy-10,
+    0,
+    100
+  );
+
+  game.mood=clamp(
+    game.mood-1,
+    0,
+    100
+  );
+
+
+  addLog(
+    "📚 You studied and improved your education."
+  );
+
+
+  saveGame(false);
+
+  render();
+
+}
+
+
+function eat(){
+
+  const cost=800;
+
+
+  if(!spend(cost))return;
+
+
+  game.health=clamp(
+    game.health+12,
+    0,
+    100
+  );
+
+  game.energy=clamp(
+    game.energy+10,
+    0,
+    100
+  );
+
+
+  addLog(
+    "🍲 You bought food for " +
+    money(cost) + "."
+  );
+
+
+  saveGame(false);
+
+  render();
+
+}
+
+
+function rest(){
+
+  game.energy=clamp(
+    game.energy+30,
+    0,
+    100
+  );
+
+  game.health=clamp(
+    game.health+5,
+    0,
+    100
+  );
+
+  game.mood=clamp(
+    game.mood+5,
+    0,
+    100
+  );
+
+
+  addLog(
+    "😴 You rested and recovered."
+  );
+
+
+  saveGame(false);
+
+  render();
+
+}
+
+
+function hangout(){
+
+  const cost=500;
+
+
+  if(!spend(cost))return;
+
+
+  game.mood=clamp(
+    game.mood+15,
+    0,
+    100
+  );
+
+  game.energy=clamp(
+    game.energy-8,
+    0,
+    100
+  );
+
+
+  addLog(
+    "🎉 You hung out and had a good time."
+  );
+
+
+  saveGame(false);
+
+  render();
+
+}
+
+
+function explore(){
+
+  const location=
+    LOCATIONS[
+      random(0,LOCATIONS.length-1)
+    ];
+
+
+  const reward=random(200,1200);
+
+
+  game.money+=reward;
+
+  game.energy=clamp(
+    game.energy-8,
+    0,
+    100
+  );
+
+
+  addLog(
+    "🔎 You explored Kaduna and found " +
+    money(reward) +
+    "."
+  );
+
+
+  if(
+    Math.random()<0.3
+  ){
+
+    game.reputation+=1;
+
+    addLog(
+      "⭐ You made a useful connection."
+    );
+
+  }
+
+
+  saveGame(false);
+
+  render();
+
+}
+
+
+function travel(){
+
+  const destination=
+    LOCATIONS[
+      random(0,LOCATIONS.length-1)
+    ];
+
+
+  if(destination.name===game.location){
+
+    addLog(
+      "📍 You are already in " +
+      destination.name + "."
+    );
+
+    render();
+
+    return;
+
+  }
+
+
+  const vehicle=
+    selectedVehicle();
+
+
+  if(vehicle){
+
+    const type=
+      VEHICLE_TYPES.find(
+        x=>x.id===vehicle.typeId
+      );
+
+
+    if(vehicle.fuel<=0){
+
+      addLog(
+        "⛽ Your vehicle needs fuel."
+      );
+
+      render();
+
+      return;
+
+    }
+
+
+    if(!spend(type.travelCost))return;
+
+
+    vehicle.fuel=
+      clamp(
+        vehicle.fuel-10,
+        0,
+        100
+      );
+
+
+    game.location=
+      destination.name;
+
+
+    addLog(
+      "🚗 You travelled to " +
+      destination.name +
+      " in your " +
+      type.name + "."
+    );
+
+  }else{
+
+    const cost=500;
+
+
+    if(!spend(cost))return;
+
+
+    energyCost(10);
+
+
+    game.location=
+      destination.name;
+
+
+    addLog(
+      "🚶 You travelled to " +
+      destination.name +
+      " on foot."
+    );
+
+  }
+
+
+  saveGame(false);
+
+  render();
+
+}
+
+
+function homeAction(){
+
+  const home=
+    game.properties.find(
+      p=>p.id===game.currentHome
+    );
+
+
+  if(!home){
+
+    addLog(
+      "🏠 You don't own a home yet."
+    );
+
+    render();
+
+    return;
+
+  }
+
+
+  const type=
+    HOME_TYPES.find(
+      x=>x.id===home.typeId
+    );
+
+
+  game.energy=clamp(
+    game.energy+20+type.comfort+
+    home.level*2,
+    0,
+    100
+  );
+
+  game.mood=clamp(
+    game.mood+10+home.level,
+    0,
+    100
+  );
+
+  game.health=clamp(
+    game.health+5,
+    0,
+    100
+  );
+
+
+  addLog(
+    "🏠 You relaxed at your " +
+    type.name + "."
+  );
+
+
+  saveGame(false);
+
+  render();
+
+}
+
+
+/* =========================================================
+   NEXT DAY
+========================================================= */
+
+function nextDay(){
+
+  game.day++;
+
+  game.energy=100;
+
+  game.health=clamp(
+    game.health+5,
+    0,
+    100
+  );
+
+
+  /* Career income */
+
+  if(game.career){
+
+    const career=
+      CAREERS.find(
+        x=>x.id===game.career
+      );
+
+    if(career){
+
+      const passive=
+        Math.floor(
+          career.salary*0.25*
+          game.careerLevel
+        );
+
+      game.money+=passive;
+
+      addLog(
+        "💼 You received " +
+        money(passive) +
+        " as a daily career bonus."
+      );
+
+    }
+
+  }
+
+
+  /* Property income */
+
+  game.properties.forEach(property=>{
+
+    const type=
+      HOME_TYPES.find(
+        x=>x.id===property.typeId
+      );
+
+    if(!type)return;
+
+
+    if(
+      property.id!==game.currentHome
+    ){
+
+      const income=
+        type.rent*
+        property.level;
+
+      game.money+=income;
+
+      addLog(
+        "🏠 Property income: +" +
+        money(income) +
+        " from " +
+        type.name + "."
+      );
+
+    }
+
+  });
+
+
+  /* Business daily income */
+
+  game.businesses.forEach(business=>{
+
+    const type=
+      BUSINESS_TYPES.find(
+        x=>x.id===business.typeId
+      );
+
+    if(!type)return;
+
+
+    const profit=
+      Math.max(
+        0,
+        (type.income-type.expense)*
+        business.level
+      );
+
+
+    game.money+=profit;
+
+
+    addLog(
+      "🏪 Daily business profit: +" +
+      money(profit) +
+      " from " +
+      business.name + "."
+    );
+
+  });
+
+
+  /* Vehicle maintenance */
+
+  game.vehicles.forEach(vehicle=>{
+
+    const type=
+      VEHICLE_TYPES.find(
+        x=>x.id===vehicle.typeId
+      );
+
+    if(!type)return;
+
+
+    if(game.money>=type.maintenance){
+
+      game.money-=type.maintenance;
+
+      addLog(
+        "🔧 Vehicle maintenance: -" +
+        money(type.maintenance) + "."
+      );
+
+    }
+
+  });
+
+
+  /* Random event */
+
+  randomEvent();
+
+
+  addLog(
+    "🌅 A new day begins. Day " +
+    game.day + "."
+  );
+
+
+  saveGame(false);
+
+  render();
+
+}
+
+
+/* =========================================================
+   RANDOM EVENTS
+========================================================= */
+
+function randomEvent(){
+
+  const chance=
+    Math.random();
+
+
+  if(chance<0.15){
+
+    const reward=
+      random(500,2500);
+
+    game.money+=reward;
+
+    addLog(
+      "🎁 Someone rewarded you with " +
+      money(reward) + "."
+    );
+
+  }
+
+
+  else if(chance<0.28){
+
+    game.mood=clamp(
+      game.mood+10,
+      0,
+      100
+    );
+
+    addLog(
+      "😊 You received some good news."
+    );
+
+  }
+
+
+  else if(chance<0.38){
+
+    game.education=clamp(
+      game.education+2,
+      0,
+      100
+    );
+
+    addLog(
+      "📚 You learned something useful."
+    );
+
+  }
+
+
+  else if(chance<0.48){
+
+    const cost=
+      Math.min(
+        game.money,
+        random(200,900)
+      );
+
+    game.money-=cost;
+
+    addLog(
+      "💸 An unexpected expense cost " +
+      money(cost) + "."
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   PEOPLE
+========================================================= */
+
+function talkToNPC(id){
+
+  const npc=
+    game.npcs.find(
+      n=>n.id===id
+    );
+
+  if(!npc)return;
+
+
+  const choices=[
+
+    {
+      text:"👋 Friendly conversation",
+      mood:4,
+      friendship:5
+    },
+
+    {
+      text:"😂 Make a joke",
+      mood:7,
+      friendship:4
+    },
+
+    {
+      text:"💼 Talk about work",
+      mood:2,
+      friendship:3
+    }
+
+  ];
+
+
+  const choice=
+    choices[
+      random(0,choices.length-1)
+    ];
+
+
+  npc.friendship+=choice.friendship;
+
+  npc.mood=clamp(
+    npc.mood+choice.mood,
+    0,
+    100
+  );
+
+
+  game.mood=clamp(
+    game.mood+3,
+    0,
+    100
+  );
+
+
+  addLog(
+    "👥 You spoke with " +
+    npc.name +
+    ". Friendship +" +
+    choice.friendship + "."
+  );
+
+
+  saveGame(false);
+
+  render();
+
+}
+
+
+/* =========================================================
+   OPPORTUNITIES
+========================================================= */
+
+function createOpportunities(){
+
+  const available=[
+
+    {
+      id:"delivery",
+      title:"📦 Delivery Opportunity",
+      description:"Complete a small delivery.",
+      reward:3000
+    },
+
+    {
+      id:"study",
+      title:"📚 Study Challenge",
+      description:"Improve your education.",
+      reward:1500
+    },
+
+    {
+      id:"community",
+      title:"🤝 Community Help",
+      description:"Help people around you.",
+      reward:2500
+    }
+
+  ];
+
+
+  if(game.opportunities.length===0){
+
+    const selected=
+      available[
+        random(0,available.length-1)
+      ];
+
+
+    game.opportunities.push({
+
+      ...selected,
+
+      completed:false
+
+    });
+
+  }
+
+}
+
+
+function completeOpportunity(index){
+
+  const opportunity=
+    game.opportunities[index];
+
+  if(!opportunity)return;
+
+
+  if(opportunity.completed){
+
+    return;
+
+  }
+
+
+  opportunity.completed=true;
+
+  game.money+=opportunity.reward;
+
+  game.reputation+=2;
+
+
+  addLog(
+    "🎯 Completed " +
+    opportunity.title +
+    " and earned " +
+    money(opportunity.reward) + "."
+  );
+
+
+  saveGame(false);
+
+  render();
+
+}
+
+
+/* =========================================================
+   RENDER STATS
+========================================================= */
+
+function renderStats(){
+
+  document.getElementById("money")
+    .textContent=money(game.money);
+
+  document.getElementById("health")
+    .textContent=game.health;
+
+  document.getElementById("mood")
+    .textContent=game.mood;
+
+  document.getElementById("energy")
+    .textContent=game.energy;
+
+  document.getElementById("education")
+    .textContent=game.education;
+
+  document.getElementById("reputation")
+    .textContent=game.reputation;
+
+  document.getElementById("day")
+    .textContent=game.day;
+
+  document.getElementById("location")
+    .textContent=game.location;
+
+
+  document.getElementById("healthBar")
+    .style.width=game.health+"%";
+
+  document.getElementById("moodBar")
+    .style.width=game.mood+"%";
+
+  document.getElementById("energyBar")
+    .style.width=game.energy+"%";
+
+  document.getElementById("educationBar")
+    .style.width=game.education+"%";
+
+}
+
+
+/* =========================================================
+   RENDER INVENTORY
+========================================================= */
+
+function renderInventory(){
+
+  const box=
+    document.getElementById("inventory");
+
+
+  box.innerHTML="";
+
+
+  const ids=
+    Object.keys(game.inventory);
+
+
+  if(ids.length===0){
+
+    box.innerHTML=
+      "<p style='color:#cbd5e1'>🎒 Your inventory is empty.</p>";
+
+  }
+
+
+  ids.forEach(id=>{
+
+    const item=ITEMS[id];
+
+    if(!item)return;
+
+
+    const amount=
+      game.inventory[id];
+
+
+    box.innerHTML+=`
+
+      <div class="item">
+
+        <div class="item-info">
+
+          <strong>${item.name} × ${amount}</strong>
+
+          <small>
+            ${item.category}
+            • Weight ${item.weight}
+          </small>
+
+        </div>
+
+        <div>
+
+          <button onclick="useItem('${id}')">
+            Use
+          </button>
+
+          <button
+            class="warning"
+            onclick="sellItem('${id}')"
+          >
+            Sell
+          </button>
+
+          <button
+            class="secondary"
+            onclick="storeItem('${id}')"
+          >
+            Store
+          </button>
+
+        </div>
+
+      </div>
+
+    `;
+
+  });
+
+
+  document.getElementById("inventoryWeight")
+    .textContent=
+      "Capacity: " +
+      inventoryWeight() +
+      " / " +
+      inventoryCapacity();
+
+}
+
+
+/* =========================================================
+   RENDER MARKET
+========================================================= */
+
+function renderItemMarket(){
+
+  const box=
+    document.getElementById("itemMarket");
+
+
+  box.innerHTML="";
+
+
+  for(const id in ITEMS){
+
+    const item=ITEMS[id];
+
+
+    box.innerHTML+=`
+
+      <div class="item">
+
+        <div class="item-info">
+
+          <strong>${item.name}</strong>
+
+          <small>
+            ${item.category}
+            • Buy ${money(item.buy)}
+            • Sell ${money(item.sell)}
+          </small>
+
+        </div>
+
+        <button
+          onclick="buyItem('${id}')"
+        >
+          Buy
+        </button>
+
+      </div>
+
+    `;
+
+  }
+
+}
+
+
+/* =========================================================
+   RENDER STORAGE
+========================================================= */
+
+function renderStorage(){
+
+  const box=
+    document.getElementById("storage");
+
+
+  box.innerHTML="";
+
+
+  const ids=
+    Object.keys(game.storage);
+
+
+  if(ids.length===0){
+
+    box.innerHTML=
+      "<p style='color:#cbd5e1'>📦 Nothing stored yet.</p>";
+
+    return;
+
+  }
+
+
+  ids.forEach(id=>{
+
+    const item=ITEMS[id];
+
+    if(!item)return;
+
+
+    box.innerHTML+=`
+
+      <div class="item">
+
+        <div class="item-info">
+
+          <strong>
+            ${item.name} × ${game.storage[id]}
+          </strong>
+
+          <small>
+            Stored at home
+          </small>
+
+        </div>
+
+        <button
+          onclick="retrieveItem('${id}')"
+        >
+          Retrieve
+        </button>
+
+      </div>
+
+    `;
+
+  });
+
+}
+
+
+/* =========================================================
+   RENDER VEHICLES
+========================================================= */
+
+function renderVehicles(){
+
+  const box=
+    document.getElementById("vehicles");
+
+
+  box.innerHTML="";
+
+
+  if(game.vehicles.length===0){
+
+    box.innerHTML=
+      "<p style='color:#cbd5e1'>🚶 You don't own a vehicle yet.</p>";
+
+    return;
+
+  }
+
+
+  game.vehicles.forEach(vehicle=>{
+
+    const type=
+      VEHICLE_TYPES.find(
+        x=>x.id===vehicle.typeId
+      );
+
+    if(!type)return;
+
+
+    const selected=
+      vehicle.id===game.selectedVehicle;
+
+
+    box.innerHTML+=`
+
+      <div class="card"
+        style="margin-bottom:10px;
+        border:2px solid ${
+          selected ? "#facc15" : "transparent"
+        }">
+
+        <h3>
+          🚗 ${type.name}
+          ${selected ? " ⭐ Selected" : ""}
+        </h3>
+
+        <p>
+          Fuel: ${Math.round(vehicle.fuel)}%
+          <br>
+          Level: ${vehicle.level}
+          <br>
+          Travel: ${money(type.travelCost)}
+        </p>
+
+        <button
+          onclick="selectVehicle('${vehicle.id}')"
+        >
+          Select
+        </button>
+
+        <button
+          class="blue"
+          onclick="refuelVehicle('${vehicle.id}')"
+        >
+          Refuel ₦1,000
+        </button>
+
+        <button
+          class="warning"
+          onclick="upgradeVehicle('${vehicle.id}')"
+        >
+          Upgrade
+        </button>
+
+      </div>
+
+    `;
+
+  });
+
+}
+
+
+/* =========================================================
+   RENDER VEHICLE MARKET
+========================================================= */
+
+function renderVehicleMarket(){
+
+  const box=
+    document.getElementById("vehicleMarket");
+
+
+  box.innerHTML="";
+
+
+  VEHICLE_TYPES.forEach(type=>{
+
+    box.innerHTML+=`
+
+      <div class="item">
+
+        <div class="item-info">
+
+          <strong>🚗 ${type.name}</strong>
+
+          <small>
+            ${money(type.price)}
+            • Speed ${type.speed}
+            • Fuel ${type.fuel}
+          </small>
+
+        </div>
+
+        <button
+          onclick="buyVehicle('${type.id}')"
+        >
+          Buy
+        </button>
+
+      </div>
+
+    `;
+
+  });
+
+}
+
+
+/* =========================================================
+   RENDER HOMES
+========================================================= */
+
+function renderHomes(){
+
+  const box=
+    document.getElementById("homes");
+
+
+  box.innerHTML="";
+
+
+  if(game.properties.length===0){
+
+    box.innerHTML=
+      "<p style='color:#cbd5e1'>🏠 You don't own a home yet.</p>";
+
+  }else{
+
+    game.properties.forEach(property=>{
+
+      const type=
+        HOME_TYPES.find(
+          x=>x.id===property.typeId
+        );
+
+      if(!type)return;
+
+
+      const current=
+        property.id===game.currentHome;
+
+
+      box.innerHTML+=`
+
+        <div class="card" style="margin-bottom:10px">
+
+          <h3>
+            🏠 ${type.name}
+            ${current ? " ⭐ Current Home" : ""}
+          </h3>
+
+          <p>
+            📍 ${type.location}
+            <br>
+            Level: ${property.level}
+            <br>
+            Comfort: ${type.comfort}
+          </p>
+
+          <button
+            onclick="selectHome('${property.id}')"
+          >
+            Select
+          </button>
+
+          <button
+            class="warning"
+            onclick="upgradeHome('${property.id}')"
+          >
+            Upgrade
+          </button>
+
+        </div>
+
+      `;
+
+    });
+
+  }
+
+
+  box.innerHTML+=
+    "<h3 style='margin-top:15px'>🏘️ Available Homes</h3>";
+
+
+  HOME_TYPES.forEach(type=>{
+
+    box.innerHTML+=`
+
+      <div class="item">
+
+        <div class="item-info">
+
+          <strong>${type.name}</strong>
+
+          <small>
+            ${type.location}
+            • ${money(type.price)}
+            • Rent ${money(type.rent)}
+          </small>
+
+        </div>
+
+        <button
+          onclick="buyHome('${type.id}')"
+        >
+          Buy
+        </button>
+
+      </div>
+
+    `;
+
+  });
+
+}
+
+
+/* =========================================================
+   RENDER CAREER
+========================================================= */
+
+function renderCareer(){
+
+  const box=
+    document.getElementById("career");
+
+
+  box.innerHTML="";
+
+
+  if(game.career){
+
+    const career=
+      CAREERS.find(
+        x=>x.id===game.career
+      );
+
+
+    box.innerHTML+=`
+
+      <div class="card">
+
+        <h3>💼 ${career.name}</h3>
+
+        <p>
+          Salary:
+          ${money(career.salary * game.careerLevel)}
+          <br>
+          Career Level:
+          ${game.careerLevel}
+          <br>
+          XP:
+          ${game.careerXP} /
+          ${game.careerLevel*100}
+        </p>
+
+        <button
+          class="danger"
+          onclick="quitCareer()"
+        >
+          Quit Career
+        </button>
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  box.innerHTML=
+    "<p style='color:#cbd5e1;margin-bottom:10px'>You currently have no career.</p>";
+
+
+  CAREERS.forEach(career=>{
+
+    box.innerHTML+=`
+
+      <div class="item">
+
+        <div class="item-info">
+
+          <strong>${career.name}</strong>
+
+          <small>
+            Salary ${money(career.salary)}
+            • Education ${career.education}
+            • Reputation ${career.reputation}
+          </small>
+
+        </div>
+
+        <button
+          onclick="applyCareer('${career.id}')"
+        >
+          Apply
+        </button>
+
+      </div>
+
+    `;
+
+  });
+
+}
+
+
+/* =========================================================
+   RENDER BUSINESSES
+========================================================= */
+
+function renderBusinesses(){
+
+  const box=
+    document.getElementById("businesses");
+
+
+  box.innerHTML="";
+
+
+  if(game.businesses.length===0){
+
+    box.innerHTML=
+      "<p style='color:#cbd5e1'>🏪 You don't own a business yet.</p>";
+
+  }else{
+
+    game.businesses.forEach(business=>{
+
+      const type=
+        BUSINESS_TYPES.find(
+          x=>x.id===business.typeId
+        );
+
+      if(!type)return;
+
+
+      box.innerHTML+=`
+
+        <div class="card" style="margin-bottom:10px">
+
+          <h3>🏪 ${business.name}</h3>
+
+          <p>
+            📍 ${business.location}
+            <br>
+            Level: ${business.level}
+            <br>
+            XP: ${business.xp} / ${business.level*100}
+            <br>
+            Estimated income:
+            ${money(type.income*business.level)}
+          </p>
+
+          <button
+            onclick="runSpecificBusiness('${business.id}')"
+          >
+            Run Business
+          </button>
+
+          <button
+            class="warning"
+            onclick="upgradeBusiness('${business.id}')"
+          >
+            Upgrade
+          </button>
+
+        </div>
+
+      `;
+
+    });
+
+  }
+
+
+  box.innerHTML+=
+    "<h3 style='margin-top:15px'>💡 Business Centre</h3>";
+
+
+  BUSINESS_TYPES.forEach(type=>{
+
+    box.innerHTML+=`
+
+      <div class="item">
+
+        <div class="item-info">
+
+          <strong>${type.name}</strong>
+
+          <small>
+            Start ${money(type.cost)}
+            • Income ${money(type.income)}
+            • Expense ${money(type.expense)}
+            • ${type.location}
+          </small>
+
+        </div>
+
+        <button
+          onclick="buyBusiness('${type.id}')"
+        >
+          Start
+        </button>
+
+      </div>
+
+    `;
+
+  });
+
+}
+
+
+/* =========================================================
+   RENDER MAP
+========================================================= */
+
+function renderMap(){
+
+  const box=
+    document.getElementById("map");
+
+
+  box.innerHTML="";
+
+
+  LOCATIONS.forEach(location=>{
+
+    const active=
+      location.name===game.location;
+
+
+    box.innerHTML+=`
+
+      <div
+        class="location ${active ? "active" : ""}"
+        onclick="travelTo('${location.name}')"
+      >
+
+        <h3>
+          📍 ${location.name}
+        </h3>
+
+        <small>
+          ${location.description}
+        </small>
+
+      </div>
+
+    `;
+
+  });
+
+}
+
+
+function travelTo(name){
+
+  if(name===game.location){
+
+    addLog(
+      "📍 You are already in " +
+      name + "."
+    );
+
+    render();
+
+    return;
+
+  }
+
+
+  const vehicle=
+    selectedVehicle();
+
+
+  if(vehicle){
+
+    const type=
+      VEHICLE_TYPES.find(
+        x=>x.id===vehicle.typeId
+      );
+
+
+    if(vehicle.fuel<=0){
+
+      addLog(
+        "⛽ Your vehicle is out of fuel."
+      );
+
+      render();
+
+      return;
+
+    }
+
+
+    if(!spend(type.travelCost))return;
+
+
+    vehicle.fuel=
+      clamp(
+        vehicle.fuel-10,
+        0,
+        100
+      );
+
+
+  }else{
+
+    if(!spend(500))return;
+
+    energyCost(10);
+
+  }
+
+
+  game.location=name;
+
+
+  addLog(
+    "📍 You arrived in " +
+    name + "."
+  );
+
+
+  saveGame(false);
+
+  render();
+
+}
+
+
+/* =========================================================
+   RENDER PEOPLE
+========================================================= */
+
+function renderPeople(){
+
+  const box=
+    document.getElementById("people");
+
+
+  box.innerHTML="";
+
+
+  const nearby=
+    game.npcs.filter(
+      npc=>npc.location===game.location
+    );
+
+
+  if(nearby.length===0){
+
+    box.innerHTML=
+      "<p style='color:#cbd5e1'>No familiar people nearby right now.</p>";
+
+    return;
+
+  }
+
+
+  nearby.forEach(npc=>{
+
+    box.innerHTML+=`
+
+      <div class="item">
+
+        <div class="item-info">
+
+          <strong>
+            👤 ${npc.name}
+          </strong>
+
+          <small>
+            ${npc.role}
+            • Friendship ${npc.friendship}
+            • Mood ${npc.mood}
+          </small>
+
+        </div>
+
+        <button
+          onclick="talkToNPC('${npc.id}')"
+        >
+          Talk
+        </button>
+
+      </div>
+
+    `;
+
+  });
+
+}
+
+
+/* =========================================================
+   RENDER OPPORTUNITIES
+========================================================= */
+
+function renderOpportunities(){
+
+  const box=
+    document.getElementById("opportunities");
+
+
+  box.innerHTML="";
+
+
+  if(game.opportunities.length===0){
+
+    box.innerHTML=
+      "<p style='color:#cbd5e1'>No opportunities available.</p>";
+
+    return;
+
+  }
+
+
+  game.opportunities.forEach(
+    (opportunity,index)=>{
+
+      box.innerHTML+=`
+
+        <div class="item">
+
+          <div class="item-info">
+
+            <strong>
+              ${opportunity.title}
+            </strong>
+
+            <small>
+              ${opportunity.description}
+              <br>
+              Reward:
+              ${money(opportunity.reward)}
+            </small>
+
+          </div>
+
+          ${
+            opportunity.completed
+
+            ? `<span class="badge">Completed ✓</span>`
+
+            : `
+              <button
+                onclick="completeOpportunity(${index})"
+              >
+                Complete
+              </button>
+            `
+          }
+
+        </div>
+
+      `;
+
+    }
+
+  );
+
+}
+
+
+/* =========================================================
+   RENDER LOG
+========================================================= */
+
+function renderLog(){
+
+  const box=
+    document.getElementById("log");
+
+
+  box.innerHTML="";
+
+
+  if(game.log.length===0){
+
+    box.innerHTML=
+      "<p style='color:#cbd5e1'>Your life story begins here...</p>";
+
+    return;
+
+  }
+
+
+  game.log.forEach(entry=>{
+
+    box.innerHTML+=`
+
+      <div class="log-entry">
+        ${entry}
+      </div>
+
+    `;
+
+  });
+
+}
+
+
+/* =========================================================
+   MAIN RENDER
+========================================================= */
+
+function render(){
+
+  renderStats();
+
+  renderInventory();
+
+  renderItemMarket();
+
+  renderStorage();
+
+  renderVehicles();
+
+  renderVehicleMarket();
+
+  renderHomes();
+
+  renderCareer();
+
+  renderBusinesses();
+
+  renderMap();
+
+  renderPeople();
+
+  renderOpportunities();
+
+  renderLog();
+
+}
+
+
+/* =========================================================
+   START GAME
+========================================================= */
+
+loadGame();
+
+
+if(!game.log.length){
+
+  addLog(
+    "🎒 Welcome to Kaduna Life V15.1 — Inventory & Save Fix."
+  );
+
+}
+
+
+createOpportunities();
+
+saveGame(false);
+
+render();
+
+
+/* =========================================================
+   AUTO SAVE
+========================================================= */
+
+setInterval(()=>{
+
+  saveGame(false);
+
+},30000);
+
+</script>
+
+</body>
+</html>
