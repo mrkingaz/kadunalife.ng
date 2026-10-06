@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kaduna Life — V9</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:#0d1117;
+color:white;
+}
+
+header{
+padding:22px 15px;
+text-align:center;
+background:linear-gradient(135deg,#075c35,#123d2b);
+border-bottom:2px solid #20a464;
+}
+
+header h1{
+margin:0;
+font-size:30px;
+}
+
+header p{
+margin:7px 0 0;
+color:#c8e8d8;
+}
+
+.container{
+max-width:950px;
+margin:auto;
+padding:15px;
+}
+
+.card{
+background:#171d27;
+border:1px solid #293442;
+border-radius:18px;
+padding:18px;
+margin-bottom:15px;
+}
+
+.stats{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:10px;
+}
+
+.stat{
+background:#202733;
+padding:13px;
+border-radius:13px;
+}
+
+.stat small{
+color:#9ca8b8;
+}
+
+.stat strong{
+display:block;
+font-size:20px;
+margin-top:5px;
+}
+
+.map{
+position:relative;
+height:430px;
+border-radius:18px;
+overflow:hidden;
+background:
+linear-gradient(135deg,#16291f,#24392a 50%,#17231c);
+border:2px solid #31503c;
+}
+
+.map:before{
+content:"";
+position:absolute;
+inset:0;
+background:
+linear-gradient(45deg,transparent 48%,rgba(255,255,255,.04) 49%,transparent 51%),
+linear-gradient(-45deg,transparent 48%,rgba(255,255,255,.04) 49%,transparent 51%);
+background-size:80px 80px;
+}
+
+.road{
+position:absolute;
+background:#4a514c;
+opacity:.45;
+}
+
+.road.one{
+height:10px;
+width:110%;
+left:-5%;
+top:50%;
+transform:rotate(-15deg);
+}
+
+.road.two{
+height:10px;
+width:110%;
+left:-5%;
+top:63%;
+transform:rotate(22deg);
+}
+
+.road.three{
+width:10px;
+height:110%;
+left:52%;
+top:-5%;
+transform:rotate(20deg);
+}
+
+.location{
+position:absolute;
+z-index:2;
+width:105px;
+padding:9px 5px;
+border-radius:12px;
+border:2px solid #5c6a63;
+background:#17231d;
+color:white;
+font-weight:bold;
+font-size:12px;
+text-align:center;
+cursor:pointer;
+box-shadow:0 5px 15px rgba(0,0,0,.35);
+}
+
+.location:hover{
+transform:scale(1.06);
+}
+
+.location.active{
+border-color:#36d889;
+background:#0f5133;
+}
+
+.location.locked{
+opacity:.45;
+}
+
+.l1{left:8%;top:20%}
+.l2{left:38%;top:8%}
+.l3{right:7%;top:23%}
+.l4{left:13%;bottom:15%}
+.l5{right:30%;bottom:10%}
+.l6{right:7%;bottom:27%}
+
+.location span{
+display:block;
+font-size:18px;
+margin-bottom:3px;
+}
+
+.actions{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:10px;
+}
+
+button{
+border:0;
+border-radius:13px;
+padding:14px;
+background:#16844d;
+color:white;
+font-weight:bold;
+font-size:14px;
+cursor:pointer;
+}
+
+button:hover{
+background:#20a964;
+}
+
+button.secondary{
+background:#303947;
+}
+
+button.danger{
+background:#8b3535;
+}
+
+button:disabled{
+background:#40454c;
+color:#8d949c;
+}
+
+.event{
+padding:10px;
+border-bottom:1px solid #293442;
+}
+
+.good{color:#69e59e}
+.bad{color:#ff7777}
+.warning{color:#ffd166}
+
+.locationInfo{
+background:#202733;
+padding:15px;
+border-radius:13px;
+margin-top:12px;
+}
+
+.locationInfo h3{
+margin-top:0;
+}
+
+footer{
+text-align:center;
+padding:25px;
+color:#697585;
+font-size:13px;
+}
+
+@media(max-width:650px){
+
+.stats{
+grid-template-columns:repeat(2,1fr);
+}
+
+.map{
+height:390px;
+}
+
+.location{
+width:95px;
+font-size:11px;
+}
+
+.actions{
+grid-template-columns:1fr;
+}
+
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>🌆 KADUNA LIFE</h1>
+<p>Live your life. Make your choices.</p>
+</header>
+
+<div class="container">
+
+<div class="card">
+
+<h2>👤 Your Life</h2>
+
+<div class="stats">
+
+<div class="stat">
+<small>💰 Money</small>
+<strong>₦<span id="money">25000</span></strong>
+</div>
+
+<div class="stat">
+<small>❤️ Health</small>
+<strong><span id="health">100</span>%</strong>
+</div>
+
+<div class="stat">
+<small>😊 Mood</small>
+<strong><span id="mood">80</span>%</strong>
+</div>
+
+<div class="stat">
+<small>⚡ Energy</small>
+<strong><span id="energy">100</span>%</strong>
+</div>
+
+<div class="stat">
+<small>📚 Education</small>
+<strong><span id="education">10</span></strong>
+</div>
+
+<div class="stat">
+<small>📅 Day</small>
+<strong><span id="day">1</span></strong>
+</div>
+
+</div>
+</div>
+
+
+<div class="card">
+
+<h2>🗺️ Kaduna World</h2>
+
+<p>
+Current location:
+<strong id="currentLocation">Barnawa</strong>
+</p>
+
+<div class="map">
+
+<div class="road one"></div>
+<div class="road two"></div>
+<div class="road three"></div>
+
+<div class="location l1 active"
+onclick="travel('Barnawa')">
+<span>🏘️</span>
+Barnawa
+</div>
+
+<div class="location l2"
+onclick="travel('Kaduna Central')">
+<span>🏙️</span>
+Kaduna Central
+</div>
+
+<div class="location l3"
+onclick="travel('Kawo')">
+<span>🏙️</span>
+Kawo
+</div>
+
+<div class="location l4"
+onclick="travel('Sabon Tasha')">
+<span>🏘️</span>
+Sabon Tasha
+</div>
+
+<div class="location l5"
+onclick="travel('Unguwan Rimi')">
+<span>🏘️</span>
+Unguwan Rimi
+</div>
+
+<div class="location l6"
+onclick="travel('Malali')">
+<span>🌳</span>
+Malali
+</div>
+
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h2>📍 Location</h2>
+
+<div class="locationInfo">
+
+<h3 id="placeName">🏘️ Barnawa</h3>
+
+<p id="placeDescription">
+Your current neighborhood. A good place to start your Kaduna life.
+</p>
+
+<div class="actions">
+
+<button onclick="locationAction(1)" id="action1">
+💼 Work
+</button>
+
+<button onclick="locationAction(2)" id="action2">
+🍛 Eat
+</button>
+
+<button onclick="locationAction(3)" id="action3">
+🎉 Socialize
+</button>
+
+<button onclick="locationAction(4)" id="action4">
+🛍️ Shop
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h2>🎯 Quick Actions</h2>
+
+<div class="actions">
+
+<button onclick="rest()">
+😴 Rest
+</button>
+
+<button onclick="study()">
+📚 Study
+</button>
+
+<button onclick="explore()">
+🔎 Explore
+</button>
+
+<button onclick="saveGame()">
+💾 Save Game
+</button>
+
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h2>📜 Life Events</h2>
+
+<div id="events">
+
+<div class="event">
+🌅 You started your life in Kaduna.
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<footer>
+Kaduna Life V9 • World Expansion 🌆
+</footer>
+
+
+<script>
+
+let game =
+JSON.parse(localStorage.getItem("kadunaLifeV8"))
+||
+{
+money:25000,
+health:100,
+mood:80,
+energy:100,
+education:10,
+day:1,
+location:"Barnawa"
+};
+
+
+const places={
+
+"Barnawa":{
+icon:"🏘️",
+description:"Your neighborhood. A solid place to begin your Kaduna journey.",
+actions:["💼 Work","🍛 Eat","🎉 Socialize","🛍️ Shop"]
+},
+
+"Kaduna Central":{
+icon:"🏙️",
+description:"The heart of the city. More opportunities, shops and activities.",
+actions:["💼 Find Work","🍛 Restaurant","🎉 Entertainment","🛍️ Shopping"]
+},
+
+"Kawo":{
+icon:"🏙️",
+description:"A busy part of Kaduna with transport, businesses and opportunities.",
+actions:["💼 Find Work","🍛 Eat","🚕 Transport","🛍️ Market"]
+},
+
+"Sabon Tasha":{
+icon:"🏘️",
+description:"A growing neighborhood with affordable food and local businesses.",
+actions:["💼 Work","🍛 Eat","🎉 Socialize","🛍️ Market"]
+},
+
+"Unguwan Rimi":{
+icon:"🏘️",
+description:"A residential area where you can meet people and build connections.",
+actions:["💼 Work","🍛 Eat","🤝 Meet People","🛍️ Shop"]
+},
+
+"Malali":{
+icon:"🌳",
+description:"A quieter area. Great for relaxing and improving your mood.",
+actions:["😴 Relax","🍛 Eat","🎉 Socialize","🛍️ Shop"]
+
+}
+
+};
+
+
+function saveGame(){
+
+localStorage.setItem(
+"kadunaLifeV8",
+JSON.stringify(game)
+);
+
+addEvent("💾 Game saved.","good");
+
+}
+
+
+function update(){
+
+document.getElementById("money").textContent =
+Math.round(game.money).toLocaleString();
+
+document.getElementById("health").textContent =
+game.health;
+
+document.getElementById("mood").textContent =
+game.mood;
+
+document.getElementById("energy").textContent =
+game.energy;
+
+document.getElementById("education").textContent =
+game.education;
+
+document.getElementById("day").textContent =
+game.day;
+
+document.getElementById("currentLocation").textContent =
+game.location;
+
+updateLocation();
+
+localStorage.setItem(
+"kadunaLifeV8",
+JSON.stringify(game)
+);
+
+}
+
+
+function addEvent(message,type=""){
+
+let box=document.getElementById("events");
+
+let div=document.createElement("div");
+
+div.className="event "+type;
+
+div.textContent=message;
+
+box.prepend(div);
+
+}
+
+
+function clamp(){
+
+game.health=Math.max(
+0,
+Math.min(100,game.health)
+);
+
+game.mood=Math.max(
+0,
+Math.min(100,game.mood)
+);
+
+game.energy=Math.max(
+0,
+Math.min(100,game.energy)
+);
+
+game.education=Math.max(
+0,
+Math.min(100,game.education)
+);
+
+}
+
+
+function updateLocation(){
+
+let data=places[game.location];
+
+document.getElementById("placeName").textContent=
+data.icon+" "+game.location;
+
+document.getElementById("placeDescription").textContent=
+data.description;
+
+for(let i=1;i<=4;i++){
+
+document.getElementById(
+"action"+i
+).textContent=data.actions[i-1];
+
+}
+
+document.querySelectorAll(".location")
+.forEach(el=>el.classList.remove("active"));
+
+document.querySelectorAll(".location")
+.forEach(el=>{
+
+if(el.textContent.trim()
+.includes(game.location)){
+
+el.classList.add("active");
+
+}
+
+});
+
+}
+
+
+function travel(place){
+
+if(place===game.location){
+
+addEvent(
+"📍 You're already in "+place+"."
+);
+
+return;
+
+}
+
+let cost=500;
+
+if(game.money<cost){
+
+addEvent(
+"💸 You need ₦500 for transportation.",
+"bad"
+);
+
+return;
+
+}
+
+game.money-=cost;
+
+game.energy-=5;
+
+game.location=place;
+
+addEvent(
+"🚕 You travelled to "+place+" for ₦500."
+);
+
+clamp();
+
+update();
+
+}
+
+
+function locationAction(number){
+
+let location=game.location;
+
+if(number===1){
+
+if(game.energy<20){
+
+addEvent(
+"⚡ You're too tired to work.",
+"warning"
+);
+
+return;
+
+}
+
+let income=5000+(game.education*150);
+
+game.money+=income;
+
+game.energy-=25;
+
+game.mood-=5;
+
+addEvent(
+"💼 You worked in "+location+
+" and earned ₦"+
+Math.round(income).toLocaleString()+".",
+"good"
+);
+
+advanceDay();
+
+}
+
+
+else if(number===2){
+
+if(game.money<1500){
+
+addEvent(
+"💸 You don't have enough money for food.",
+"bad"
+);
+
+return;
+
+}
+
+game.money-=1500;
+
+game.energy+=15;
+
+game.health+=5;
+
+game.mood+=5;
+
+addEvent(
+"🍛 You ate at "+location+".",
+"good"
+);
+
+clamp();
+
+update();
+
+}
+
+
+else if(number===3){
+
+if(game.money<1000){
+
+addEvent(
+"💸 You need ₦1,000 to socialize.",
+"bad"
+);
+
+return;
+
+}
+
+game.money-=1000;
+
+game.mood+=20;
+
+game.energy-=10;
+
+addEvent(
+"🎉 You had a good time in "+location+"!",
+"good"
+);
+
+advanceDay();
+
+}
+
+
+else if(number===4){
+
+if(game.money<3000){
+
+addEvent(
+"🛍️ You need at least ₦3,000 to shop.",
+"bad"
+);
+
+return;
+
+}
+
+game.money-=3000;
+
+game.health+=5;
+
+addEvent(
+"🛒 You bought supplies in "+location+".",
+"good"
+);
+
+clamp();
+
+update();
+
+}
+
+}
+
+
+function study(){
+
+if(game.energy<15){
+
+addEvent(
+"📚 You're too tired to study.",
+"warning"
+);
+
+return;
+
+}
+
+game.education+=3;
+
+game.energy-=15;
+
+game.mood-=2;
+
+addEvent(
+"📚 You studied and improved your education.",
+"good"
+);
+
+advanceDay();
+
+}
+
+
+function rest(){
+
+game.energy+=40;
+
+game.health+=5;
+
+game.mood+=5;
+
+addEvent(
+"😴 You rested and recovered.",
+"good"
+);
+
+advanceDay();
+
+}
+
+
+function explore(){
+
+if(game.energy<20){
+
+addEvent(
+"⚡ You're too tired to explore.",
+"warning"
+);
+
+return;
+
+}
+
+game.energy-=20;
+
+game.mood+=10;
+
+addEvent(
+"🔎 You explored "+game.location+
+" and discovered something interesting!",
+"good"
+);
+
+advanceDay();
+
+}
+
+
+function advanceDay(){
+
+game.day++;
+
+game.energy-=10;
+
+if(game.energy<20){
+
+game.mood-=5;
+
+addEvent(
+"😩 You're exhausted. You should rest.",
+"warning"
+);
+
+}
+
+randomEvent();
+
+clamp();
+
+update();
+
+}
+
+
+function randomEvent(){
+
+let chance=Math.random();
+
+if(chance<0.12){
+
+let money=
+Math.floor(Math.random()*4000)+1000;
+
+game.money+=money;
+
+addEvent(
+"🎉 Lucky day! You received ₦"+
+money.toLocaleString()+".",
+"good"
+);
+
+}
+
+else if(chance<0.22){
+
+let money=
+Math.floor(Math.random()*2500)+500;
+
+game.money-=money;
+
+addEvent(
+"💸 Unexpected expense: ₦"+
+money.toLocaleString()+".",
+"bad"
+);
+
+}
+
+else if(chance<0.32){
+
+game.mood+=10;
+
+addEvent(
+"😊 Something good happened today!",
+"good"
+);
+
+}
+
+}
+
+
+update();
+
+</script>
+
+</body>
+</html>
