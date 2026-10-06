@@ -1,0 +1,5529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Kaduna Life — V37</title>
+
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha256-p4NxAoJBhIINfQ3QhLx6P8yR2N9hM9G9Q1QKx3xR2rM="
+  crossorigin=""
+/>
+
+<style>
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#07111f;
+  color:#fff;
+  font-family:Arial,Helvetica,sans-serif;
+}
+
+button,
+input{
+  font:inherit;
+}
+
+button{
+  border:0;
+  cursor:pointer;
+}
+
+#game{
+  position:fixed;
+  inset:0;
+  overflow:hidden;
+  background:#07111f;
+}
+
+canvas{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  display:block;
+  background:#6f9b55;
+}
+
+/* =========================
+   AUTH
+========================= */
+
+.screen{
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:1000;
+  background:
+    radial-gradient(circle at 50% 20%,rgba(58,130,246,.22),transparent 35%),
+    linear-gradient(135deg,#07111f,#102b46 60%,#0a1728);
+  padding:20px;
+}
+
+.authBox{
+  width:min(430px,100%);
+  padding:28px;
+  border-radius:24px;
+  background:rgba(8,20,35,.94);
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 20px 60px rgba(0,0,0,.45);
+}
+
+.logo{
+  text-align:center;
+  font-size:38px;
+  font-weight:900;
+  margin-bottom:5px;
+}
+
+.subtitle{
+  text-align:center;
+  color:#a9bbcf;
+  margin-bottom:24px;
+}
+
+.field{
+  margin-bottom:13px;
+}
+
+.field label{
+  display:block;
+  font-size:13px;
+  color:#9eb1c6;
+  margin-bottom:6px;
+}
+
+.field input{
+  width:100%;
+  padding:13px 14px;
+  border-radius:13px;
+  border:1px solid rgba(255,255,255,.12);
+  background:#0d2035;
+  color:#fff;
+  outline:none;
+}
+
+.field input:focus{
+  border-color:#4da3ff;
+}
+
+.primary{
+  width:100%;
+  padding:14px;
+  border-radius:13px;
+  background:#2489ff;
+  color:#fff;
+  font-weight:800;
+  margin-top:6px;
+}
+
+.secondary{
+  width:100%;
+  padding:13px;
+  border-radius:13px;
+  background:#152b42;
+  color:#dbe9f7;
+  font-weight:700;
+  margin-top:9px;
+}
+
+.smallNote{
+  margin-top:15px;
+  font-size:12px;
+  line-height:1.5;
+  color:#8197ae;
+  text-align:center;
+}
+
+.error{
+  margin-top:12px;
+  color:#ff9c9c;
+  font-size:13px;
+  text-align:center;
+}
+
+/* =========================
+   HUD
+========================= */
+
+#hud{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  z-index:50;
+  padding:10px;
+  pointer-events:none;
+}
+
+.hudRow{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.card{
+  background:rgba(7,18,31,.88);
+  border:1px solid rgba(255,255,255,.1);
+  backdrop-filter:blur(10px);
+  box-shadow:0 8px 25px rgba(0,0,0,.25);
+}
+
+.playerCard{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:9px 12px;
+  border-radius:14px;
+}
+
+.avatar{
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#2489ff;
+  font-weight:900;
+}
+
+.playerInfo strong{
+  display:block;
+  font-size:13px;
+}
+
+.playerInfo span{
+  display:block;
+  font-size:11px;
+  color:#a9bfd4;
+}
+
+.statBar{
+  min-width:70px;
+  padding:7px 9px;
+  border-radius:11px;
+}
+
+.statTop{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  font-size:10px;
+  color:#a9bfd4;
+}
+
+.statValue{
+  font-weight:900;
+  color:#fff;
+  font-size:12px;
+}
+
+.money{
+  padding:9px 12px;
+  border-radius:14px;
+  font-weight:900;
+  color:#9dffbd;
+}
+
+.locationBadge{
+  padding:9px 12px;
+  border-radius:14px;
+  font-size:12px;
+  font-weight:800;
+}
+
+.topButtons{
+  margin-left:auto;
+  display:flex;
+  gap:7px;
+  pointer-events:auto;
+}
+
+.iconBtn{
+  width:40px;
+  height:40px;
+  border-radius:12px;
+  background:rgba(7,18,31,.9);
+  color:#fff;
+  border:1px solid rgba(255,255,255,.1);
+  font-size:18px;
+}
+
+/* =========================
+   ONLINE
+========================= */
+
+#onlineBadge{
+  position:fixed;
+  top:86px;
+  right:10px;
+  z-index:60;
+  padding:8px 11px;
+  border-radius:12px;
+  font-size:11px;
+  font-weight:800;
+  background:rgba(7,18,31,.88);
+  border:1px solid rgba(255,255,255,.1);
+  pointer-events:none;
+}
+
+.onlineDot{
+  display:inline-block;
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:#35e67b;
+  margin-right:5px;
+}
+
+/* =========================
+   LOCATION / MAP
+========================= */
+
+#mapPanel{
+  position:fixed;
+  inset:0;
+  z-index:300;
+  display:none;
+  background:rgba(3,10,18,.95);
+}
+
+#realMap{
+  position:absolute;
+  inset:0;
+}
+
+.mapHeader{
+  position:absolute;
+  top:12px;
+  left:12px;
+  right:12px;
+  z-index:500;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  pointer-events:none;
+}
+
+.mapTitle{
+  padding:10px 13px;
+  border-radius:13px;
+  background:rgba(7,18,31,.94);
+  border:1px solid rgba(255,255,255,.12);
+  font-weight:900;
+  pointer-events:auto;
+}
+
+.mapClose{
+  margin-left:auto;
+  width:42px;
+  height:42px;
+  border-radius:13px;
+  background:rgba(7,18,31,.94);
+  color:#fff;
+  border:1px solid rgba(255,255,255,.12);
+  pointer-events:auto;
+  font-size:18px;
+}
+
+.mapCredit{
+  position:absolute;
+  bottom:9px;
+  left:9px;
+  z-index:500;
+  padding:6px 8px;
+  background:rgba(7,18,31,.82);
+  border-radius:8px;
+  font-size:10px;
+  color:#d7e5f3;
+}
+
+/* =========================
+   MINIMAP
+========================= */
+
+#minimap{
+  position:fixed;
+  right:10px;
+  top:130px;
+  z-index:60;
+  width:145px;
+  height:105px;
+  border-radius:15px;
+  overflow:hidden;
+  background:#182b22;
+  border:2px solid rgba(255,255,255,.2);
+  box-shadow:0 8px 25px rgba(0,0,0,.3);
+  pointer-events:none;
+}
+
+#miniCanvas{
+  width:100%;
+  height:100%;
+  display:block;
+}
+
+/* =========================
+   CONTROLS
+========================= */
+
+#controls{
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  z-index:80;
+  height:190px;
+  pointer-events:none;
+}
+
+.dpad{
+  position:absolute;
+  left:18px;
+  bottom:24px;
+  width:145px;
+  height:145px;
+  pointer-events:auto;
+}
+
+.dpad button{
+  position:absolute;
+  width:48px;
+  height:48px;
+  border-radius:14px;
+  background:rgba(7,18,31,.85);
+  color:#fff;
+  border:1px solid rgba(255,255,255,.12);
+  font-size:20px;
+  font-weight:900;
+  touch-action:none;
+}
+
+#up{left:48px;top:0}
+#left{left:0;top:48px}
+#down{left:48px;top:48px}
+#right{right:0;top:48px}
+
+.actionControls{
+  position:absolute;
+  right:18px;
+  bottom:25px;
+  display:flex;
+  gap:10px;
+  pointer-events:auto;
+}
+
+.actionBtn{
+  min-width:68px;
+  height:54px;
+  padding:0 15px;
+  border-radius:16px;
+  background:rgba(7,18,31,.9);
+  color:#fff;
+  border:1px solid rgba(255,255,255,.12);
+  font-weight:900;
+}
+
+.actionBtn.primaryAction{
+  background:#2489ff;
+}
+
+/* =========================
+   CHAT
+========================= */
+
+#chatPanel{
+  position:fixed;
+  left:10px;
+  bottom:205px;
+  width:min(360px,calc(100vw - 20px));
+  max-height:370px;
+  z-index:120;
+  display:none;
+  flex-direction:column;
+  border-radius:18px;
+  overflow:hidden;
+  background:rgba(6,17,29,.97);
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 15px 45px rgba(0,0,0,.4);
+}
+
+.chatHeader{
+  padding:11px 13px;
+  display:flex;
+  align-items:center;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.chatHeader strong{
+  font-size:14px;
+}
+
+.chatStatus{
+  margin-left:auto;
+  font-size:10px;
+  color:#8da3b8;
+}
+
+#chatMessages{
+  flex:1;
+  overflow-y:auto;
+  padding:10px;
+  min-height:170px;
+  max-height:255px;
+}
+
+.chatMsg{
+  margin-bottom:8px;
+  padding:8px 10px;
+  border-radius:11px;
+  background:#10273e;
+  font-size:12px;
+  line-height:1.4;
+}
+
+.chatMsg.mine{
+  background:#165ea7;
+}
+
+.chatName{
+  font-size:10px;
+  color:#8fb5d9;
+  font-weight:800;
+  margin-bottom:2px;
+}
+
+.chatComposer{
+  display:flex;
+  gap:7px;
+  padding:9px;
+  border-top:1px solid rgba(255,255,255,.08);
+}
+
+#chatInput{
+  flex:1;
+  min-width:0;
+  padding:11px;
+  border-radius:11px;
+  border:1px solid rgba(255,255,255,.1);
+  background:#0d2035;
+  color:#fff;
+  outline:none;
+}
+
+#sendChat{
+  width:48px;
+  border-radius:11px;
+  background:#2489ff;
+  color:#fff;
+  font-weight:900;
+}
+
+/* =========================
+   NEARBY
+========================= */
+
+#nearbyPanel{
+  position:fixed;
+  right:10px;
+  top:245px;
+  width:190px;
+  max-height:220px;
+  z-index:70;
+  display:none;
+  border-radius:16px;
+  padding:10px;
+  background:rgba(6,17,29,.95);
+  border:1px solid rgba(255,255,255,.1);
+  box-shadow:0 12px 35px rgba(0,0,0,.35);
+}
+
+.nearbyTitle{
+  font-size:12px;
+  font-weight:900;
+  margin-bottom:8px;
+}
+
+.nearbyPlayer{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:7px;
+  border-radius:10px;
+  background:#0d2035;
+  margin-bottom:5px;
+  font-size:11px;
+}
+
+.nearbyPlayer .dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#36e77a;
+}
+
+/* =========================
+   MODAL
+========================= */
+
+.modal{
+  position:fixed;
+  inset:0;
+  z-index:400;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  background:rgba(2,7,13,.72);
+  backdrop-filter:blur(6px);
+}
+
+.modalBox{
+  width:min(420px,100%);
+  max-height:80vh;
+  overflow:auto;
+  border-radius:22px;
+  background:#091827;
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 25px 70px rgba(0,0,0,.5);
+  padding:20px;
+}
+
+.modalTitle{
+  font-size:22px;
+  font-weight:900;
+  margin-bottom:6px;
+}
+
+.modalText{
+  color:#9fb2c6;
+  font-size:13px;
+  line-height:1.5;
+  margin-bottom:16px;
+}
+
+.modalActions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+
+.modalActions button{
+  padding:12px;
+  border-radius:12px;
+  background:#10283f;
+  color:#fff;
+  font-weight:800;
+}
+
+.modalActions .blue{
+  background:#2489ff;
+}
+
+/* =========================
+   TOAST
+========================= */
+
+#toast{
+  position:fixed;
+  left:50%;
+  bottom:205px;
+  transform:translateX(-50%) translateY(20px);
+  z-index:600;
+  padding:10px 14px;
+  border-radius:12px;
+  background:rgba(7,18,31,.96);
+  border:1px solid rgba(255,255,255,.12);
+  color:#fff;
+  font-size:12px;
+  font-weight:700;
+  opacity:0;
+  pointer-events:none;
+  transition:.22s ease;
+}
+
+#toast.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+
+/* =========================
+   INTERIOR
+========================= */
+
+#interiorBadge{
+  position:fixed;
+  top:105px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:100;
+  display:none;
+  padding:9px 13px;
+  border-radius:13px;
+  background:rgba(7,18,31,.9);
+  border:1px solid rgba(255,255,255,.12);
+  font-size:12px;
+  font-weight:900;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:700px){
+
+  .hudRow{
+    max-width:calc(100vw - 20px);
+  }
+
+  .statBar{
+    display:none;
+  }
+
+  .locationBadge{
+    display:none;
+  }
+
+  .playerCard{
+    padding:7px 9px;
+  }
+
+  .money{
+    padding:8px 9px;
+  }
+
+  #minimap{
+    width:125px;
+    height:90px;
+    top:125px;
+  }
+
+  #onlineBadge{
+    top:82px;
+  }
+
+  #nearbyPanel{
+    top:220px;
+  }
+
+  #chatPanel{
+    bottom:195px;
+  }
+
+  #toast{
+    bottom:195px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="game">
+
+<canvas id="world"></canvas>
+
+<div id="hud">
+
+  <div class="hudRow">
+
+    <div class="playerCard card">
+      <div class="avatar" id="avatar">K</div>
+      <div class="playerInfo">
+        <strong id="hudName">Player</strong>
+        <span id="hudAge">Age 18</span>
+      </div>
+    </div>
+
+    <div class="money card" id="money">
+      ₦0
+    </div>
+
+    <div class="statBar card">
+      <div class="statTop">
+        <span>❤️ HP</span>
+        <span class="statValue" id="healthValue">100</span>
+      </div>
+    </div>
+
+    <div class="statBar card">
+      <div class="statTop">
+        <span>⚡ Energy</span>
+        <span class="statValue" id="energyValue">100</span>
+      </div>
+    </div>
+
+    <div class="locationBadge card" id="locationBadge">
+      Kaduna
+    </div>
+
+    <div class="topButtons">
+      <button class="iconBtn" id="mapBtn" title="Real map">🗺️</button>
+      <button class="iconBtn" id="nearbyBtn" title="Nearby players">👥</button>
+      <button class="iconBtn" id="chatBtn" title="Chat">💬</button>
+      <button class="iconBtn" id="menuBtn" title="Menu">☰</button>
+    </div>
+
+  </div>
+
+</div>
+
+<div id="onlineBadge">
+  <span class="onlineDot"></span>
+  <span id="onlineText">1 ONLINE</span>
+</div>
+
+<div id="minimap">
+  <canvas id="miniCanvas"></canvas>
+</div>
+
+<div id="interiorBadge">
+  🏢 <span id="interiorName">Interior</span>
+</div>
+
+<!-- CHAT -->
+
+<div id="chatPanel">
+
+  <div class="chatHeader">
+    <strong>💬 Kaduna Life Chat</strong>
+    <span class="chatStatus" id="chatStatus">Connecting...</span>
+  </div>
+
+  <div id="chatMessages"></div>
+
+  <div class="chatComposer">
+    <input
+      id="chatInput"
+      maxlength="120"
+      placeholder="Say something..."
+      autocomplete="off"
+    >
+    <button id="sendChat">➤</button>
+  </div>
+
+</div>
+
+<!-- NEARBY -->
+
+<div id="nearbyPanel">
+
+  <div class="nearbyTitle">
+    👥 Players Nearby
+  </div>
+
+  <div id="nearbyList">
+    Nobody nearby.
+  </div>
+
+</div>
+
+<!-- CONTROLS -->
+
+<div id="controls">
+
+  <div class="dpad">
+
+    <button id="up">▲</button>
+    <button id="left">◀</button>
+    <button id="down">▼</button>
+    <button id="right">▶</button>
+
+  </div>
+
+  <div class="actionControls">
+
+    <button class="actionBtn" id="enterBtn">
+      ENTER
+    </button>
+
+    <button class="actionBtn" id="interactBtn">
+      INTERACT
+    </button>
+
+    <button class="actionBtn primaryAction" id="runBtn">
+      RUN
+    </button>
+
+  </div>
+
+</div>
+
+<!-- TOAST -->
+
+<div id="toast"></div>
+
+<!-- MAP -->
+
+<div id="mapPanel">
+
+  <div class="mapHeader">
+    <div class="mapTitle">
+      🗺️ Kaduna Real Map
+    </div>
+
+    <button class="mapClose" id="mapClose">
+      ✕
+    </button>
+  </div>
+
+  <div id="realMap"></div>
+
+  <div class="mapCredit">
+    Map data © OpenStreetMap contributors
+  </div>
+
+</div>
+
+<!-- INTERACTION MODAL -->
+
+<div class="modal" id="interactionModal">
+
+  <div class="modalBox">
+
+    <div class="modalTitle" id="interactionTitle">
+      Interaction
+    </div>
+
+    <div class="modalText" id="interactionText">
+      Choose an action.
+    </div>
+
+    <div class="modalActions">
+
+      <button id="waveBtn">
+        👋 Wave
+      </button>
+
+      <button id="helloBtn">
+        👋 Say Hello
+      </button>
+
+      <button id="highFiveBtn">
+        🙌 High Five
+      </button>
+
+      <button id="cheerBtn">
+        🎉 Cheer
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- MENU -->
+
+<div class="modal" id="menuModal">
+
+  <div class="modalBox">
+
+    <div class="modalTitle">
+      Kaduna Life
+    </div>
+
+    <div class="modalText" id="menuStats">
+      Your life in Kaduna.
+    </div>
+
+    <div class="modalActions">
+
+      <button class="blue" id="saveBtn">
+        💾 Save
+      </button>
+
+      <button id="closeMenuBtn">
+        Close
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- AUTH -->
+
+<div class="screen" id="authScreen">
+
+  <div class="authBox">
+
+    <div class="logo">
+      KADUNA LIFE
+    </div>
+
+    <div class="subtitle">
+      Your life. Your city. Your story. 🇳🇬
+    </div>
+
+    <div class="field">
+      <label>Email</label>
+      <input
+        id="email"
+        type="email"
+        placeholder="you@example.com"
+        autocomplete="email"
+      >
+    </div>
+
+    <div class="field">
+      <label>Password</label>
+      <input
+        id="password"
+        type="password"
+        placeholder="Password"
+        autocomplete="current-password"
+      >
+    </div>
+
+    <button class="primary" id="loginBtn">
+      LOGIN
+    </button>
+
+    <button class="secondary" id="signupBtn">
+      CREATE ACCOUNT
+    </button>
+
+    <div class="error" id="authError"></div>
+
+    <div class="smallNote">
+      Kaduna Life uses Supabase to save your account and game progress.
+    </div>
+
+  </div>
+
+</div>
+
+<!-- CHARACTER CREATION -->
+
+<div class="screen" id="characterScreen" style="display:none">
+
+  <div class="authBox">
+
+    <div class="logo">
+      👤
+    </div>
+
+    <div class="subtitle">
+      Create your Kaduna Life character
+    </div>
+
+    <div class="field">
+
+      <label>Name</label>
+
+      <input
+        id="characterName"
+        maxlength="24"
+        placeholder="Your character name"
+      >
+
+    </div>
+
+    <div class="field">
+
+      <label>Age</label>
+
+      <input
+        id="characterAge"
+        type="number"
+        min="18"
+        max="50"
+        placeholder="18–50"
+      >
+
+    </div>
+
+    <button class="primary" id="startBtn">
+      ENTER KADUNA
+    </button>
+
+    <div class="error" id="characterError"></div>
+
+  </div>
+
+</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script
+  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+  crossorigin="">
+</script>
+
+<script>
+
+/* =========================================================
+   KADUNA LIFE V37
+   ========================================================= */
+
+/* =========================
+   SUPABASE
+========================= */
+
+const SUPABASE_URL =
+  "https://mdcwdfwrgxqtcafsyldt.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_3asep2gSU5Z_Gx9bxXtw7Q_FhY-0ETp";
+
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+/* =========================
+   DOM
+========================= */
+
+const worldCanvas =
+  document.getElementById("world");
+
+const ctx =
+  worldCanvas.getContext("2d");
+
+const miniCanvas =
+  document.getElementById("miniCanvas");
+
+const miniCtx =
+  miniCanvas.getContext("2d");
+
+const authScreen =
+  document.getElementById("authScreen");
+
+const characterScreen =
+  document.getElementById("characterScreen");
+
+const authError =
+  document.getElementById("authError");
+
+const characterError =
+  document.getElementById("characterError");
+
+const chatPanel =
+  document.getElementById("chatPanel");
+
+const chatMessages =
+  document.getElementById("chatMessages");
+
+const chatInput =
+  document.getElementById("chatInput");
+
+const chatStatus =
+  document.getElementById("chatStatus");
+
+const nearbyPanel =
+  document.getElementById("nearbyPanel");
+
+const nearbyList =
+  document.getElementById("nearbyList");
+
+const interactionModal =
+  document.getElementById("interactionModal");
+
+const menuModal =
+  document.getElementById("menuModal");
+
+const mapPanel =
+  document.getElementById("mapPanel");
+
+const toast =
+  document.getElementById("toast");
+
+const interiorBadge =
+  document.getElementById("interiorBadge");
+
+const interiorName =
+  document.getElementById("interiorName");
+
+/* =========================
+   WORLD
+========================= */
+
+const WORLD_W = 3000;
+const WORLD_H = 2100;
+
+let camera = {
+  x:0,
+  y:0
+};
+
+let keys = {};
+
+let running = false;
+
+let currentMode = "outside";
+
+let currentInterior = null;
+
+let lastFrame = 0;
+
+let lastNetworkMove = 0;
+
+let lastChatTime = 0;
+
+let toastTimer = null;
+
+let mapInitialized = false;
+
+let realMap = null;
+
+/* =========================
+   GAME STATE
+========================= */
+
+let game = {
+
+  character:{
+    name:"",
+    age:18
+  },
+
+  cash:150000,
+
+  bank:50000,
+
+  health:100,
+
+  energy:100,
+
+  mood:75,
+
+  reputation:0,
+
+  day:1,
+
+  career:"Unemployed",
+
+  home:"Kaduna",
+
+  transport:"Walking",
+
+  inventory:[],
+
+  friendship:{},
+
+  achievements:[],
+
+  x:1450,
+
+  y:980,
+
+  inside:false,
+
+  interior:"",
+
+  lastLocation:"Kaduna"
+
+};
+
+/* =========================
+   MULTIPLAYER
+========================= */
+
+let currentUser = null;
+
+let channel = null;
+
+let channelReady = false;
+
+let remotePlayers = {};
+
+let remoteBubbles = {};
+
+let myColor =
+  "#" +
+  Math.floor(Math.random()*16777215)
+    .toString(16)
+    .padStart(6,"0");
+
+/* =========================
+   NPCS
+========================= */
+
+const npcs = [
+
+  {
+    id:"amina",
+    name:"Amina",
+    x:1330,
+    y:930,
+    color:"#e58dff",
+    mood:"Friendly"
+  },
+
+  {
+    id:"daniel",
+    name:"Daniel",
+    x:1570,
+    y:980,
+    color:"#6cb6ff",
+    mood:"Chill"
+  },
+
+  {
+    id:"fatima",
+    name:"Fatima",
+    x:1740,
+    y:1050,
+    color:"#ffd166",
+    mood:"Happy"
+  },
+
+  {
+    id:"musa",
+    name:"Musa",
+    x:1210,
+    y:1100,
+    color:"#ff8c69",
+    mood:"Busy"
+  },
+
+  {
+    id:"zainab",
+    name:"Zainab",
+    x:1880,
+    y:910,
+    color:"#76e5b4",
+    mood:"Friendly"
+  }
+
+];
+
+/* =========================
+   REALISTIC-STYLE KADUNA MAP
+========================= */
+
+const roads = [
+
+  {
+    name:"Ahmadu Bello Way",
+    points:[
+      [0,1080],
+      [500,1060],
+      [1000,1040],
+      [1500,1020],
+      [2050,1000],
+      [2600,980],
+      [3000,970]
+    ],
+    width:72
+  },
+
+  {
+    name:"Independence Way",
+    points:[
+      [420,0],
+      [450,400],
+      [470,800],
+      [500,1200],
+      [520,1650],
+      [550,2100]
+    ],
+    width:62
+  },
+
+  {
+    name:"Kachia Road",
+    points:[
+      [650,2100],
+      [700,1700],
+      [820,1400],
+      [1100,1100],
+      [1450,1020],
+      [1750,850],
+      [2200,650],
+      [2600,500],
+      [3000,430]
+    ],
+    width:64
+  },
+
+  {
+    name:"Yakubu Gowon Way",
+    points:[
+      [900,0],
+      [950,300],
+      [1050,650],
+      [1200,900],
+      [1500,1020],
+      [1800,1200],
+      [2050,1500],
+      [2250,1800],
+      [2350,2100]
+    ],
+    width:60
+  },
+
+  {
+    name:"Independence Road",
+    points:[
+      [0,470],
+      [500,500],
+      [950,540],
+      [1350,600],
+      [1800,660],
+      [2300,720],
+      [3000,760]
+    ],
+    width:52
+  },
+
+  {
+    name:"Ali Akilu Road",
+    points:[
+      [1900,0],
+      [1880,350],
+      [1860,700],
+      [1840,1000],
+      [1800,1400],
+      [1750,1750],
+      [1700,2100]
+    ],
+    width:54
+  }
+
+];
+
+/* =========================
+   BUILDINGS
+========================= */
+
+const buildings = [
+
+  {
+    id:"central-bank",
+    name:"Kaduna Bank",
+    x:820,
+    y:390,
+    w:270,
+    h:190,
+    type:"bank",
+    color:"#315b84",
+    interior:"bank"
+  },
+
+  {
+    id:"hospital",
+    name:"Kaduna Hospital",
+    x:1180,
+    y:320,
+    w:310,
+    h:190,
+    type:"hospital",
+    color:"#427d74",
+    interior:"hospital"
+  },
+
+  {
+    id:"university",
+    name:"University",
+    x:2000,
+    y:350,
+    w:350,
+    h:230,
+    type:"university",
+    color:"#604c83",
+    interior:"university"
+  },
+
+  {
+    id:"restaurant",
+    name:"Arewa Restaurant",
+    x:2280,
+    y:910,
+    w:250,
+    h:160,
+    type:"restaurant",
+    color:"#9a5a43",
+    interior:"restaurant"
+  },
+
+  {
+    id:"market",
+    name:"Central Market",
+    x:620,
+    y:1240,
+    w:370,
+    h:230,
+    type:"market",
+    color:"#826d39",
+    interior:"market"
+  },
+
+  {
+    id:"supermarket",
+    name:"Supermarket",
+    x:1320,
+    y:1330,
+    w:260,
+    h:170,
+    type:"shop",
+    color:"#456b83",
+    interior:"supermarket"
+  },
+
+  {
+    id:"mechanic",
+    name:"Mechanic Garage",
+    x:2130,
+    y:1390,
+    w:310,
+    h:180,
+    type:"mechanic",
+    color:"#66665b",
+    interior:"mechanic"
+  },
+
+  {
+    id:"home",
+    name:"Your Home",
+    x:1500,
+    y:1500,
+    w:240,
+    h:170,
+    type:"home",
+    color:"#536c4c",
+    interior:"home"
+  },
+
+  {
+    id:"work",
+    name:"Work Office",
+    x:1030,
+    y:760,
+    w:260,
+    h:160,
+    type:"work",
+    color:"#435f83",
+    interior:"work"
+  },
+
+  {
+    id:"station",
+    name:"Transport Station",
+    x:2550,
+    y:1320,
+    w:300,
+    h:190,
+    type:"transport",
+    color:"#765f43",
+    interior:"transport"
+  }
+
+];
+
+/* =========================
+   LANDMARKS
+========================= */
+
+const landmarks = [
+
+  {
+    name:"Kaduna Central",
+    x:1480,
+    y:900
+  },
+
+  {
+    name:"Barnawa",
+    x:690,
+    y:1580
+  },
+
+  {
+    name:"Kawo",
+    x:2220,
+    y:390
+  },
+
+  {
+    name:"Unguwan Rimi",
+    x:2180,
+    y:820
+  },
+
+  {
+    name:"Sabon Tasha",
+    x:470,
+    y:1820
+  },
+
+  {
+    name:"Malali",
+    x:2440,
+    y:700
+  },
+
+  {
+    name:"Tudun Wada",
+    x:1160,
+    y:1650
+  }
+
+];
+
+/* =========================
+   UTILITY
+========================= */
+
+function clamp(v,min,max){
+  return Math.max(min,Math.min(max,v));
+}
+
+function distance(a,b){
+  return Math.hypot(
+    a.x-b.x,
+    a.y-b.y
+  );
+}
+
+function formatMoney(value){
+  return "₦" + Math.round(value)
+    .toLocaleString();
+}
+
+function escapeHTML(str){
+  return String(str)
+    .replace(/[&<>"']/g,function(m){
+      return ({
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;",
+        "'":"&#039;"
+      })[m];
+    });
+}
+
+function showToast(message){
+
+  toast.textContent = message;
+
+  toast.classList.add("show");
+
+  clearTimeout(toastTimer);
+
+  toastTimer = setTimeout(()=>{
+    toast.classList.remove("show");
+  },2600);
+}
+
+/* =========================
+   RESIZE
+========================= */
+
+function resizeCanvas(){
+
+  const dpr =
+    Math.min(window.devicePixelRatio || 1,2);
+
+  worldCanvas.width =
+    window.innerWidth*dpr;
+
+  worldCanvas.height =
+    window.innerHeight*dpr;
+
+  worldCanvas.style.width =
+    window.innerWidth+"px";
+
+  worldCanvas.style.height =
+    window.innerHeight+"px";
+
+  ctx.setTransform(
+    dpr,0,0,dpr,0,0
+  );
+
+  miniCanvas.width = 290;
+  miniCanvas.height = 210;
+
+  miniCtx.setTransform(
+    2,0,0,2,0,0
+  );
+
+}
+
+window.addEventListener(
+  "resize",
+  resizeCanvas
+);
+
+resizeCanvas();
+
+/* =========================
+   AUTH
+========================= */
+
+document
+  .getElementById("loginBtn")
+  .addEventListener("click",login);
+
+document
+  .getElementById("signupBtn")
+  .addEventListener("click",signup);
+
+async function login(){
+
+  authError.textContent="";
+
+  const email =
+    document.getElementById("email")
+      .value.trim();
+
+  const password =
+    document.getElementById("password")
+      .value;
+
+  if(!email || !password){
+
+    authError.textContent =
+      "Enter your email and password.";
+
+    return;
+  }
+
+  const {data,error} =
+    await supabaseClient.auth.signInWithPassword({
+      email,
+      password
+    });
+
+  if(error){
+
+    authError.textContent =
+      error.message;
+
+    return;
+  }
+
+  currentUser = data.user;
+
+  await afterLogin();
+
+}
+
+async function signup(){
+
+  authError.textContent="";
+
+  const email =
+    document.getElementById("email")
+      .value.trim();
+
+  const password =
+    document.getElementById("password")
+      .value;
+
+  if(!email || !password){
+
+    authError.textContent =
+      "Enter an email and password.";
+
+    return;
+  }
+
+  if(password.length < 6){
+
+    authError.textContent =
+      "Password must be at least 6 characters.";
+
+    return;
+  }
+
+  const {data,error} =
+    await supabaseClient.auth.signUp({
+      email,
+      password
+    });
+
+  if(error){
+
+    authError.textContent =
+      error.message;
+
+    return;
+  }
+
+  if(!data.user){
+
+    authError.textContent =
+      "Check your email to continue.";
+
+    return;
+  }
+
+  currentUser = data.user;
+
+  if(data.session){
+
+    await afterLogin();
+
+  }else{
+
+    authError.textContent =
+      "Account created. Check your email, then log in.";
+
+  }
+
+}
+
+/* =========================
+   SESSION
+========================= */
+
+async function checkSession(){
+
+  const {
+    data:{
+      session
+    }
+  } =
+    await supabaseClient.auth.getSession();
+
+  if(session){
+
+    currentUser =
+      session.user;
+
+    await afterLogin();
+
+  }
+
+}
+
+supabaseClient.auth.onAuthStateChange(
+  async (event,session)=>{
+
+    if(session && !currentUser){
+
+      currentUser =
+        session.user;
+
+      await afterLogin();
+
+    }
+
+  }
+);
+
+/* =========================
+   LOGIN LOAD
+========================= */
+
+async function afterLogin(){
+
+  authScreen.style.display =
+    "none";
+
+  const loaded =
+    await loadCloudGame();
+
+  if(!loaded){
+
+    const localKey =
+      "kaduna-life-v37-" +
+      currentUser.id;
+
+    const saved =
+      localStorage.getItem(localKey);
+
+    if(saved){
+
+      try{
+
+        const parsed =
+          JSON.parse(saved);
+
+        game = {
+          ...game,
+          ...parsed
+        };
+
+      }catch(e){}
+
+    }
+
+  }
+
+  if(
+    game.character &&
+    game.character.name
+  ){
+
+    startGame();
+
+  }else{
+
+    characterScreen.style.display =
+      "flex";
+
+  }
+
+}
+
+/* =========================
+   CHARACTER CREATION
+========================= */
+
+document
+  .getElementById("startBtn")
+  .addEventListener(
+    "click",
+    createCharacter
+  );
+
+function createCharacter(){
+
+  characterError.textContent="";
+
+  const name =
+    document
+      .getElementById("characterName")
+      .value.trim();
+
+  const age =
+    Number(
+      document
+        .getElementById("characterAge")
+        .value
+    );
+
+  if(!name){
+
+    characterError.textContent =
+      "Enter a character name.";
+
+    return;
+  }
+
+  if(age < 18 || age > 50){
+
+    characterError.textContent =
+      "Character age must be between 18 and 50.";
+
+    return;
+  }
+
+  game.character = {
+    name,
+    age
+  };
+
+  game.x = 1450;
+  game.y = 980;
+
+  saveGame();
+
+  startGame();
+
+}
+
+/* =========================
+   GAME START
+========================= */
+
+function startGame(){
+
+  characterScreen.style.display =
+    "none";
+
+  document.getElementById("hud")
+    .style.display="block";
+
+  updateHUD();
+
+  connectRealtime();
+
+  requestAnimationFrame(
+    gameLoop
+  );
+
+}
+
+/* =========================
+   CLOUD SAVE
+========================= */
+
+async function saveGame(){
+
+  if(!currentUser){
+
+    return;
+  }
+
+  const localKey =
+    "kaduna-life-v37-" +
+    currentUser.id;
+
+  localStorage.setItem(
+    localKey,
+    JSON.stringify(game)
+  );
+
+  const {error} =
+    await supabaseClient
+      .from("profiles")
+      .upsert({
+        id:currentUser.id,
+        name:game.character.name,
+        age:game.character.age,
+        game_state:game
+      });
+
+  if(error){
+
+    console.warn(
+      "Cloud save failed:",
+      error.message
+    );
+
+  }
+
+}
+
+async function loadCloudGame(){
+
+  if(!currentUser){
+
+    return false;
+  }
+
+  const {data,error} =
+    await supabaseClient
+      .from("profiles")
+      .select("*")
+      .eq("id",currentUser.id)
+      .maybeSingle();
+
+  if(error){
+
+    console.warn(
+      "Cloud load failed:",
+      error.message
+    );
+
+    return false;
+  }
+
+  if(
+    data &&
+    data.game_state
+  ){
+
+    try{
+
+      game = {
+        ...game,
+        ...data.game_state
+      };
+
+      return true;
+
+    }catch(e){
+
+      return false;
+
+    }
+
+  }
+
+  return false;
+
+}
+
+/* =========================
+   HUD
+========================= */
+
+function updateHUD(){
+
+  const name =
+    game.character.name || "Player";
+
+  document.getElementById(
+    "hudName"
+  ).textContent = name;
+
+  document.getElementById(
+    "hudAge"
+  ).textContent =
+    "Age " +
+    game.character.age;
+
+  document.getElementById(
+    "avatar"
+  ).textContent =
+    name.charAt(0).toUpperCase();
+
+  document.getElementById(
+    "money"
+  ).textContent =
+    formatMoney(
+      game.cash
+    );
+
+  document.getElementById(
+    "healthValue"
+  ).textContent =
+    Math.round(game.health);
+
+  document.getElementById(
+    "energyValue"
+  ).textContent =
+    Math.round(game.energy);
+
+  document.getElementById(
+    "locationBadge"
+  ).textContent =
+    game.lastLocation;
+
+  document.getElementById(
+    "menuStats"
+  ).innerHTML =
+    `
+      <b>${escapeHTML(name)}</b><br>
+      Day ${game.day}<br>
+      Career: ${escapeHTML(game.career)}<br>
+      Cash: ${formatMoney(game.cash)}<br>
+      Bank: ${formatMoney(game.bank)}<br>
+      Health: ${Math.round(game.health)}<br>
+      Energy: ${Math.round(game.energy)}
+    `;
+
+}
+
+/* =========================
+   REALTIME
+========================= */
+
+async function connectRealtime(){
+
+  if(!currentUser){
+
+    return;
+  }
+
+  if(channel){
+
+    try{
+      await supabaseClient
+        .removeChannel(channel);
+    }catch(e){}
+
+  }
+
+  remotePlayers = {};
+
+  channelReady = false;
+
+  chatStatus.textContent =
+    "Connecting...";
+
+  channel =
+    supabaseClient.channel(
+      "kaduna-world",
+      {
+        config:{
+          broadcast:{
+            self:false,
+            ack:true
+          },
+          presence:{
+            key:currentUser.id
+          }
+        }
+      }
+    );
+
+  /* =========================
+     PLAYER MOVEMENT
+  ========================= */
+
+  channel.on(
+    "broadcast",
+    {
+      event:"player-move"
+    },
+    payload=>{
+
+      const data =
+        payload.payload;
+
+      if(
+        !data ||
+        data.userId === currentUser.id
+      ){
+
+        return;
+      }
+
+      remotePlayers[
+        data.userId
+      ] = {
+        ...data,
+        lastSeen:Date.now()
+      };
+
+    }
+  );
+
+  /* =========================
+     CHAT
+  ========================= */
+
+  channel.on(
+    "broadcast",
+    {
+      event:"chat-message"
+    },
+    payload=>{
+
+      const data =
+        payload.payload;
+
+      if(!data){
+
+        return;
+      }
+
+      if(
+        data.userId === currentUser.id
+      ){
+
+        return;
+      }
+
+      addChatMessage(
+        data.name || "Player",
+        data.message || "",
+        false
+      );
+
+      if(
+        data.x !== undefined &&
+        data.y !== undefined
+      ){
+
+        remoteBubbles[
+          data.userId
+        ] = {
+          text:data.message,
+          expires:Date.now()+6000
+        };
+
+      }
+
+      showToast(
+        "💬 " +
+        (data.name || "Player") +
+        ": " +
+        data.message
+      );
+
+    }
+  );
+
+  /* =========================
+     PLAYER ACTION
+  ========================= */
+
+  channel.on(
+    "broadcast",
+    {
+      event:"player-action"
+    },
+    payload=>{
+
+      const data =
+        payload.payload;
+
+      if(!data){
+
+        return;
+      }
+
+      const target =
+        remotePlayers[
+          data.userId
+        ];
+
+      if(target){
+
+        remoteBubbles[
+          data.userId
+        ] = {
+          text:data.label,
+          expires:Date.now()+3500
+        };
+
+      }
+
+      showToast(
+        "👥 " +
+        (data.name || "Player") +
+        " " +
+        data.label
+      );
+
+    }
+  );
+
+  /* =========================
+     PRESENCE
+  ========================= */
+
+  channel.on(
+    "presence",
+    {
+      event:"sync"
+    },
+    ()=>{
+      updateOnlineCount();
+      updateNearby();
+    }
+  );
+
+  channel.on(
+    "presence",
+    {
+      event:"join"
+    },
+    ()=>{
+      updateOnlineCount();
+    }
+  );
+
+  channel.on(
+    "presence",
+    {
+      event:"leave"
+    },
+    ()=>{
+      updateOnlineCount();
+    }
+  );
+
+  channel.subscribe(
+    async status=>{
+
+      if(status === "SUBSCRIBED"){
+
+        channelReady = true;
+
+        chatStatus.textContent =
+          "Online";
+
+        await channel.track({
+          userId:currentUser.id,
+          name:game.character.name,
+          age:game.character.age,
+          x:game.x,
+          y:game.y,
+          color:myColor,
+          onlineAt:new Date().toISOString()
+        });
+
+        updateOnlineCount();
+
+        showToast(
+          "🌍 Connected to Kaduna Life"
+        );
+
+      }else if(
+        status === "CHANNEL_ERROR"
+      ){
+
+        channelReady = false;
+
+        chatStatus.textContent =
+          "Connection error";
+
+        showToast(
+          "⚠️ Multiplayer connection error"
+        );
+
+      }else if(
+        status === "TIMED_OUT"
+      ){
+
+        channelReady = false;
+
+        chatStatus.textContent =
+          "Timed out";
+
+      }
+
+    }
+  );
+
+}
+
+/* =========================
+   ONLINE COUNT
+========================= */
+
+function updateOnlineCount(){
+
+  if(!channel){
+
+    document.getElementById(
+      "onlineText"
+    ).textContent =
+      "1 ONLINE";
+
+    return;
+  }
+
+  try{
+
+    const state =
+      channel.presenceState();
+
+    let count = 0;
+
+    Object.keys(state)
+      .forEach(key=>{
+
+        const entries =
+          state[key];
+
+        if(entries && entries.length){
+
+          count++;
+
+        }
+
+      });
+
+    count =
+      Math.max(
+        1,
+        count
+      );
+
+    document.getElementById(
+      "onlineText"
+    ).textContent =
+      count +
+      (
+        count === 1
+        ? " ONLINE"
+        : " ONLINE"
+      );
+
+  }catch(e){
+
+    document.getElementById(
+      "onlineText"
+    ).textContent =
+      "1 ONLINE";
+
+  }
+
+}
+
+/* =========================
+   BROADCAST MOVEMENT
+========================= */
+
+async function broadcastMovement(){
+
+  if(
+    !channelReady ||
+    !channel ||
+    !currentUser
+  ){
+
+    return;
+  }
+
+  const now =
+    Date.now();
+
+  if(
+    now - lastNetworkMove <
+    120
+  ){
+
+    return;
+  }
+
+  lastNetworkMove = now;
+
+  try{
+
+    await channel.send({
+      type:"broadcast",
+      event:"player-move",
+      payload:{
+        userId:currentUser.id,
+        name:game.character.name,
+        age:game.character.age,
+        x:game.x,
+        y:game.y,
+        inside:game.inside,
+        interior:game.interior,
+        color:myColor,
+        t:now
+      }
+    });
+
+  }catch(e){
+
+    console.warn(
+      "Movement broadcast failed:",
+      e
+    );
+
+  }
+
+}
+
+/* =========================
+   CHAT
+========================= */
+
+document
+  .getElementById("chatBtn")
+  .addEventListener(
+    "click",
+    ()=>{
+      toggleChat();
+    }
+  );
+
+function toggleChat(){
+
+  const open =
+    chatPanel.style.display === "flex";
+
+  chatPanel.style.display =
+    open
+    ? "none"
+    : "flex";
+
+  if(!open){
+
+    setTimeout(()=>{
+      chatInput.focus();
+    },100);
+
+  }
+
+}
+
+document
+  .getElementById("sendChat")
+  .addEventListener(
+    "click",
+    sendChat
+  );
+
+chatInput.addEventListener(
+  "keydown",
+  e=>{
+
+    if(e.key === "Enter"){
+
+      e.preventDefault();
+
+      sendChat();
+
+    }
+
+  }
+);
+
+async function sendChat(){
+
+  const message =
+    chatInput.value.trim();
+
+  if(!message){
+
+    return;
+  }
+
+  if(
+    message.length >
+    120
+  ){
+
+    showToast(
+      "Message is too long."
+    );
+
+    return;
+  }
+
+  if(!channelReady){
+
+    showToast(
+      "💬 Still connecting..."
+    );
+
+    return;
+  }
+
+  const now =
+    Date.now();
+
+  if(
+    now - lastChatTime <
+    800
+  ){
+
+    showToast(
+      "Slow down a little 😅"
+    );
+
+    return;
+  }
+
+  lastChatTime = now;
+
+  const payload = {
+
+    userId:currentUser.id,
+
+    name:game.character.name,
+
+    message,
+
+    x:game.x,
+
+    y:game.y,
+
+    inside:game.inside,
+
+    interior:game.interior,
+
+    time:now
+
+  };
+
+  try{
+
+    const result =
+      await channel.send({
+        type:"broadcast",
+        event:"chat-message",
+        payload
+      });
+
+    if(result !== "ok"){
+
+      showToast(
+        "⚠️ Message wasn't delivered."
+      );
+
+      return;
+
+    }
+
+    addChatMessage(
+      game.character.name,
+      message,
+      true
+    );
+
+    chatInput.value = "";
+
+    remoteBubbles[
+      currentUser.id
+    ] = {
+      text:message,
+      expires:Date.now()+6000
+    };
+
+  }catch(error){
+
+    console.error(
+      "Chat error:",
+      error
+    );
+
+    showToast(
+      "⚠️ Chat connection failed."
+    );
+
+  }
+
+}
+
+function addChatMessage(
+  name,
+  message,
+  mine
+){
+
+  const div =
+    document.createElement("div");
+
+  div.className =
+    "chatMsg" +
+    (
+      mine
+      ? " mine"
+      : ""
+    );
+
+  const safeName =
+    escapeHTML(name);
+
+  const safeMessage =
+    escapeHTML(message);
+
+  div.innerHTML =
+    `
+      <div class="chatName">
+        ${safeName}
+      </div>
+      <div>
+        ${safeMessage}
+      </div>
+    `;
+
+  chatMessages.appendChild(div);
+
+  while(
+    chatMessages.children.length >
+    60
+  ){
+
+    chatMessages.removeChild(
+      chatMessages.firstChild
+    );
+
+  }
+
+  chatMessages.scrollTop =
+    chatMessages.scrollHeight;
+
+}
+
+/* =========================
+   PLAYER ACTIONS
+========================= */
+
+function sendAction(
+  action,
+  label
+){
+
+  if(
+    !channelReady ||
+    !channel
+  ){
+
+    showToast(
+      "Multiplayer is connecting..."
+    );
+
+    return;
+  }
+
+  channel.send({
+
+    type:"broadcast",
+
+    event:"player-action",
+
+    payload:{
+      userId:currentUser.id,
+      name:game.character.name,
+      action,
+      label,
+      x:game.x,
+      y:game.y,
+      inside:game.inside,
+      interior:game.interior
+    }
+
+  });
+
+  remoteBubbles[
+    currentUser.id
+  ] = {
+    text:label,
+    expires:Date.now()+3500
+  };
+
+}
+
+document
+  .getElementById("waveBtn")
+  .addEventListener(
+    "click",
+    ()=>{
+      sendAction(
+        "wave",
+        "waves 👋"
+      );
+      interactionModal.style.display =
+        "none";
+    }
+  );
+
+document
+  .getElementById("helloBtn")
+  .addEventListener(
+    "click",
+    ()=>{
+      sendAction(
+        "hello",
+        "says hello 👋"
+      );
+      interactionModal.style.display =
+        "none";
+    }
+  );
+
+document
+  .getElementById("highFiveBtn")
+  .addEventListener(
+    "click",
+    ()=>{
+      sendAction(
+        "highfive",
+        "offers a high five 🙌"
+      );
+      interactionModal.style.display =
+        "none";
+    }
+  );
+
+document
+  .getElementById("cheerBtn")
+  .addEventListener(
+    "click",
+    ()=>{
+      sendAction(
+        "cheer",
+        "starts cheering 🎉"
+      );
+      interactionModal.style.display =
+        "none";
+    }
+  );
+
+/* =========================
+   NEARBY
+========================= */
+
+document
+  .getElementById("nearbyBtn")
+  .addEventListener(
+    "click",
+    ()=>{
+
+      const visible =
+        nearbyPanel.style.display === "block";
+
+      nearbyPanel.style.display =
+        visible
+        ? "none"
+        : "block";
+
+      updateNearby();
+
+    }
+  );
+
+function updateNearby(){
+
+  const players =
+    Object.values(
+      remotePlayers
+    )
+    .filter(player=>{
+
+      if(
+        player.x === undefined ||
+        player.y === undefined
+      ){
+
+        return false;
+
+      }
+
+      if(
+        game.inside !== !!player.inside
+      ){
+
+        return false;
+
+      }
+
+      if(
+        game.inside &&
+        game.interior !== player.interior
+      ){
+
+        return false;
+
+      }
+
+      return distance(
+        game,
+        player
+      ) < 500;
+
+    })
+    .sort(
+      (a,b)=>
+        distance(game,a) -
+        distance(game,b)
+    );
+
+  if(!players.length){
+
+    nearbyList.innerHTML =
+      `
+      <div style="
+        color:#8298ad;
+        font-size:11px;
+        padding:5px;
+      ">
+        Nobody nearby.
+      </div>
+      `;
+
+    return;
+
+  }
+
+  nearbyList.innerHTML =
+    players.map(player=>{
+
+      const d =
+        Math.round(
+          distance(game,player)
+        );
+
+      return `
+        <div
+          class="nearbyPlayer"
+          data-user="${escapeHTML(player.userId)}"
+        >
+          <span class="dot"></span>
+          <span>
+            <b>${escapeHTML(player.name)}</b>
+            <br>
+            ${d}m away
+          </span>
+        </div>
+      `;
+
+    }).join("");
+
+}
+
+/* =========================
+   INTERACT
+========================= */
+
+document
+  .getElementById("interactBtn")
+  .addEventListener(
+    "click",
+    interact
+  );
+
+function interact(){
+
+  let closest = null;
+
+  let closestDistance =
+    Infinity;
+
+  for(
+    const player of Object.values(
+      remotePlayers
+    )
+  ){
+
+    if(
+      game.inside !== !!player.inside
+    ){
+
+      continue;
+    }
+
+    if(
+      game.inside &&
+      game.interior !== player.interior
+    ){
+
+      continue;
+    }
+
+    const d =
+      distance(
+        game,
+        player
+      );
+
+    if(
+      d < closestDistance &&
+      d < 180
+    ){
+
+      closestDistance = d;
+
+      closest = player;
+
+    }
+
+  }
+
+  if(!closest){
+
+    showToast(
+      "👥 No player close enough."
+    );
+
+    return;
+
+  }
+
+  document.getElementById(
+    "interactionTitle"
+  ).textContent =
+    "👋 " +
+    closest.name;
+
+  document.getElementById(
+    "interactionText"
+  ).textContent =
+    "You're close to " +
+    closest.name +
+    ". Choose an interaction.";
+
+  interactionModal.style.display =
+    "flex";
+
+}
+
+/* =========================
+   MAP
+========================= */
+
+document
+  .getElementById("mapBtn")
+  .addEventListener(
+    "click",
+    openRealMap
+  );
+
+document
+  .getElementById("mapClose")
+  .addEventListener(
+    "click",
+    ()=>{
+      mapPanel.style.display =
+        "none";
+    }
+  );
+
+function openRealMap(){
+
+  mapPanel.style.display =
+    "block";
+
+  if(!mapInitialized){
+
+    realMap =
+      L.map(
+        "realMap",
+        {
+          zoomControl:true
+        }
+      ).setView(
+        [10.5105,7.4165],
+        12
+      );
+
+    L.tileLayer(
+      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+      {
+        maxZoom:19,
+        attribution:
+          "&copy; OpenStreetMap contributors"
+      }
+    ).addTo(
+      realMap
+    );
+
+    L.marker(
+      [10.5105,7.4165]
+    )
+    .addTo(realMap)
+    .bindPopup(
+      "<b>Kaduna</b><br>Current game region"
+    )
+    .openPopup();
+
+    mapInitialized = true;
+
+  }
+
+  setTimeout(()=>{
+    realMap.invalidateSize();
+  },100);
+
+}
+
+/* =========================
+   MENU
+========================= */
+
+document
+  .getElementById("menuBtn")
+  .addEventListener(
+    "click",
+    ()=>{
+      updateHUD();
+      menuModal.style.display =
+        "flex";
+    }
+  );
+
+document
+  .getElementById("closeMenuBtn")
+  .addEventListener(
+    "click",
+    ()=>{
+      menuModal.style.display =
+        "none";
+    }
+  );
+
+document
+  .getElementById("saveBtn")
+  .addEventListener(
+    "click",
+    async ()=>{
+      await saveGame();
+      showToast(
+        "💾 Game saved."
+      );
+    }
+  );
+
+/* =========================
+   KEYBOARD
+========================= */
+
+window.addEventListener(
+  "keydown",
+  e=>{
+
+    keys[
+      e.key.toLowerCase()
+    ] = true;
+
+    if(
+      ["arrowup",
+       "arrowdown",
+       "arrowleft",
+       "arrowright",
+       " "].includes(
+        e.key.toLowerCase()
+      )
+    ){
+
+      e.preventDefault();
+
+    }
+
+    if(e.key === "Enter"){
+
+      enterNearestBuilding();
+
+    }
+
+    if(
+      e.key.toLowerCase() === "e"
+    ){
+
+      interact();
+
+    }
+
+    if(
+      e.key.toLowerCase() === "r"
+    ){
+
+      running = true;
+
+    }
+
+    if(
+      e.key.toLowerCase() === "c"
+    ){
+
+      toggleChat();
+
+    }
+
+  }
+);
+
+window.addEventListener(
+  "keyup",
+  e=>{
+
+    keys[
+      e.key.toLowerCase()
+    ] = false;
+
+    if(
+      e.key.toLowerCase() === "r"
+    ){
+
+      running = false;
+
+    }
+
+  }
+);
+
+/* =========================
+   TOUCH D-PAD
+========================= */
+
+function bindHold(
+  element,
+  key
+){
+
+  const start = e=>{
+
+    e.preventDefault();
+
+    keys[key] = true;
+
+  };
+
+  const end = e=>{
+
+    e.preventDefault();
+
+    keys[key] = false;
+
+  };
+
+  element.addEventListener(
+    "touchstart",
+    start,
+    {passive:false}
+  );
+
+  element.addEventListener(
+    "touchend",
+    end,
+    {passive:false}
+  );
+
+  element.addEventListener(
+    "touchcancel",
+    end,
+    {passive:false}
+  );
+
+  element.addEventListener(
+    "mousedown",
+    start
+  );
+
+  element.addEventListener(
+    "mouseup",
+    end
+  );
+
+  element.addEventListener(
+    "mouseleave",
+    end
+  );
+
+}
+
+bindHold(
+  document.getElementById("up"),
+  "arrowup"
+);
+
+bindHold(
+  document.getElementById("down"),
+  "arrowdown"
+);
+
+bindHold(
+  document.getElementById("left"),
+  "arrowleft"
+);
+
+bindHold(
+  document.getElementById("right"),
+  "arrowright"
+);
+
+/* =========================
+   RUN
+========================= */
+
+const runButton =
+  document.getElementById("runBtn");
+
+bindHold(
+  runButton,
+  "__run"
+);
+
+/* =========================
+   ENTER BUTTON
+========================= */
+
+document
+  .getElementById("enterBtn")
+  .addEventListener(
+    "click",
+    enterNearestBuilding
+  );
+
+/* =========================
+   COLLISION
+========================= */
+
+function rectContains(
+  rect,
+  x,
+  y
+){
+
+  return (
+    x >= rect.x &&
+    x <= rect.x+rect.w &&
+    y >= rect.y &&
+    y <= rect.y+rect.h
+  );
+
+}
+
+function isRoad(x,y){
+
+  for(
+    const road of roads
+  ){
+
+    for(
+      let i=0;
+      i<road.points.length-1;
+      i++
+    ){
+
+      const a = {
+        x:road.points[i][0],
+        y:road.points[i][1]
+      };
+
+      const b = {
+        x:road.points[i+1][0],
+        y:road.points[i+1][1]
+      };
+
+      const dist =
+        pointToSegmentDistance(
+          x,
+          y,
+          a.x,
+          a.y,
+          b.x,
+          b.y
+        );
+
+      if(
+        dist <
+        road.width/2 + 5
+      ){
+
+        return true;
+
+      }
+
+    }
+
+  }
+
+  return false;
+
+}
+
+function pointToSegmentDistance(
+  px,
+  py,
+  x1,
+  y1,
+  x2,
+  y2
+){
+
+  const dx =
+    x2-x1;
+
+  const dy =
+    y2-y1;
+
+  if(
+    dx === 0 &&
+    dy === 0
+  ){
+
+    return Math.hypot(
+      px-x1,
+      py-y1
+    );
+
+  }
+
+  const t =
+    clamp(
+      (
+        (px-x1)*dx +
+        (py-y1)*dy
+      ) /
+      (
+        dx*dx +
+        dy*dy
+      ),
+      0,
+      1
+    );
+
+  const x =
+    x1+t*dx;
+
+  const y =
+    y1+t*dy;
+
+  return Math.hypot(
+    px-x,
+    py-y
+  );
+
+}
+
+/* =========================
+   BUILDING DOORS
+========================= */
+
+function getDoor(building){
+
+  return {
+    x:
+      building.x +
+      building.w/2,
+
+    y:
+      building.y +
+      building.h +
+      14
+  };
+
+}
+
+function nearDoor(building){
+
+  const door =
+    getDoor(building);
+
+  return Math.hypot(
+    game.x-door.x,
+    game.y-door.y
+  ) < 85;
+
+}
+
+function collidesBuilding(
+  x,
+  y
+){
+
+  const radius = 20;
+
+  for(
+    const b of buildings
+  ){
+
+    const nearX =
+      clamp(
+        x,
+        b.x,
+        b.x+b.w
+      );
+
+    const nearY =
+      clamp(
+        y,
+        b.y,
+        b.y+b.h
+      );
+
+    const d =
+      Math.hypot(
+        x-nearX,
+        y-nearY
+      );
+
+    if(d < radius){
+
+      /*
+        Door opening:
+        allow the player through
+        the front centre section.
+      */
+
+      const door =
+        getDoor(b);
+
+      const nearDoorArea =
+        Math.hypot(
+          x-door.x,
+          y-door.y
+        ) < 45;
+
+      if(nearDoorArea){
+
+        continue;
+
+      }
+
+      return true;
+
+    }
+
+  }
+
+  return false;
+
+}
+
+/* =========================
+   ENTER BUILDING
+========================= */
+
+function enterNearestBuilding(){
+
+  if(game.inside){
+
+    exitBuilding();
+
+    return;
+
+  }
+
+  let closest = null;
+
+  let best = Infinity;
+
+  for(
+    const b of buildings
+  ){
+
+    const door =
+      getDoor(b);
+
+    const d =
+      Math.hypot(
+        game.x-door.x,
+        game.y-door.y
+      );
+
+    if(
+      d < best &&
+      d < 100
+    ){
+
+      best = d;
+
+      closest = b;
+
+    }
+
+  }
+
+  if(!closest){
+
+    showToast(
+      "🏢 Walk to a building door first."
+    );
+
+    return;
+
+  }
+
+  enterBuilding(
+    closest
+  );
+
+}
+
+function enterBuilding(
+  building
+){
+
+  game.inside = true;
+
+  game.interior =
+    building.interior;
+
+  currentMode =
+    "inside";
+
+  currentInterior =
+    building;
+
+  game.x =
+    WORLD_W/2;
+
+  game.y =
+    WORLD_H/2;
+
+  interiorName.textContent =
+    building.name;
+
+  interiorBadge.style.display =
+    "block";
+
+  showToast(
+    "🏢 Entered " +
+    building.name
+  );
+
+  broadcastMovement();
+
+}
+
+function exitBuilding(){
+
+  if(!currentInterior){
+
+    game.inside=false;
+
+    return;
+
+  }
+
+  const b =
+    currentInterior;
+
+  const door =
+    getDoor(b);
+
+  game.inside = false;
+
+  game.interior = "";
+
+  currentMode =
+    "outside";
+
+  currentInterior = null;
+
+  game.x =
+    door.x;
+
+  game.y =
+    door.y + 45;
+
+  interiorBadge.style.display =
+    "none";
+
+  showToast(
+    "🚪 You left " +
+    b.name
+  );
+
+  broadcastMovement();
+
+}
+
+/* =========================
+   MOVEMENT
+========================= */
+
+function updateMovement(){
+
+  if(game.inside){
+
+    updateInteriorMovement();
+
+    return;
+
+  }
+
+  let dx = 0;
+  let dy = 0;
+
+  if(
+    keys["w"] ||
+    keys["arrowup"]
+  ){
+
+    dy -= 1;
+
+  }
+
+  if(
+    keys["s"] ||
+    keys["arrowdown"]
+  ){
+
+    dy += 1;
+
+  }
+
+  if(
+    keys["a"] ||
+    keys["arrowleft"]
+  ){
+
+    dx -= 1;
+
+  }
+
+  if(
+    keys["d"] ||
+    keys["arrowright"]
+  ){
+
+    dx += 1;
+
+  }
+
+  if(
+    dx === 0 &&
+    dy === 0
+  ){
+
+    return;
+
+  }
+
+  const length =
+    Math.hypot(
+      dx,
+      dy
+    );
+
+  dx /= length;
+  dy /= length;
+
+  const speed =
+    (
+      running ||
+      keys["__run"]
+    )
+    ? 8
+    : 4.2;
+
+  const nx =
+    game.x +
+    dx*speed;
+
+  const ny =
+    game.y +
+    dy*speed;
+
+  if(
+    !collidesBuilding(
+      nx,
+      game.y
+    )
+  ){
+
+    game.x = nx;
+
+  }
+
+  if(
+    !collidesBuilding(
+      game.x,
+      ny
+    )
+  ){
+
+    game.y = ny;
+
+  }
+
+  game.x =
+    clamp(
+      game.x,
+      30,
+      WORLD_W-30
+    );
+
+  game.y =
+    clamp(
+      game.y,
+      30,
+      WORLD_H-30
+    );
+
+  if(
+    running ||
+    keys["__run"]
+  ){
+
+    game.energy =
+      clamp(
+        game.energy-.08,
+        0,
+        100
+      );
+
+  }else{
+
+    game.energy =
+      clamp(
+        game.energy+.015,
+        0,
+        100
+      );
+
+  }
+
+  updateLocation();
+
+  broadcastMovement();
+
+}
+
+function updateInteriorMovement(){
+
+  let dx=0;
+  let dy=0;
+
+  if(
+    keys["w"] ||
+    keys["arrowup"]
+  ){
+
+    dy-=1;
+
+  }
+
+  if(
+    keys["s"] ||
+    keys["arrowdown"]
+  ){
+
+    dy+=1;
+
+  }
+
+  if(
+    keys["a"] ||
+    keys["arrowleft"]
+  ){
+
+    dx-=1;
+
+  }
+
+  if(
+    keys["d"] ||
+    keys["arrowright"]
+  ){
+
+    dx+=1;
+
+  }
+
+  if(
+    dx===0 &&
+    dy===0
+  ){
+
+    return;
+
+  }
+
+  const len =
+    Math.hypot(
+      dx,
+      dy
+    );
+
+  dx/=len;
+  dy/=len;
+
+  const speed =
+    (
+      running ||
+      keys["__run"]
+    )
+    ? 7
+    : 4;
+
+  game.x =
+    clamp(
+      game.x+dx*speed,
+      150,
+      WORLD_W-150
+    );
+
+  game.y =
+    clamp(
+      game.y+dy*speed,
+      150,
+      WORLD_H-150
+    );
+
+  /*
+    Interior exit zone:
+    bottom-middle of the room.
+  */
+
+  if(
+    game.y >
+    WORLD_H-350 &&
+    Math.abs(
+      game.x-WORLD_W/2
+    ) < 120
+  ){
+
+    showToast(
+      "🚪 Press ENTER to leave."
+    );
+
+  }
+
+  broadcastMovement();
+
+}
+
+/* =========================
+   LOCATION
+========================= */
+
+function updateLocation(){
+
+  let closest =
+    "Kaduna";
+
+  let best =
+    Infinity;
+
+  for(
+    const landmark of landmarks
+  ){
+
+    const d =
+      Math.hypot(
+        game.x-landmark.x,
+        game.y-landmark.y
+      );
+
+    if(
+      d < best &&
+      d < 450
+    ){
+
+      best=d;
+
+      closest =
+        landmark.name;
+
+    }
+
+  }
+
+  for(
+    const b of buildings
+  ){
+
+    const d =
+      Math.hypot(
+        game.x -
+        (b.x+b.w/2),
+        game.y -
+        (b.y+b.h/2)
+      );
+
+    if(
+      d < 170 &&
+      d < best
+    ){
+
+      best=d;
+
+      closest =
+        b.name;
+
+    }
+
+  }
+
+  game.lastLocation =
+    closest;
+
+  updateHUD();
+
+}
+
+/* =========================
+   GAME LOOP
+========================= */
+
+function gameLoop(time){
+
+  const dt =
+    Math.min(
+      32,
+      time-lastFrame || 16
+    );
+
+  lastFrame =
+    time;
+
+  updateMovement();
+
+  cleanupRemotePlayers();
+
+  updateCamera();
+
+  drawWorld();
+
+  drawMinimap();
+
+  updateNearby();
+
+  requestAnimationFrame(
+    gameLoop
+  );
+
+}
+
+/* =========================
+   CAMERA
+========================= */
+
+function updateCamera(){
+
+  const vw =
+    window.innerWidth;
+
+  const vh =
+    window.innerHeight;
+
+  camera.x =
+    clamp(
+      game.x-vw/2,
+      0,
+      WORLD_W-vw
+    );
+
+  camera.y =
+    clamp(
+      game.y-vh/2,
+      0,
+      WORLD_H-vh
+    );
+
+}
+
+/* =========================
+   DRAW WORLD
+========================= */
+
+function drawWorld(){
+
+  const vw =
+    window.innerWidth;
+
+  const vh =
+    window.innerHeight;
+
+  ctx.clearRect(
+    0,
+    0,
+    vw,
+    vh
+  );
+
+  ctx.save();
+
+  ctx.translate(
+    -camera.x,
+    -camera.y
+  );
+
+  if(game.inside){
+
+    drawInterior();
+
+  }else{
+
+    drawOutside();
+
+  }
+
+  ctx.restore();
+
+}
+
+/* =========================
+   OUTSIDE
+========================= */
+
+function drawOutside(){
+
+  /* grass/base */
+
+  ctx.fillStyle =
+    "#71985b";
+
+  ctx.fillRect(
+    0,
+    0,
+    WORLD_W,
+    WORLD_H
+  );
+
+  /* neighbourhood blocks */
+
+  drawNeighborhoods();
+
+  /* roads */
+
+  drawRoads();
+
+  /* buildings */
+
+  drawBuildings();
+
+  /* trees */
+
+  drawTrees();
+
+  /* landmarks */
+
+  drawLandmarkLabels();
+
+  /* NPCs */
+
+  drawNPCs();
+
+  /* remote players */
+
+  drawRemotePlayers();
+
+  /* local player */
+
+  drawPlayer();
+
+}
+
+/* =========================
+   NEIGHBOURHOODS
+========================= */
+
+function drawNeighborhoods(){
+
+  const zones = [
+
+    {
+      x:0,
+      y:0,
+      w:800,
+      h:700,
+      label:"Kawo"
+    },
+
+    {
+      x:850,
+      y:0,
+      w:850,
+      h:700,
+      label:"Kaduna North"
+    },
+
+    {
+      x:1700,
+      y:0,
+      w:1300,
+      h:700,
+      label:"Malali / Kawo"
+    },
+
+    {
+      x:0,
+      y:700,
+      w:850,
+      h:700,
+      label:"Kaduna South"
+    },
+
+    {
+      x:850,
+      y:700,
+      w:900,
+      h:700,
+      label:"Kaduna Central"
+    },
+
+    {
+      x:1750,
+      y:700,
+      w:1250,
+      h:700,
+      label:"Unguwan Rimi"
+    },
+
+    {
+      x:0,
+      y:1400,
+      w:850,
+      h:700,
+      label:"Barnawa"
+    },
+
+    {
+      x:850,
+      y:1400,
+      w:950,
+      h:700,
+      label:"Tudun Wada"
+    },
+
+    {
+      x:1800,
+      y:1400,
+      w:1200,
+      h:700,
+      label:"Sabon Tasha"
+    }
+
+  ];
+
+  zones.forEach((z,i)=>{
+
+    ctx.fillStyle =
+      i%2===0
+      ? "rgba(255,255,255,.025)"
+      : "rgba(0,0,0,.025)";
+
+    ctx.fillRect(
+      z.x,
+      z.y,
+      z.w,
+      z.h
+    );
+
+    ctx.fillStyle =
+      "rgba(255,255,255,.20)";
+
+    ctx.font =
+      "bold 28px Arial";
+
+    ctx.fillText(
+      z.label,
+      z.x+25,
+      z.y+48
+    );
+
+  });
+
+}
+
+/* =========================
+   ROADS
+========================= */
+
+function drawRoads(){
+
+  roads.forEach(
+    road=>{
+
+      ctx.beginPath();
+
+      road.points.forEach(
+        (p,i)=>{
+
+          if(i===0){
+
+            ctx.moveTo(
+              p[0],
+              p[1]
+            );
+
+          }else{
+
+            ctx.lineTo(
+              p[0],
+              p[1]
+            );
+
+          }
+
+        }
+      );
+
+      ctx.lineCap =
+        "round";
+
+      ctx.lineJoin =
+        "round";
+
+      ctx.strokeStyle =
+        "#3e4243";
+
+      ctx.lineWidth =
+        road.width;
+
+      ctx.stroke();
+
+      ctx.beginPath();
+
+      road.points.forEach(
+        (p,i)=>{
+
+          if(i===0){
+
+            ctx.moveTo(
+              p[0],
+              p[1]
+            );
+
+          }else{
+
+            ctx.lineTo(
+              p[0],
+              p[1]
+            );
+
+          }
+
+        }
+      );
+
+      ctx.strokeStyle =
+        "#55595a";
+
+      ctx.lineWidth =
+        road.width-10;
+
+      ctx.stroke();
+
+      /* centre line */
+
+      ctx.beginPath();
+
+      road.points.forEach(
+        (p,i)=>{
+
+          if(i===0){
+
+            ctx.moveTo(
+              p[0],
+              p[1]
+            );
+
+          }else{
+
+            ctx.lineTo(
+              p[0],
+              p[1]
+            );
+
+          }
+
+        }
+      );
+
+      ctx.strokeStyle =
+        "rgba(255,210,70,.8)";
+
+      ctx.lineWidth=3;
+
+      ctx.setLineDash(
+        [18,18]
+      );
+
+      ctx.stroke();
+
+      ctx.setLineDash([]);
+
+      ctx.fillStyle =
+        "rgba(255,255,255,.6)";
+
+      ctx.font =
+        "bold 15px Arial";
+
+      const mid =
+        road.points[
+          Math.floor(
+            road.points.length/2
+          )
+        ];
+
+      ctx.save();
+
+      ctx.translate(
+        mid[0],
+        mid[1]-road.width/2-8
+      );
+
+      ctx.rotate(
+        -0.03
+      );
+
+      ctx.fillText(
+        road.name,
+        0,
+        0
+      );
+
+      ctx.restore();
+
+    }
+  );
+
+}
+
+/* =========================
+   BUILDINGS
+========================= */
+
+function drawBuildings(){
+
+  buildings.forEach(
+    b=>{
+
+      ctx.fillStyle =
+        "rgba(0,0,0,.18)";
+
+      ctx.fillRect(
+        b.x+8,
+        b.y+10,
+        b.w,
+        b.h
+      );
+
+      ctx.fillStyle =
+        b.color;
+
+      ctx.fillRect(
+        b.x,
+        b.y,
+        b.w,
+        b.h
+      );
+
+      ctx.strokeStyle =
+        "rgba(255,255,255,.18)";
+
+      ctx.lineWidth=3;
+
+      ctx.strokeRect(
+        b.x,
+        b.y,
+        b.w,
+        b.h
+      );
+
+      /* roof */
+
+      ctx.fillStyle =
+        "rgba(0,0,0,.16)";
+
+      ctx.fillRect(
+        b.x,
+        b.y,
+        b.w,
+        26
+      );
+
+      /* windows */
+
+      const cols =
+        Math.max(
+          2,
+          Math.floor(
+            b.w/65
+          )
+        );
+
+      const rows =
+        Math.max(
+          1,
+          Math.floor(
+            b.h/65
+          )
+        );
+
+      for(
+        let r=0;
+        r<rows;
+        r++
+      ){
+
+        for(
+          let c=0;
+          c<cols;
+          c++
+        ){
+
+          const wx =
+            b.x+
+            22+
+            c*
+            (
+              (b.w-44)/
+              Math.max(
+                1,
+                cols-1
+              )
+            );
+
+          const wy =
+            b.y+
+            45+
+            r*52;
+
+          ctx.fillStyle =
+            "rgba(165,220,255,.65)";
+
+          ctx.fillRect(
+            wx-7,
+            wy-6,
+            14,
+            12
+          );
+
+        }
+
+      }
+
+      /* label */
+
+      ctx.fillStyle =
+        "#fff";
+
+      ctx.font =
+        "bold 15px Arial";
+
+      ctx.textAlign =
+        "center";
+
+      ctx.fillText(
+        b.name,
+        b.x+b.w/2,
+        b.y-12
+      );
+
+      /* door */
+
+      const door =
+        getDoor(b);
+
+      ctx.fillStyle =
+        "#29221d";
+
+      ctx.fillRect(
+        door.x-16,
+        b.y+b.h-4,
+        32,
+        26
+      );
+
+      ctx.fillStyle =
+        "#fff";
+
+      ctx.font =
+        "bold 10px Arial";
+
+      ctx.fillText(
+        "ENTER",
+        door.x,
+        b.y+b.h+38
+      );
+
+      ctx.textAlign =
+        "left";
+
+    }
+  );
+
+}
+
+/* =========================
+   TREES
+========================= */
+
+function drawTrees(){
+
+  const positions = [
+
+    [180,220],
+    [320,780],
+    [760,180],
+    [1120,160],
+    [1600,210],
+    [2450,180],
+    [2780,820],
+    [420,1450],
+    [1040,1250],
+    [1900,1450],
+    [2670,1650],
+    [850,1880],
+    [2050,1850],
+    [2840,1880]
+
+  ];
+
+  positions.forEach(
+    p=>{
+
+      ctx.fillStyle =
+        "#5d4932";
+
+      ctx.fillRect(
+        p[0]-5,
+        p[1],
+        10,
+        28
+      );
+
+      ctx.beginPath();
+
+      ctx.arc(
+        p[0],
+        p[1]-4,
+        28,
+        0,
+        Math.PI*2
+      );
+
+      ctx.fillStyle =
+        "#315f3a";
+
+      ctx.fill();
+
+      ctx.beginPath();
+
+      ctx.arc(
+        p[0]-15,
+        p[1]+3,
+        20,
+        0,
+        Math.PI*2
+      );
+
+      ctx.fill();
+
+      ctx.beginPath();
+
+      ctx.arc(
+        p[0]+15,
+        p[1]+3,
+        20,
+        0,
+        Math.PI*2
+      );
+
+      ctx.fill();
+
+    }
+  );
+
+}
+
+/* =========================
+   LANDMARK LABELS
+========================= */
+
+function drawLandmarkLabels(){
+
+  landmarks.forEach(
+    landmark=>{
+
+      ctx.fillStyle =
+        "rgba(0,0,0,.22)";
+
+      ctx.beginPath();
+
+      ctx.arc(
+        landmark.x,
+        landmark.y,
+        34,
+        0,
+        Math.PI*2
+      );
+
+      ctx.fill();
+
+      ctx.fillStyle =
+        "#f3f7fa";
+
+      ctx.font =
+        "bold 14px Arial";
+
+      ctx.textAlign =
+        "center";
+
+      ctx.fillText(
+        landmark.name,
+        landmark.x,
+        landmark.y+60
+      );
+
+      ctx.textAlign =
+        "left";
+
+    }
+  );
+
+}
+
+/* =========================
+   NPC DRAW
+========================= */
+
+function drawNPCs(){
+
+  npcs.forEach(
+    npc=>{
+
+      drawCharacter(
+        npc.x,
+        npc.y,
+        npc.color,
+        npc.name,
+        false
+      );
+
+    }
+  );
+
+}
+
+/* =========================
+   REMOTE PLAYERS
+========================= */
+
+function drawRemotePlayers(){
+
+  Object.values(
+    remotePlayers
+  ).forEach(
+    player=>{
+
+      if(
+        game.inside !==
+        !!player.inside
+      ){
+
+        return;
+
+      }
+
+      if(
+        game.inside &&
+        game.interior !==
+        player.interior
+      ){
+
+        return;
+
+      }
+
+      drawCharacter(
+        player.x,
+        player.y,
+        player.color || "#39a8ff",
+        player.name,
+        true
+      );
+
+    }
+  );
+
+}
+
+/* =========================
+   LOCAL PLAYER
+========================= */
+
+function drawPlayer(){
+
+  drawCharacter(
+    game.x,
+    game.y,
+    myColor,
+    game.character.name,
+    false,
+    true
+  );
+
+}
+
+/* =========================
+   CHARACTER
+========================= */
+
+function drawCharacter(
+  x,
+  y,
+  color,
+  name,
+  online,
+  local=false
+){
+
+  /* shadow */
+
+  ctx.beginPath();
+
+  ctx.ellipse(
+    x,
+    y+27,
+    22,
+    9,
+    0,
+    0,
+    Math.PI*2
+  );
+
+  ctx.fillStyle =
+    "rgba(0,0,0,.28)";
+
+  ctx.fill();
+
+  /* body */
+
+  ctx.fillStyle =
+    color;
+
+  ctx.beginPath();
+
+  ctx.roundRect(
+    x-17,
+    y-2,
+    34,
+    40,
+    11
+  );
+
+  ctx.fill();
+
+  /* head */
+
+  ctx.beginPath();
+
+  ctx.arc(
+    x,
+    y-15,
+    16,
+    0,
+    Math.PI*2
+  );
+
+  ctx.fillStyle =
+    "#d49b78";
+
+  ctx.fill();
+
+  /* hair */
+
+  ctx.beginPath();
+
+  ctx.arc(
+    x,
+    y-20,
+    15,
+    Math.PI,
+    Math.PI*2
+  );
+
+  ctx.fillStyle =
+    "#231d1a";
+
+  ctx.fill();
+
+  /* name */
+
+  ctx.textAlign =
+    "center";
+
+  ctx.font =
+    local
+    ? "bold 13px Arial"
+    : "bold 11px Arial";
+
+  ctx.fillStyle =
+    "#fff";
+
+  ctx.fillText(
+    name,
+    x,
+    y-43
+  );
+
+  if(online){
+
+    ctx.font =
+      "9px Arial";
+
+    ctx.fillStyle =
+      "#45ee87";
+
+    ctx.fillText(
+      "● ONLINE",
+      x,
+      y-30
+    );
+
+  }
+
+  /* chat bubble */
+
+  const bubble =
+    remoteBubbles[
+      online
+      ? Object.keys(remotePlayers)
+        .find(
+          id =>
+            remotePlayers[id].x === x &&
+            remotePlayers[id].y === y
+        )
+      : currentUser?.id
+    ];
+
+  if(
+    bubble &&
+    bubble.expires >
+    Date.now()
+  ){
+
+    const text =
+      String(bubble.text)
+        .slice(0,32);
+
+    ctx.font =
+      "11px Arial";
+
+    const width =
+      Math.min(
+        180,
+        ctx.measureText(text).width+22
+      );
+
+    ctx.fillStyle =
+      "rgba(7,18,31,.94)";
+
+    ctx.beginPath();
+
+    ctx.roundRect(
+      x-width/2,
+      y-78,
+      width,
+      28,
+      9
+    );
+
+    ctx.fill();
+
+    ctx.fillStyle =
+      "#fff";
+
+    ctx.fillText(
+      text,
+      x,
+      y-60
+    );
+
+  }
+
+  ctx.textAlign =
+    "left";
+
+}
+
+/* =========================
+   INTERIOR
+========================= */
+
+function drawInterior(){
+
+  const b =
+    currentInterior;
+
+  /* floor */
+
+  ctx.fillStyle =
+    "#b99b72";
+
+  ctx.fillRect(
+    0,
+    0,
+    WORLD_W,
+    WORLD_H
+  );
+
+  /* walls */
+
+  ctx.fillStyle =
+    "#263c4d";
+
+  ctx.fillRect(
+    100,
+    100,
+    WORLD_W-200,
+    120
+  );
+
+  ctx.fillRect(
+    100,
+    100,
+    120,
+    WORLD_H-200
+  );
+
+  ctx.fillRect(
+    WORLD_W-220,
+    100,
+    120,
+    WORLD_H-200
+  );
+
+  ctx.fillRect(
+    100,
+    WORLD_H-220,
+    WORLD_W-200,
+    120
+  );
+
+  /* room name */
+
+  ctx.fillStyle =
+    "#fff";
+
+  ctx.font =
+    "bold 44px Arial";
+
+  ctx.textAlign =
+    "center";
+
+  ctx.fillText(
+    b ? b.name : "Interior",
+    WORLD_W/2,
+    300
+  );
+
+  /* furniture */
+
+  const type =
+    b ? b.type : "home";
+
+  drawInteriorFurniture(
+    type
+  );
+
+  /* exit */
+
+  ctx.fillStyle =
+    "#1d6fd3";
+
+  ctx.fillRect(
+    WORLD_W/2-65,
+    WORLD_H-225,
+    130,
+    65
+  );
+
+  ctx.fillStyle =
+    "#fff";
+
+  ctx.font =
+    "bold 20px Arial";
+
+  ctx.fillText(
+    "EXIT",
+    WORLD_W/2,
+    WORLD_H-183
+  );
+
+  ctx.textAlign =
+    "left";
+
+  /* players */
+
+  Object.values(
+    remotePlayers
+  ).forEach(
+    player=>{
+
+      if(
+        !player.inside ||
+        player.interior !==
+        game.interior
+      ){
+
+        return;
+
+      }
+
+      drawCharacter(
+        player.x,
+        player.y,
+        player.color || "#39a8ff",
+        player.name,
+        true
+      );
+
+    }
+  );
+
+  drawPlayer();
+
+}
+
+/* =========================
+   INTERIOR FURNITURE
+========================= */
+
+function drawInteriorFurniture(
+  type
+){
+
+  const items = {
+
+    bank:[
+      ["Counter",500,700,900,100],
+      ["Desk",900,1000,300,120],
+      ["Desk",1500,1000,300,120]
+    ],
+
+    hospital:[
+      ["Reception",450,650,1000,100],
+      ["Bed",650,1050,280,120],
+      ["Bed",1050,1050,280,120],
+      ["Bed",1450,1050,280,120]
+    ],
+
+    university:[
+      ["Lecturer Desk",1100,650,700,100],
+      ["Desk",600,1000,220,100],
+      ["Desk",900,1000,220,100],
+      ["Desk",1200,1000,220,100]
+    ],
+
+    restaurant:[
+      ["Counter",1050,600,700,100],
+      ["Table",650,1000,220,120],
+      ["Table",1050,1000,220,120],
+      ["Table",1450,1000,220,120]
+    ],
+
+    market:[
+      ["Stall",500,600,300,180],
+      ["Stall",950,600,300,180],
+      ["Stall",1400,600,300,180],
+      ["Stall",800,1050,300,180],
+      ["Stall",1250,1050,300,180]
+    ],
+
+    supermarket:[
+      ["Shelf",600,600,900,90],
+      ["Shelf",600,850,900,90],
+      ["Shelf",600,1100,900,90]
+    ],
+
+    mechanic:[
+      ["Lift",550,650,500,180],
+      ["Tool Bench",1250,650,700,130],
+      ["Car Bay",850,1050,850,250]
+    ],
+
+    home:[
+      ["Sofa",550,650,600,130],
+      ["Table",1300,650,350,180],
+      ["Bed",1300,1050,450,230]
+    ],
+
+    work:[
+      ["Reception",550,600,900,100],
+      ["Desk",600,950,300,130],
+      ["Desk",1100,950,300,130],
+      ["Desk",1600,950,300,130]
+    ],
+
+    transport:[
+      ["Ticket Desk",550,650,1000,100],
+      ["Bench",650,1050,500,120],
+      ["Bench",1350,1050,500,120]
+    ]
+
+  };
+
+  const list =
+    items[type] ||
+    items.home;
+
+  list.forEach(
+    item=>{
+
+      const [
+        label,
+        x,
+        y,
+        w,
+        h
+      ] = item;
+
+      ctx.fillStyle =
+        "rgba(0,0,0,.18)";
+
+      ctx.fillRect(
+        x+10,
+        y+10,
+        w,
+        h
+      );
+
+      ctx.fillStyle =
+        "#795d42";
+
+      ctx.fillRect(
+        x,
+        y,
+        w,
+        h
+      );
+
+      ctx.strokeStyle =
+        "rgba(255,255,255,.12)";
+
+      ctx.strokeRect(
+        x,
+        y,
+        w,
+        h
+      );
+
+      ctx.fillStyle =
+        "#fff";
+
+      ctx.font =
+        "bold 15px Arial";
+
+      ctx.textAlign =
+        "center";
+
+      ctx.fillText(
+        label,
+        x+w/2,
+        y+h/2+5
+      );
+
+      ctx.textAlign =
+        "left";
+
+    }
+  );
+
+}
+
+/* =========================
+   MINIMAP
+========================= */
+
+function drawMinimap(){
+
+  const w =
+    145;
+
+  const h =
+    105;
+
+  miniCtx.clearRect(
+    0,
+    0,
+    w,
+    h
+  );
+
+  miniCtx.fillStyle =
+    "#668b53";
+
+  miniCtx.fillRect(
+    0,
+    0,
+    w,
+    h
+  );
+
+  const sx =
+    w/WORLD_W;
+
+  const sy =
+    h/WORLD_H;
+
+  /* roads */
+
+  roads.forEach(
+    road=>{
+
+      miniCtx.beginPath();
+
+      road.points.forEach(
+        (p,i)=>{
+
+          const x =
+            p[0]*sx;
+
+          const y =
+            p[1]*sy;
+
+          if(i===0){
+
+            miniCtx.moveTo(
+              x,
+              y
+            );
+
+          }else{
+
+            miniCtx.lineTo(
+              x,
+              y
+            );
+
+          }
+
+        }
+      );
+
+      miniCtx.strokeStyle =
+        "#4a4e4e";
+
+      miniCtx.lineWidth =
+        Math.max(
+          2,
+          road.width*sx
+        );
+
+      miniCtx.stroke();
+
+    }
+  );
+
+  /* buildings */
+
+  buildings.forEach(
+    b=>{
+
+      miniCtx.fillStyle =
+        "#536779";
+
+      miniCtx.fillRect(
+        b.x*sx,
+        b.y*sy,
+        b.w*sx,
+        b.h*sy
+      );
+
+    }
+  );
+
+  /* remote */
+
+  Object.values(
+    remotePlayers
+  ).forEach(
+    player=>{
+
+      if(
+        game.inside ||
+        player.inside
+      ){
+
+        return;
+
+      }
+
+      miniCtx.fillStyle =
+        "#39e77d";
+
+      miniCtx.beginPath();
+
+      miniCtx.arc(
+        player.x*sx,
+        player.y*sy,
+        3,
+        0,
+        Math.PI*2
+      );
+
+      miniCtx.fill();
+
+    }
+  );
+
+  /* player */
+
+  miniCtx.fillStyle =
+    "#ffffff";
+
+  miniCtx.beginPath();
+
+  miniCtx.arc(
+    game.x*sx,
+    game.y*sy,
+    4,
+    0,
+    Math.PI*2
+  );
+
+  miniCtx.fill();
+
+  miniCtx.strokeStyle =
+    "#1685ff";
+
+  miniCtx.lineWidth=2;
+
+  miniCtx.stroke();
+
+}
+
+/* =========================
+   CLEANUP
+========================= */
+
+function cleanupRemotePlayers(){
+
+  const now =
+    Date.now();
+
+  Object.keys(
+    remotePlayers
+  ).forEach(
+    id=>{
+
+      const p =
+        remotePlayers[id];
+
+      if(
+        p.lastSeen &&
+        now-p.lastSeen >
+        15000
+      ){
+
+        delete remotePlayers[id];
+
+      }
+
+    }
+  );
+
+  Object.keys(
+    remoteBubbles
+  ).forEach(
+    id=>{
+
+      if(
+        remoteBubbles[id].expires <
+        now
+      ){
+
+        delete remoteBubbles[id];
+
+      }
+
+    }
+  );
+
+}
+
+/* =========================
+   AUTO SAVE
+========================= */
+
+setInterval(
+  ()=>{
+    if(currentUser){
+      saveGame();
+    }
+  },
+  30000
+);
+
+/* =========================
+   EXIT INTERIOR KEY
+========================= */
+
+document.addEventListener(
+  "keydown",
+  e=>{
+
+    if(
+      e.key === "Enter" &&
+      game.inside
+    ){
+
+      if(
+        game.y >
+        WORLD_H-400 &&
+        Math.abs(
+          game.x-WORLD_W/2
+        ) < 160
+      ){
+
+        exitBuilding();
+
+      }
+
+    }
+
+  }
+);
+
+/* =========================
+   START SESSION
+========================= */
+
+checkSession();
+
+/* =========================
+   DEBUG
+========================= */
+
+console.log(
+  "Kaduna Life V37 loaded."
+);
+
+</script>
+
+</body>
+</html>
