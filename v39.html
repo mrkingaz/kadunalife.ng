@@ -1,0 +1,4627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Kaduna Life — V39</title>
+
+<link rel="stylesheet"
+href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+integrity="sha256-p4NxAoJBhIINfQ3D3R4N4Yl8XG3kQ5Q1L1k4f1Q1Q="
+crossorigin=""/>
+
+<style>
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+  margin:0;
+  padding:0;
+  min-height:100%;
+  background:#07111f;
+  color:#f4f7fb;
+  font-family:Inter,Arial,sans-serif;
+}
+
+body{
+  overflow-x:hidden;
+}
+
+button,input,select{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+.hidden{
+  display:none!important;
+}
+
+#authScreen{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:
+    radial-gradient(circle at top left,#173d5d 0,#0a1626 40%,#050b13 100%);
+}
+
+.authBox{
+  width:min(460px,100%);
+  background:rgba(12,25,42,.96);
+  border:1px solid #29415c;
+  border-radius:24px;
+  padding:25px;
+  box-shadow:0 20px 70px rgba(0,0,0,.45);
+}
+
+.logo{
+  text-align:center;
+  font-size:32px;
+  font-weight:900;
+  margin-bottom:5px;
+}
+
+.logo span{
+  color:#51d88a;
+}
+
+.subtitle{
+  text-align:center;
+  color:#9eb0c5;
+  margin-bottom:25px;
+}
+
+.authTabs{
+  display:flex;
+  gap:8px;
+  margin-bottom:18px;
+}
+
+.authTabs button{
+  flex:1;
+}
+
+.tabActive{
+  background:#51d88a!important;
+  color:#06120b!important;
+}
+
+.field{
+  margin-bottom:13px;
+}
+
+.field label{
+  display:block;
+  color:#9eb0c5;
+  font-size:13px;
+  margin-bottom:6px;
+}
+
+.field input,
+.field select{
+  width:100%;
+  background:#081522;
+  border:1px solid #2a4058;
+  border-radius:12px;
+  padding:12px;
+  color:white;
+  outline:none;
+}
+
+.field input:focus,
+.field select:focus{
+  border-color:#51d88a;
+}
+
+.primary{
+  width:100%;
+  border:0;
+  border-radius:13px;
+  padding:13px;
+  background:#51d88a;
+  color:#06120b;
+  font-weight:900;
+}
+
+.secondary{
+  border:1px solid #304860;
+  background:#102238;
+  color:white;
+  border-radius:11px;
+  padding:10px 13px;
+}
+
+.danger{
+  background:#5a1821;
+  border-color:#81313d;
+}
+
+.small{
+  font-size:12px;
+  color:#91a4b8;
+  line-height:1.5;
+}
+
+#setupScreen{
+  min-height:100vh;
+  padding:18px;
+  background:#07111f;
+}
+
+.setupBox{
+  width:min(720px,100%);
+  margin:auto;
+  background:#0d1c2e;
+  border:1px solid #29415c;
+  border-radius:22px;
+  padding:20px;
+}
+
+.setupTitle{
+  font-size:25px;
+  font-weight:900;
+  margin-bottom:4px;
+}
+
+.backgroundGrid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  margin:15px 0;
+}
+
+.bgCard{
+  padding:15px;
+  border:1px solid #2b435c;
+  border-radius:15px;
+  background:#0a1726;
+}
+
+.bgCard.selected{
+  border-color:#51d88a;
+  box-shadow:0 0 0 1px #51d88a inset;
+}
+
+.bgCard strong{
+  display:block;
+  margin-bottom:5px;
+}
+
+#game{
+  min-height:100vh;
+  background:#07111f;
+}
+
+.topbar{
+  position:sticky;
+  top:0;
+  z-index:1000;
+  background:rgba(5,14,25,.96);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid #20354c;
+  padding:10px 12px;
+}
+
+.topbarRow{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+}
+
+.playerName{
+  font-weight:900;
+}
+
+.dayBadge{
+  color:#51d88a;
+  font-weight:800;
+}
+
+.money{
+  font-weight:900;
+}
+
+.nav{
+  display:flex;
+  gap:7px;
+  overflow-x:auto;
+  padding-top:9px;
+  scrollbar-width:none;
+}
+
+.nav::-webkit-scrollbar{
+  display:none;
+}
+
+.nav button{
+  white-space:nowrap;
+  border:1px solid #29415c;
+  background:#0d1e31;
+  color:#dce8f3;
+  border-radius:10px;
+  padding:8px 11px;
+}
+
+.nav button.active{
+  background:#51d88a;
+  color:#06120b;
+  border-color:#51d88a;
+  font-weight:900;
+}
+
+.page{
+  display:none;
+  padding:14px;
+}
+
+.page.active{
+  display:block;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:11px;
+}
+
+.grid3{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+}
+
+.card{
+  background:#0d1c2e;
+  border:1px solid #263e56;
+  border-radius:17px;
+  padding:14px;
+  box-shadow:0 8px 25px rgba(0,0,0,.12);
+}
+
+.card h3,
+.card h2{
+  margin:0 0 10px;
+}
+
+.stat{
+  font-size:25px;
+  font-weight:900;
+}
+
+.muted{
+  color:#8fa4b9;
+}
+
+.green{
+  color:#51d88a;
+}
+
+.yellow{
+  color:#ffd166;
+}
+
+.red{
+  color:#ff6b6b;
+}
+
+.blue{
+  color:#65b8ff;
+}
+
+.progress{
+  height:8px;
+  background:#07111f;
+  border-radius:20px;
+  overflow:hidden;
+  margin:6px 0 10px;
+}
+
+.progress div{
+  height:100%;
+  background:#51d88a;
+  width:0%;
+  transition:.25s;
+}
+
+.actionGrid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+}
+
+.actionGrid button{
+  border:1px solid #29415c;
+  background:#102238;
+  color:white;
+  border-radius:11px;
+  padding:10px;
+}
+
+.actionGrid button:active{
+  transform:scale(.98);
+}
+
+.list{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.listItem{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:center;
+  background:#091726;
+  border:1px solid #20364d;
+  border-radius:13px;
+  padding:11px;
+}
+
+.listItem strong{
+  display:block;
+}
+
+.badge{
+  display:inline-block;
+  padding:4px 8px;
+  border-radius:99px;
+  background:#17314b;
+  color:#bcd2e6;
+  font-size:11px;
+  font-weight:800;
+}
+
+.badge.greenBadge{
+  background:#123e2a;
+  color:#70e39e;
+}
+
+.sectionTitle{
+  margin:8px 0 12px;
+  font-size:20px;
+  font-weight:900;
+}
+
+.hero{
+  background:
+    linear-gradient(135deg,#102c42,#0c1b2c 55%,#102b20);
+  border:1px solid #2d5265;
+  border-radius:20px;
+  padding:18px;
+  margin-bottom:12px;
+}
+
+.hero h1{
+  margin:0 0 5px;
+  font-size:26px;
+}
+
+.hero p{
+  margin:0;
+  color:#a8bacb;
+}
+
+.needsGrid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+}
+
+.need{
+  background:#091726;
+  border:1px solid #20364d;
+  border-radius:13px;
+  padding:9px;
+}
+
+.needName{
+  font-size:11px;
+  color:#91a4b8;
+}
+
+.needValue{
+  font-weight:900;
+  margin-top:3px;
+}
+
+#map{
+  width:100%;
+  height:58vh;
+  min-height:390px;
+  border-radius:18px;
+  overflow:hidden;
+  border:1px solid #29415c;
+}
+
+.mapControls{
+  display:flex;
+  gap:8px;
+  margin-top:10px;
+  overflow-x:auto;
+}
+
+.mapControls button{
+  white-space:nowrap;
+  border:1px solid #29415c;
+  background:#102238;
+  color:white;
+  padding:9px 11px;
+  border-radius:11px;
+}
+
+.locationCard{
+  margin-top:10px;
+}
+
+.chatBox{
+  height:310px;
+  overflow-y:auto;
+  background:#07111f;
+  border:1px solid #20364d;
+  border-radius:14px;
+  padding:10px;
+}
+
+.chatMessage{
+  margin-bottom:8px;
+  background:#102238;
+  border-radius:11px;
+  padding:8px 10px;
+}
+
+.chatMessage strong{
+  color:#51d88a;
+}
+
+.chatInput{
+  display:flex;
+  gap:7px;
+  margin-top:8px;
+}
+
+.chatInput input{
+  flex:1;
+  background:#081522;
+  color:white;
+  border:1px solid #29415c;
+  border-radius:11px;
+  padding:11px;
+}
+
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:18px;
+  transform:translateX(-50%) translateY(120px);
+  z-index:5000;
+  background:#102b42;
+  border:1px solid #42647d;
+  color:white;
+  padding:12px 16px;
+  border-radius:13px;
+  box-shadow:0 15px 40px rgba(0,0,0,.4);
+  transition:.3s;
+  max-width:90%;
+  text-align:center;
+}
+
+.toast.show{
+  transform:translateX(-50%) translateY(0);
+}
+
+.modal{
+  position:fixed;
+  inset:0;
+  z-index:4000;
+  background:rgba(0,0,0,.72);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+}
+
+.modalBox{
+  width:min(520px,100%);
+  max-height:90vh;
+  overflow-y:auto;
+  background:#0d1c2e;
+  border:1px solid #304960;
+  border-radius:20px;
+  padding:18px;
+}
+
+.closeRow{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.close{
+  background:#1a2d42;
+  color:white;
+  border:1px solid #304960;
+  border-radius:10px;
+  padding:7px 10px;
+}
+
+.eventChoice{
+  width:100%;
+  margin-top:8px;
+  text-align:left;
+  padding:11px;
+  border-radius:11px;
+  border:1px solid #29415c;
+  background:#102238;
+  color:white;
+}
+
+@media(max-width:650px){
+  .grid{
+    grid-template-columns:1fr;
+  }
+
+  .grid3{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .backgroundGrid{
+    grid-template-columns:1fr;
+  }
+
+  .needsGrid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .topbarRow{
+    align-items:flex-start;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- AUTH -->
+<section id="authScreen">
+  <div class="authBox">
+    <div class="logo">Kaduna <span>Life</span></div>
+    <div class="subtitle">Build your life. Make your moves. Own Kaduna.</div>
+
+    <div class="authTabs">
+      <button id="loginTab" class="secondary tabActive" onclick="switchAuth('login')">Login</button>
+      <button id="signupTab" class="secondary" onclick="switchAuth('signup')">Create Account</button>
+    </div>
+
+    <div class="field">
+      <label>Email</label>
+      <input id="authEmail" type="email" placeholder="you@example.com">
+    </div>
+
+    <div class="field">
+      <label>Password</label>
+      <input id="authPassword" type="password" placeholder="Password">
+    </div>
+
+    <button id="authButton" class="primary" onclick="submitAuth()">Login</button>
+
+    <div id="authStatus" class="small" style="margin-top:12px;text-align:center;"></div>
+
+    <div class="small" style="margin-top:20px;text-align:center;">
+      Kaduna Life uses Supabase authentication and saves your game profile online.
+    </div>
+  </div>
+</section>
+
+<!-- CHARACTER SETUP -->
+<section id="setupScreen" class="hidden">
+  <div class="setupBox">
+
+    <div class="setupTitle">Create Your Kaduna Life Character</div>
+    <div class="small">
+      Your character is permanent on this account. Existing V38 characters can be migrated automatically.
+    </div>
+
+    <div class="field" style="margin-top:18px;">
+      <label>Character Name</label>
+      <input id="charName" maxlength="24" placeholder="Enter your character name">
+    </div>
+
+    <div class="field">
+      <label>Age</label>
+      <input id="charAge" type="number" min="18" max="50" placeholder="18–50">
+    </div>
+
+    <div class="sectionTitle">Choose Your Starting Background</div>
+
+    <div class="backgroundGrid">
+
+      <div class="bgCard selected" data-bg="regular" onclick="selectBackground(this)">
+        <strong>🏠 Regular Family</strong>
+        <div class="small">Balanced start with ₦10,000 bonus.</div>
+      </div>
+
+      <div class="bgCard" data-bg="nepo" onclick="selectBackground(this)">
+        <strong>👔 Nepo Start</strong>
+        <div class="small">Family connections give you a head start.</div>
+      </div>
+
+      <div class="bgCard" data-bg="microfinance" onclick="selectBackground(this)">
+        <strong>🏦 Microfinance Start</strong>
+        <div class="small">Extra business knowledge and starter capital.</div>
+      </div>
+
+      <div class="bgCard" data-bg="student" onclick="selectBackground(this)">
+        <strong>🎓 Student</strong>
+        <div class="small">Education-focused beginning with lower expenses.</div>
+      </div>
+
+      <div class="bgCard" data-bg="hustler" onclick="selectBackground(this)">
+        <strong>💼 Self-Made Hustler</strong>
+        <div class="small">Higher hustle skills and a small cash boost.</div>
+      </div>
+
+      <div class="bgCard" data-bg="tech" onclick="selectBackground(this)">
+        <strong>💻 Tech Starter</strong>
+        <div class="small">Technology skill advantage and a laptop.</div>
+      </div>
+
+    </div>
+
+    <button class="primary" onclick="createCharacter()">
+      Start Kaduna Life 🚀
+    </button>
+
+  </div>
+</section>
+
+<!-- GAME -->
+<section id="game" class="hidden">
+
+  <header class="topbar">
+
+    <div class="topbarRow">
+      <div>
+        <div class="playerName" id="topName">Player</div>
+        <div class="small">
+          Day <span id="topDay">1</span> ·
+          <span id="topTime">Morning</span>
+        </div>
+      </div>
+
+      <div style="text-align:right;">
+        <div class="money" id="topMoney">₦0</div>
+        <div class="dayBadge" id="topMood">🙂 Good</div>
+      </div>
+    </div>
+
+    <div class="nav">
+
+      <button class="active" onclick="showPage('home',this)">🏠 Home</button>
+      <button onclick="showPage('map',this)">🗺️ Map</button>
+      <button onclick="showPage('career',this)">💼 Career</button>
+      <button onclick="showPage('money',this)">💰 Money</button>
+      <button onclick="showPage('life',this)">❤️ Life</button>
+      <button onclick="showPage('social',this)">👥 Social</button>
+      <button onclick="showPage('achievements',this)">🏆 Achievements</button>
+    </div>
+
+  </header>
+
+  <!-- HOME -->
+  <main id="page-home" class="page active">
+
+    <div class="hero">
+      <h1 id="welcomeTitle">Welcome to Kaduna Life</h1>
+      <p id="welcomeText">
+        Your choices shape your character's future.
+      </p>
+    </div>
+
+    <div class="card">
+      <h3>📊 Needs</h3>
+
+      <div class="needsGrid">
+
+        <div class="need">
+          <div class="needName">🍔 Hunger</div>
+          <div class="needValue" id="needHunger">100%</div>
+          <div class="progress"><div id="barHunger"></div></div>
+        </div>
+
+        <div class="need">
+          <div class="needName">⚡ Energy</div>
+          <div class="needValue" id="needEnergy">100%</div>
+          <div class="progress"><div id="barEnergy"></div></div>
+        </div>
+
+        <div class="need">
+          <div class="needName">🚿 Hygiene</div>
+          <div class="needValue" id="needHygiene">100%</div>
+          <div class="progress"><div id="barHygiene"></div></div>
+        </div>
+
+        <div class="need">
+          <div class="needName">🎮 Fun</div>
+          <div class="needValue" id="needFun">100%</div>
+          <div class="progress"><div id="barFun"></div></div>
+        </div>
+
+        <div class="need">
+          <div class="needName">👥 Social</div>
+          <div class="needValue" id="needSocial">100%</div>
+          <div class="progress"><div id="barSocial"></div></div>
+        </div>
+
+        <div class="need">
+          <div class="needName">❤️ Health</div>
+          <div class="needValue" id="needHealth">100%</div>
+          <div class="progress"><div id="barHealth"></div></div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="grid" style="margin-top:11px;">
+
+      <div class="card">
+        <h3>⚡ Quick Actions</h3>
+
+        <div class="actionGrid">
+          <button onclick="eat()">🍲 Eat</button>
+          <button onclick="sleep()">😴 Sleep</button>
+          <button onclick="shower()">🚿 Shower</button>
+          <button onclick="haveFun()">🎮 Have Fun</button>
+          <button onclick="socialize()">👥 Socialize</button>
+          <button onclick="healthCare()">🏥 Healthcare</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>📌 Current Life</h3>
+
+        <div class="list">
+
+          <div class="listItem">
+            <div>
+              <strong>Career</strong>
+              <span class="small" id="summaryCareer">Unemployed</span>
+            </div>
+            <span class="badge" id="summaryCareerLevel">Level 0</span>
+          </div>
+
+          <div class="listItem">
+            <div>
+              <strong>🏠 Home</strong>
+              <span class="small" id="summaryHome">Single Room</span>
+            </div>
+          </div>
+
+          <div class="listItem">
+            <div>
+              <strong>🚗 Vehicle</strong>
+              <span class="small" id="summaryVehicle">Walking</span>
+            </div>
+          </div>
+
+          <div class="listItem">
+            <div>
+              <strong>⚡ Power</strong>
+              <span class="small" id="summaryPower">Available</span>
+            </div>
+            <span class="badge" id="powerBadge">ON</span>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <div class="card" style="margin-top:11px;">
+      <h3>💳 Financial Snapshot</h3>
+
+      <div class="grid3">
+
+        <div>
+          <div class="small">Cash</div>
+          <div class="stat green" id="homeCash">₦0</div>
+        </div>
+
+        <div>
+          <div class="small">Bank</div>
+          <div class="stat blue" id="homeBank">₦0</div>
+        </div>
+
+        <div>
+          <div class="small">Net Worth</div>
+          <div class="stat yellow" id="homeNetWorth">₦0</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:11px;">
+      <h3>📰 Life Feed</h3>
+      <div id="feed" class="list"></div>
+    </div>
+
+  </main>
+
+  <!-- MAP -->
+  <main id="page-map" class="page">
+
+    <div class="sectionTitle">🗺️ Kaduna City</div>
+
+    <div class="card">
+      <div id="map"></div>
+
+      <div class="mapControls">
+        <button onclick="goLocation('home')">🏠 Home</button>
+        <button onclick="goLocation('work')">💼 Work Hub</button>
+        <button onclick="goLocation('market')">🛒 Market</button>
+        <button onclick="goLocation('bank')">🏦 Bank</button>
+        <button onclick="goLocation('hospital')">🏥 Hospital</button>
+        <button onclick="goLocation('university')">🎓 University</button>
+      </div>
+
+      <div class="locationCard card" style="background:#091726;">
+        <strong id="currentLocation">You are at Home</strong>
+        <div class="small" id="locationDescription">
+          Tap anywhere on the map to move.
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- CAREER -->
+  <main id="page-career" class="page">
+
+    <div class="sectionTitle">💼 Career & Work</div>
+
+    <div class="card">
+      <h3>Current Career</h3>
+
+      <div class="listItem">
+        <div>
+          <strong id="careerName">Unemployed</strong>
+          <span class="small" id="careerDescription">Find a job to begin earning.</span>
+        </div>
+        <span class="badge greenBadge" id="careerSalary">₦0</span>
+      </div>
+
+      <div style="margin-top:10px;">
+        <div class="small">
+          Career Level <span id="careerLevel">0</span> / 5
+        </div>
+        <div class="progress">
+          <div id="careerProgress"></div>
+        </div>
+      </div>
+
+      <button class="primary" onclick="workShift()" style="margin-top:8px;">
+        💼 Work Shift
+      </button>
+    </div>
+
+    <div class="sectionTitle">Available Careers</div>
+
+    <div id="careerList" class="list"></div>
+
+    <div class="sectionTitle">🛵 Side Gigs</div>
+
+    <div id="gigList" class="list"></div>
+
+    <div class="sectionTitle">🧠 Skills</div>
+
+    <div id="skillsList" class="grid"></div>
+
+  </main>
+
+  <!-- MONEY -->
+  <main id="page-money" class="page">
+
+    <div class="sectionTitle">💰 Money & Wealth</div>
+
+    <div class="grid">
+
+      <div class="card">
+        <h3>Wallet</h3>
+        <div class="stat green" id="moneyCash">₦0</div>
+        <div class="small">Available cash</div>
+      </div>
+
+      <div class="card">
+        <h3>Bank</h3>
+        <div class="stat blue" id="moneyBank">₦0</div>
+        <div class="small">Bank balance</div>
+      </div>
+
+      <div class="card">
+        <h3>Investments</h3>
+        <div class="stat yellow" id="moneyInvestments">₦0</div>
+        <div class="small">Current value</div>
+      </div>
+
+      <div class="card">
+        <h3>Net Worth</h3>
+        <div class="stat" id="moneyNetWorth">₦0</div>
+        <div class="small">Total estimated wealth</div>
+      </div>
+
+    </div>
+
+    <div class="sectionTitle">🏦 Banking</div>
+
+    <div class="card">
+      <div class="actionGrid">
+        <button onclick="deposit()">Deposit ₦1,000</button>
+        <button onclick="withdraw()">Withdraw ₦1,000</button>
+        <button onclick="deposit(5000)">Deposit ₦5,000</button>
+        <button onclick="withdraw(5000)">Withdraw ₦5,000</button>
+      </div>
+    </div>
+
+    <div class="sectionTitle">📈 Investments</div>
+
+    <div id="investmentList" class="list"></div>
+
+    <div class="sectionTitle">🏪 Businesses</div>
+
+    <div id="businessList" class="list"></div>
+
+    <div class="sectionTitle">🏦 Microfinance</div>
+
+    <div class="card">
+
+      <div class="listItem">
+        <div>
+          <strong>Current Loan</strong>
+          <span class="small">Fictional in-game microfinance system</span>
+        </div>
+        <strong id="loanBalance">₦0</strong>
+      </div>
+
+      <div class="actionGrid" style="margin-top:9px;">
+        <button onclick="takeLoan(10000)">Borrow ₦10,000</button>
+        <button onclick="takeLoan(25000)">Borrow ₦25,000</button>
+        <button onclick="repayLoan(5000)">Repay ₦5,000</button>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- LIFE -->
+  <main id="page-life" class="page">
+
+    <div class="sectionTitle">❤️ Life Management</div>
+
+    <div class="card">
+      <h3>🏠 Housing</h3>
+      <div id="housingList" class="list"></div>
+    </div>
+
+    <div class="card" style="margin-top:11px;">
+      <h3>🚗 Transport</h3>
+      <div id="vehicleList" class="list"></div>
+    </div>
+
+    <div class="card" style="margin-top:11px;">
+      <h3>🎓 Education</h3>
+      <div id="educationList" class="list"></div>
+    </div>
+
+    <div class="card" style="margin-top:11px;">
+      <h3>🧾 Bills</h3>
+
+      <div class="listItem">
+        <div>
+          <strong>Weekly Rent</strong>
+          <span class="small">Paid automatically when the week advances.</span>
+        </div>
+        <strong id="rentAmount">₦0</strong>
+      </div>
+
+      <div class="listItem">
+        <div>
+          <strong>Power</strong>
+          <span class="small">Generator/power expenses can appear during outages.</span>
+        </div>
+        <strong id="powerCost">₦0</strong>
+      </div>
+
+      <div class="listItem">
+        <div>
+          <strong>Transport</strong>
+          <span class="small">Moving around can consume transport funds.</span>
+        </div>
+        <strong id="transportCost">₦0</strong>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- SOCIAL -->
+  <main id="page-social" class="page">
+
+    <div class="sectionTitle">👥 Kaduna Social Life</div>
+
+    <div class="card">
+      <h3>People Around Kaduna</h3>
+      <div id="npcList" class="list"></div>
+    </div>
+
+    <div class="card" style="margin-top:11px;">
+      <h3>🌐 City Chat</h3>
+
+      <div id="chatBox" class="chatBox"></div>
+
+      <div class="chatInput">
+        <input id="chatInput" maxlength="160" placeholder="Say something...">
+        <button class="primary" style="width:auto;" onclick="sendChat()">Send</button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ACHIEVEMENTS -->
+  <main id="page-achievements" class="page">
+
+    <div class="sectionTitle">🏆 Achievements</div>
+
+    <div class="card">
+      <div id="achievementList" class="list"></div>
+    </div>
+
+  </main>
+
+</section>
+
+<!-- MODAL -->
+<div id="modal" class="modal hidden" onclick="closeModalOutside(event)">
+  <div class="modalBox">
+    <div class="closeRow">
+      <h2 id="modalTitle">Life Event</h2>
+      <button class="close" onclick="closeModal()">✕</button>
+    </div>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+crossorigin=""></script>
+
+<script>
+
+/* =========================================================
+   KADUNA LIFE V39
+   ========================================================= */
+
+const SUPABASE_URL =
+  "https://mdcwdfwrgxqtcafsyldt.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_3asep2gSU5Z_Gx9bxXtw7Q_FhY-0ETp";
+
+const supabaseClient =
+  supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{
+    auth:{
+      persistSession:true,
+      autoRefreshToken:true,
+      detectSessionInUrl:true
+    }
+  });
+
+const VERSION = "v39";
+const BONUS_AMOUNT = 10000;
+
+let currentUser = null;
+let authMode = "login";
+let selectedBackground = "regular";
+let game = null;
+let map = null;
+let playerMarker = null;
+let realtimeChannel = null;
+let lastSave = 0;
+
+const KADUNA_CENTER = [10.5105,7.4165];
+
+const locations = {
+
+  home:{
+    name:"Kaduna Life Apartments",
+    lat:10.5140,
+    lng:7.4075,
+    description:"Your home base."
+  },
+
+  bank:{
+    name:"Kaduna Life Bank",
+    lat:10.5230,
+    lng:7.4380,
+    description:"Deposit, withdraw and manage your money."
+  },
+
+  market:{
+    name:"Central Market",
+    lat:10.5260,
+    lng:7.4300,
+    description:"Food, shopping and everyday expenses."
+  },
+
+  hospital:{
+    name:"Kaduna Life Hospital",
+    lat:10.5060,
+    lng:7.4450,
+    description:"Restore health and deal with medical events."
+  },
+
+  university:{
+    name:"Kaduna Life University",
+    lat:10.5350,
+    lng:7.4180,
+    description:"Study and improve your education."
+  },
+
+  work:{
+    name:"Kaduna Work Hub",
+    lat:10.5160,
+    lng:7.4260,
+    description:"Find careers and work shifts."
+  },
+
+  business:{
+    name:"Kaduna Business Centre",
+    lat:10.5190,
+    lng:7.4480,
+    description:"Start and manage businesses."
+  },
+
+  recreation:{
+    name:"Kaduna Recreation Hub",
+    lat:10.5020,
+    lng:7.4250,
+    description:"Relax and improve your fun."
+  },
+
+  microfinance:{
+    name:"Microfinance Office",
+    lat:10.5280,
+    lng:7.4100,
+    description:"Access fictional in-game microfinance services."
+  },
+
+  transport:{
+    name:"Kaduna Motor Hub",
+    lat:10.4980,
+    lng:7.4100,
+    description:"Buy and manage vehicles."
+  }
+
+};
+
+const careers = [
+
+  {
+    id:"retail",
+    name:"Retail Assistant",
+    workplace:"Central Market",
+    description:"Work in retail and build customer-service experience.",
+    salaries:[900,1200,1600,2100,2800],
+    skill:"communication"
+  },
+
+  {
+    id:"teacher",
+    name:"Teacher",
+    workplace:"Kaduna Life University",
+    description:"Teach students and build education skill.",
+    salaries:[1500,2100,2900,3900,5200],
+    skill:"education"
+  },
+
+  {
+    id:"creator",
+    name:"Content Creator",
+    workplace:"Kaduna Work Hub",
+    description:"Create digital content and grow your reputation.",
+    salaries:[1300,1900,2700,3900,5600],
+    skill:"creativity"
+  },
+
+  {
+    id:"developer",
+    name:"Software Developer",
+    workplace:"Kaduna Work Hub",
+    description:"Build software and solve technical problems.",
+    salaries:[2500,3500,5000,7000,9500],
+    skill:"technology"
+  },
+
+  {
+    id:"fitness",
+    name:"Fitness Coach",
+    workplace:"Recreation Hub",
+    description:"Coach people and improve your fitness skill.",
+    salaries:[1200,1800,2500,3400,4800],
+    skill:"fitness"
+  },
+
+  {
+    id:"business",
+    name:"Business Assistant",
+    workplace:"Business Centre",
+    description:"Help businesses operate and grow.",
+    salaries:[1700,2400,3400,4700,6500],
+    skill:"business"
+  },
+
+  {
+    id:"designer",
+    name:"Creative Designer",
+    workplace:"Kaduna Work Hub",
+    description:"Design posters, brands and digital products.",
+    salaries:[1600,2300,3300,4700,6500],
+    skill:"creativity"
+  },
+
+  {
+    id:"banker",
+    name:"Bank Officer",
+    workplace:"Kaduna Life Bank",
+    description:"Work in banking and develop financial experience.",
+    salaries:[2200,3000,4200,5800,8000],
+    skill:"business"
+  },
+
+  {
+    id:"health",
+    name:"Health Assistant",
+    workplace:"Kaduna Life Hospital",
+    description:"Assist with healthcare services.",
+    salaries:[1800,2600,3700,5100,7000],
+    skill:"education"
+  },
+
+  {
+    id:"technician",
+    name:"Tech Technician",
+    workplace:"Kaduna Work Hub",
+    description:"Repair devices and solve technical problems.",
+    salaries:[1800,2600,3600,5000,6900],
+    skill:"technology"
+  },
+
+  {
+    id:"photographer",
+    name:"Photographer",
+    workplace:"Recreation Hub",
+    description:"Take photos and grow your creative portfolio.",
+    salaries:[1200,1900,2800,4000,5800],
+    skill:"creativity"
+  },
+
+  {
+    id:"sales",
+    name:"Sales Representative",
+    workplace:"Business Centre",
+    description:"Sell products and develop communication skills.",
+    salaries:[1600,2300,3300,4700,6800],
+    skill:"communication"
+  }
+
+];
+
+const gigs = [
+
+  {
+    id:"delivery",
+    name:"Delivery Runs",
+    pay:900,
+    energy:9,
+    skill:"fitness"
+  },
+
+  {
+    id:"tutoring",
+    name:"Private Tutoring",
+    pay:1100,
+    energy:7,
+    skill:"education"
+  },
+
+  {
+    id:"photography",
+    name:"Photo Session",
+    pay:1300,
+    energy:8,
+    skill:"creativity"
+  },
+
+  {
+    id:"errands",
+    name:"Errand Service",
+    pay:750,
+    energy:6,
+    skill:"communication"
+  },
+
+  {
+    id:"content",
+    name:"Quick Content Job",
+    pay:1250,
+    energy:8,
+    skill:"creativity"
+  }
+
+];
+
+const investments = [
+
+  {
+    id:"foods",
+    name:"Kaduna Foods",
+    price:5000,
+    growth:.035
+  },
+
+  {
+    id:"tech",
+    name:"Northern Tech Fund",
+    price:10000,
+    growth:.05
+  },
+
+  {
+    id:"transport",
+    name:"Kaduna Transport Fund",
+    price:7500,
+    growth:.028
+  },
+
+  {
+    id:"property",
+    name:"Northern Property Fund",
+    price:15000,
+    growth:.065
+  }
+
+];
+
+const businesses = [
+
+  {
+    id:"recharge",
+    name:"Recharge Kiosk",
+    cost:15000,
+    income:1800
+  },
+
+  {
+    id:"food",
+    name:"Small Food Spot",
+    cost:35000,
+    income:4200
+  },
+
+  {
+    id:"laundry",
+    name:"Laundry Business",
+    cost:50000,
+    income:5700
+  },
+
+  {
+    id:"transport",
+    name:"Transport Business",
+    cost:85000,
+    income:8500
+  },
+
+  {
+    id:"techshop",
+    name:"Tech Accessories Shop",
+    cost:100000,
+    income:11000
+  }
+
+];
+
+const homes = [
+
+  {
+    id:"room",
+    name:"Single Room",
+    price:0,
+    rent:1200,
+    comfort:45
+  },
+
+  {
+    id:"self",
+    name:"Self Contained",
+    price:25000,
+    rent:2500,
+    comfort:60
+  },
+
+  {
+    id:"apartment",
+    name:"Modern Apartment",
+    price:100000,
+    rent:6500,
+    comfort:75
+  },
+
+  {
+    id:"luxury",
+    name:"Luxury House",
+    price:350000,
+    rent:15000,
+    comfort:92
+  }
+
+];
+
+const vehicles = [
+
+  {
+    id:"walk",
+    name:"Walking",
+    price:0,
+    fuel:0,
+    speed:1
+  },
+
+  {
+    id:"keke",
+    name:"Keke",
+    price:18000,
+    fuel:250,
+    speed:1.4
+  },
+
+  {
+    id:"usedsedan",
+    name:"Used Sedan",
+    price:85000,
+    fuel:600,
+    speed:1.8
+  },
+
+  {
+    id:"sedan",
+    name:"Modern Sedan",
+    price:180000,
+    fuel:900,
+    speed:2.2
+  },
+
+  {
+    id:"suv",
+    name:"Luxury SUV",
+    price:450000,
+    fuel:1500,
+    speed:2.7
+  }
+
+];
+
+const education = [
+
+  {
+    id:"secondary",
+    name:"Secondary Certificate",
+    cost:0,
+    education:10
+  },
+
+  {
+    id:"diploma",
+    name:"Professional Diploma",
+    cost:15000,
+    education:18
+  },
+
+  {
+    id:"degree",
+    name:"University Degree",
+    cost:50000,
+    education:30
+  },
+
+  {
+    id:"masters",
+    name:"Advanced Certification",
+    cost:100000,
+    education:45
+  }
+
+];
+
+const npcs = [
+
+  {
+    id:"amina",
+    name:"Amina",
+    role:"Student",
+    x:10.531,
+    y:7.420,
+    description:"A friendly student who enjoys talking about campus life."
+  },
+
+  {
+    id:"daniel",
+    name:"Daniel",
+    role:"Business Owner",
+    x:10.519,
+    y:7.448,
+    description:"A young business owner who knows the local hustle."
+  },
+
+  {
+    id:"fatima",
+    name:"Fatima",
+    role:"Creative",
+    x:10.502,
+    y:7.425,
+    description:"A creative photographer around the recreation area."
+  },
+
+  {
+    id:"musa",
+    name:"Musa",
+    role:"Technician",
+    x:10.516,
+    y:7.426,
+    description:"A technician who knows his way around technology."
+  },
+
+  {
+    id:"zainab",
+    name:"Zainab",
+    role:"Bank Officer",
+    x:10.523,
+    y:7.438,
+    description:"A bank officer who can explain basic financial services."
+  },
+
+  {
+    id:"abdul",
+    name:"Abdul",
+    role:"Trader",
+    x:10.526,
+    y:7.430,
+    description:"A trader who spends most of his time around the market."
+  }
+
+];
+
+const achievementDefinitions = [
+
+  {
+    id:"firstday",
+    name:"First Steps",
+    description:"Survive your first day.",
+    check:g=>g.day>=2
+  },
+
+  {
+    id:"worker",
+    name:"Clocked In",
+    description:"Complete 5 work shifts.",
+    check:g=>g.stats.shifts>=5
+  },
+
+  {
+    id:"rich",
+    name:"Five Figures",
+    description:"Reach ₦50,000 net worth.",
+    check:g=>netWorth()>=50000
+  },
+
+  {
+    id:"investor",
+    name:"Investor",
+    description:"Own at least one investment.",
+    check:g=>Object.values(g.investments).some(v=>v>0)
+  },
+
+  {
+    id:"businessowner",
+    name:"Entrepreneur",
+    description:"Own a business.",
+    check:g=>Object.values(g.businesses).some(v=>v>0)
+  },
+
+  {
+    id:"property",
+    name:"Property Owner",
+    description:"Buy a home.",
+    check:g=>g.home!=="room"
+  },
+
+  {
+    id:"driver",
+    name:"On The Road",
+    description:"Buy a vehicle.",
+    check:g=>g.vehicle!=="walk"
+  },
+
+  {
+    id:"educated",
+    name:"Educated",
+    description:"Complete an education upgrade.",
+    check:g=>g.educationLevel>0
+  },
+
+  {
+    id:"social",
+    name:"People Person",
+    description:"Reach 50 friendship with someone.",
+    check:g=>Object.values(g.friendship).some(v=>v>=50)
+  },
+
+  {
+    id:"million",
+    name:"Serious Wealth",
+    description:"Reach ₦1,000,000 net worth.",
+    check:g=>netWorth()>=1000000
+  }
+
+];
+
+/* =========================================================
+   DEFAULT GAME
+   ========================================================= */
+
+function defaultGame(){
+
+  return {
+
+    version:VERSION,
+
+    name:"",
+    age:18,
+    background:"regular",
+
+    cash:10000,
+    bank:0,
+
+    health:100,
+    hunger:100,
+    energy:100,
+    hygiene:100,
+    fun:100,
+    social:100,
+    mood:80,
+    reputation:0,
+
+    day:1,
+    week:1,
+    hour:8,
+
+    lastRealDay:new Date().toISOString().slice(0,10),
+
+    hasReceivedSignupBonus:false,
+
+    career:{
+      id:null,
+      level:0,
+      xp:0
+    },
+
+    skills:{
+      communication:0,
+      business:0,
+      technology:0,
+      fitness:0,
+      creativity:0,
+      education:0
+    },
+
+    home:"room",
+    vehicle:"walk",
+
+    educationLevel:0,
+    educationXP:0,
+
+    investments:{
+      foods:0,
+      tech:0,
+      transport:0,
+      property:0
+    },
+
+    businesses:{
+      recharge:0,
+      food:0,
+      laundry:0,
+      transport:0,
+      techshop:0
+    },
+
+    loan:0,
+
+    friendship:{
+      amina:0,
+      daniel:0,
+      fatima:0,
+      musa:0,
+      zainab:0,
+      abdul:0
+    },
+
+    achievements:[],
+
+    stats:{
+      shifts:0,
+      gigs:0,
+      daysPlayed:0,
+      moneyEarned:0,
+      moneySpent:0,
+      conversations:0,
+      moves:0,
+      investmentsBought:0,
+      businessesBought:0
+    },
+
+    x:locations.home.lat,
+    y:locations.home.lng,
+
+    currentLocation:"home",
+
+    power:{
+      available:true,
+      outageTimer:0,
+      outages:0
+    },
+
+    inventory:{
+      food:0,
+      medicine:0,
+      books:0
+    },
+
+    feed:[]
+
+  };
+
+}
+
+/* =========================================================
+   AUTH
+   ========================================================= */
+
+function switchAuth(mode){
+
+  authMode=mode;
+
+  const loginTab=document.getElementById("loginTab");
+  const signupTab=document.getElementById("signupTab");
+  const button=document.getElementById("authButton");
+
+  if(mode==="login"){
+
+    loginTab.classList.add("tabActive");
+    signupTab.classList.remove("tabActive");
+
+    button.textContent="Login";
+
+  }else{
+
+    signupTab.classList.add("tabActive");
+    loginTab.classList.remove("tabActive");
+
+    button.textContent="Create Account";
+
+  }
+
+  document.getElementById("authStatus").textContent="";
+
+}
+
+async function submitAuth(){
+
+  const email=document.getElementById("authEmail").value.trim();
+  const password=document.getElementById("authPassword").value;
+
+  if(!email || !password){
+
+    setAuthStatus("Enter your email and password.");
+    return;
+
+  }
+
+  setAuthStatus("Please wait...");
+
+  try{
+
+    if(authMode==="signup"){
+
+      const {data,error}=await supabaseClient.auth.signUp({
+        email,
+        password
+      });
+
+      if(error) throw error;
+
+      if(data.session){
+
+        currentUser=data.user;
+        await loadPlayer();
+
+      }else{
+
+        setAuthStatus(
+          "Account created. Check your email if confirmation is enabled, then log in."
+        );
+
+      }
+
+    }else{
+
+      const {data,error}=await supabaseClient.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if(error) throw error;
+
+      currentUser=data.user;
+
+      await loadPlayer();
+
+    }
+
+  }catch(err){
+
+    console.error(err);
+
+    setAuthStatus(err.message || "Authentication failed.");
+
+  }
+
+}
+
+function setAuthStatus(message){
+
+  document.getElementById("authStatus").textContent=message;
+
+}
+
+supabaseClient.auth.onAuthStateChange(async(event,session)=>{
+
+  if(session && !currentUser){
+
+    currentUser=session.user;
+    await loadPlayer();
+
+  }
+
+});
+
+/* =========================================================
+   LOAD / SAVE
+   ========================================================= */
+
+async function loadPlayer(){
+
+  if(!currentUser) return;
+
+  document.getElementById("authScreen").classList.add("hidden");
+
+  const localKey=`kadunaLife:${currentUser.id}:v39`;
+
+  let saved=null;
+
+  try{
+
+    const local=localStorage.getItem(localKey);
+
+    if(local){
+
+      saved=JSON.parse(local);
+
+    }
+
+  }catch(e){
+
+    console.warn(e);
+
+  }
+
+  try{
+
+    const {data,error}=await supabaseClient
+      .from("profiles")
+      .select("game_state,name,age")
+      .eq("id",currentUser.id)
+      .maybeSingle();
+
+    if(!error && data && data.game_state){
+
+      saved=data.game_state;
+
+    }
+
+  }catch(e){
+
+    console.warn("Cloud load failed",e);
+
+  }
+
+  if(saved){
+
+    game=migrateGame(saved);
+
+    showGame();
+
+  }else{
+
+    await tryV38Migration();
+
+  }
+
+}
+
+async function tryV38Migration(){
+
+  const localKey=`kadunaLife:${currentUser.id}:v38`;
+
+  let old=null;
+
+  try{
+
+    const local=localStorage.getItem(localKey);
+
+    if(local) old=JSON.parse(local);
+
+  }catch(e){}
+
+  if(old){
+
+    game=migrateGame(old);
+
+    game.version=VERSION;
+
+    showGame();
+
+    addFeed("🔄","Your V38 character has been upgraded to V39.");
+
+    await saveGame();
+
+    toast("V38 character migrated successfully!");
+
+    return;
+
+  }
+
+  game=defaultGame();
+
+  showSetup();
+
+}
+
+function migrateGame(old){
+
+  const base=defaultGame();
+
+  const merged={
+    ...base,
+    ...old,
+
+    career:{
+      ...base.career,
+      ...(old.career||{})
+    },
+
+    skills:{
+      ...base.skills,
+      ...(old.skills||{})
+    },
+
+    investments:{
+      ...base.investments,
+      ...(old.investments||{})
+    },
+
+    businesses:{
+      ...base.businesses,
+      ...(old.businesses||{})
+    },
+
+    friendship:{
+      ...base.friendship,
+      ...(old.friendship||{})
+    },
+
+    stats:{
+      ...base.stats,
+      ...(old.stats||{})
+    },
+
+    power:{
+      ...base.power,
+      ...(old.power||{})
+    },
+
+    inventory:{
+      ...base.inventory,
+      ...(old.inventory||{})
+    }
+
+  };
+
+  if(typeof merged.age!=="number") merged.age=18;
+
+  if(!merged.name && old.characterName){
+    merged.name=old.characterName;
+  }
+
+  if(!merged.career.id && old.job){
+    const found=careers.find(c=>c.id===old.job);
+    if(found) merged.career.id=found.id;
+  }
+
+  if(!merged.currentLocation){
+    merged.currentLocation="home";
+  }
+
+  return merged;
+
+}
+
+async function saveGame(){
+
+  if(!currentUser || !game) return;
+
+  const localKey=`kadunaLife:${currentUser.id}:v39`;
+
+  try{
+
+    localStorage.setItem(localKey,JSON.stringify(game));
+
+  }catch(e){
+
+    console.warn("Local save failed",e);
+
+  }
+
+  try{
+
+    await supabaseClient
+      .from("profiles")
+      .upsert({
+        id:currentUser.id,
+        name:game.name,
+        age:game.age,
+        game_state:game
+      });
+
+  }catch(e){
+
+    console.warn("Cloud save failed",e);
+
+  }
+
+  lastSave=Date.now();
+
+}
+
+async function logout(){
+
+  await saveGame();
+
+  await supabaseClient.auth.signOut();
+
+  currentUser=null;
+  game=null;
+
+  document.getElementById("game").classList.add("hidden");
+  document.getElementById("setupScreen").classList.add("hidden");
+  document.getElementById("authScreen").classList.remove("hidden");
+
+}
+
+/* =========================================================
+   CHARACTER
+   ========================================================= */
+
+function selectBackground(card){
+
+  document.querySelectorAll(".bgCard").forEach(x=>{
+    x.classList.remove("selected");
+  });
+
+  card.classList.add("selected");
+
+  selectedBackground=card.dataset.bg;
+
+}
+
+async function createCharacter(){
+
+  const name=document.getElementById("charName").value.trim();
+  const age=Number(document.getElementById("charAge").value);
+
+  if(name.length<2){
+
+    toast("Enter a character name.");
+
+    return;
+
+  }
+
+  if(age<18 || age>50){
+
+    toast("Character age must be between 18 and 50.");
+
+    return;
+
+  }
+
+  game=defaultGame();
+
+  game.name=name;
+  game.age=age;
+  game.background=selectedBackground;
+
+  applyBackground();
+
+  giveSignupBonus();
+
+  addFeed("🎉","Welcome to Kaduna Life!");
+
+  addFeed(
+    "💵",
+    `Your one-time sign-up bonus of ${money(BONUS_AMOUNT)} has been added.`
+  );
+
+  showGame();
+
+  await saveGame();
+
+}
+
+function applyBackground(){
+
+  switch(game.background){
+
+    case"nepo":
+
+      game.cash+=25000;
+      game.skills.business=8;
+      game.skills.communication=5;
+      game.reputation=12;
+
+      addFeed("👔","Your family connections gave you a useful starting advantage.");
+
+      break;
+
+    case"microfinance":
+
+      game.cash+=15000;
+      game.skills.business=12;
+      game.skills.communication=4;
+
+      addFeed("🏦","You start with useful business knowledge.");
+
+      break;
+
+    case"student":
+
+      game.cash+=5000;
+      game.skills.education=12;
+      game.skills.creativity=4;
+
+      addFeed("🎓","Your student background gives you an education advantage.");
+
+      break;
+
+    case"hustler":
+
+      game.cash+=12000;
+      game.skills.communication=10;
+      game.skills.business=7;
+
+      addFeed("💼","Your hustle experience gives you an early advantage.");
+
+      break;
+
+    case"tech":
+
+      game.cash+=8000;
+      game.skills.technology=14;
+      game.inventory.books=1;
+
+      addFeed("💻","Your technology background gives you a head start.");
+
+      break;
+
+    default:
+
+      break;
+
+  }
+
+}
+
+function giveSignupBonus(){
+
+  if(game.hasReceivedSignupBonus) return;
+
+  game.cash+=BONUS_AMOUNT;
+  game.hasReceivedSignupBonus=true;
+
+}
+
+/* =========================================================
+   UI
+   ========================================================= */
+
+function showSetup(){
+
+  document.getElementById("authScreen").classList.add("hidden");
+  document.getElementById("game").classList.add("hidden");
+  document.getElementById("setupScreen").classList.remove("hidden");
+
+}
+
+function showGame(){
+
+  document.getElementById("authScreen").classList.add("hidden");
+  document.getElementById("setupScreen").classList.add("hidden");
+  document.getElementById("game").classList.remove("hidden");
+
+  renderAll();
+
+  setTimeout(initMap,300);
+
+  setupRealtime();
+
+}
+
+function showPage(page,button){
+
+  document.querySelectorAll(".page").forEach(p=>{
+    p.classList.remove("active");
+  });
+
+  document.getElementById(`page-${page}`).classList.add("active");
+
+  document.querySelectorAll(".nav button").forEach(b=>{
+    b.classList.remove("active");
+  });
+
+  button.classList.add("active");
+
+  if(page==="map"){
+
+    setTimeout(()=>{
+      if(map) map.invalidateSize();
+    },200);
+
+  }
+
+}
+
+function renderAll(){
+
+  if(!game) return;
+
+  document.getElementById("topName").textContent=game.name;
+  document.getElementById("topDay").textContent=game.day;
+
+  const times=["Morning","Late Morning","Afternoon","Evening","Night"];
+
+  document.getElementById("topTime").textContent =
+    times[Math.min(4,Math.floor(game.hour/5))];
+
+  document.getElementById("topMoney").textContent=money(game.cash);
+
+  document.getElementById("topMood").textContent=
+    moodEmoji()+" "+moodText();
+
+  renderNeeds();
+  renderHome();
+  renderCareer();
+  renderMoney();
+  renderLife();
+  renderSocial();
+  renderAchievements();
+
+}
+
+function renderNeeds(){
+
+  const needs=[
+    ["Hunger",game.hunger],
+    ["Energy",game.energy],
+    ["Hygiene",game.hygiene],
+    ["Fun",game.fun],
+    ["Social",game.social],
+    ["Health",game.health]
+  ];
+
+  needs.forEach(([name,value])=>{
+
+    const key=name.toLowerCase();
+
+    const valueEl=document.getElementById("need"+name);
+    const bar=document.getElementById("bar"+name);
+
+    if(valueEl) valueEl.textContent=Math.round(value)+"%";
+    if(bar) bar.style.width=Math.max(0,Math.min(100,value))+"%";
+
+  });
+
+}
+
+function renderHome(){
+
+  document.getElementById("welcomeTitle").textContent=
+    `Welcome back, ${game.name} 👋`;
+
+  document.getElementById("welcomeText").textContent=
+    `${homeObject().name} · Day ${game.day}`;
+
+  document.getElementById("summaryCareer").textContent=
+    currentCareer()?currentCareer().name:"Unemployed";
+
+  document.getElementById("summaryCareerLevel").textContent=
+    `Level ${game.career.level}`;
+
+  document.getElementById("summaryHome").textContent=
+    homeObject().name;
+
+  document.getElementById("summaryVehicle").textContent=
+    vehicleObject().name;
+
+  document.getElementById("summaryPower").textContent=
+    game.power.available?"Available":"Outage";
+
+  document.getElementById("powerBadge").textContent=
+    game.power.available?"ON":"OFF";
+
+  document.getElementById("powerBadge").className=
+    "badge "+(game.power.available?"greenBadge":"");
+
+  document.getElementById("homeCash").textContent=money(game.cash);
+  document.getElementById("homeBank").textContent=money(game.bank);
+  document.getElementById("homeNetWorth").textContent=money(netWorth());
+
+  renderFeed();
+
+}
+
+function renderFeed(){
+
+  const box=document.getElementById("feed");
+
+  box.innerHTML="";
+
+  if(!game.feed.length){
+
+    box.innerHTML=
+      `<div class="small">Nothing has happened yet.</div>`;
+
+    return;
+
+  }
+
+  game.feed.slice(0,12).forEach(item=>{
+
+    const div=document.createElement("div");
+
+    div.className="listItem";
+
+    div.innerHTML=`
+      <div>
+        <strong>${escapeHtml(item.icon)} ${escapeHtml(item.text)}</strong>
+        <span class="small">Day ${item.day}</span>
+      </div>
+    `;
+
+    box.appendChild(div);
+
+  });
+
+}
+
+function renderCareer(){
+
+  const career=currentCareer();
+
+  document.getElementById("careerName").textContent=
+    career?career.name:"Unemployed";
+
+  document.getElementById("careerDescription").textContent=
+    career?career.description:"Choose a career below.";
+
+  document.getElementById("careerLevel").textContent=
+    game.career.level;
+
+  document.getElementById("careerSalary").textContent=
+    career?money(career.salaries[Math.max(0,game.career.level-1)]||career.salaries[0]):"₦0";
+
+  document.getElementById("careerProgress").style.width=
+    Math.min(100,game.career.xp)+"%";
+
+  const list=document.getElementById("careerList");
+
+  list.innerHTML="";
+
+  careers.forEach(c=>{
+
+    const active=game.career.id===c.id;
+
+    const div=document.createElement("div");
+
+    div.className="listItem";
+
+    div.innerHTML=`
+
+      <div>
+        <strong>${c.name}</strong>
+        <span class="small">
+          ${c.description}<br>
+          Workplace: ${c.workplace}
+        </span>
+      </div>
+
+      <button class="secondary"
+        onclick="chooseCareer('${c.id}')">
+        ${active?"Selected":"Choose"}
+      </button>
+
+    `;
+
+    list.appendChild(div);
+
+  });
+
+  const gigBox=document.getElementById("gigList");
+
+  gigBox.innerHTML="";
+
+  gigs.forEach(g=>{
+
+    const div=document.createElement("div");
+
+    div.className="listItem";
+
+    div.innerHTML=`
+
+      <div>
+        <strong>${g.name}</strong>
+        <span class="small">
+          Energy -${g.energy} · +${money(g.pay)}
+        </span>
+      </div>
+
+      <button class="secondary"
+        onclick="doGig('${g.id}')">
+        Do Gig
+      </button>
+
+    `;
+
+    gigBox.appendChild(div);
+
+  });
+
+  const skillsBox=document.getElementById("skillsList");
+
+  skillsBox.innerHTML="";
+
+  Object.entries(game.skills).forEach(([skill,value])=>{
+
+    const div=document.createElement("div");
+
+    div.className="card";
+
+    div.innerHTML=`
+
+      <strong>${capitalize(skill)}</strong>
+
+      <div class="stat">${Math.round(value)}</div>
+
+      <div class="progress">
+        <div style="width:${Math.min(100,value)}%"></div>
+      </div>
+
+      <button class="secondary" style="width:100%;"
+        onclick="trainSkill('${skill}')">
+        Train
+      </button>
+
+    `;
+
+    skillsBox.appendChild(div);
+
+  });
+
+}
+
+function renderMoney(){
+
+  document.getElementById("moneyCash").textContent=money(game.cash);
+  document.getElementById("moneyBank").textContent=money(game.bank);
+  document.getElementById("moneyInvestments").textContent=
+    money(investmentValue());
+
+  document.getElementById("moneyNetWorth").textContent=
+    money(netWorth());
+
+  document.getElementById("loanBalance").textContent=
+    money(game.loan);
+
+  const investmentsBox=document.getElementById("investmentList");
+
+  investmentsBox.innerHTML="";
+
+  investments.forEach(item=>{
+
+    const owned=game.investments[item.id]||0;
+
+    const currentValue=
+      owned*item.price*(1+item.growth*game.day/30);
+
+    const div=document.createElement("div");
+
+    div.className="listItem";
+
+    div.innerHTML=`
+
+      <div>
+        <strong>${item.name}</strong>
+        <span class="small">
+          Unit: ${money(item.price)} · Owned: ${owned}
+        </span>
+      </div>
+
+      <div style="text-align:right;">
+        <strong>${money(currentValue)}</strong>
+        <button class="secondary"
+          onclick="buyInvestment('${item.id}')">
+          Buy
+        </button>
+      </div>
+
+    `;
+
+    investmentsBox.appendChild(div);
+
+  });
+
+  const businessBox=document.getElementById("businessList");
+
+  businessBox.innerHTML="";
+
+  businesses.forEach(item=>{
+
+    const owned=game.businesses[item.id]||0;
+
+    const div=document.createElement("div");
+
+    div.className="listItem";
+
+    div.innerHTML=`
+
+      <div>
+        <strong>${item.name}</strong>
+        <span class="small">
+          Cost: ${money(item.cost)} · Daily income: ${money(item.income)}
+          <br>Owned: ${owned}
+        </span>
+      </div>
+
+      <button class="secondary"
+        onclick="buyBusiness('${item.id}')">
+        ${owned?"Buy Another":"Start"}
+      </button>
+
+    `;
+
+    businessBox.appendChild(div);
+
+  });
+
+}
+
+function renderLife(){
+
+  document.getElementById("rentAmount").textContent=
+    money(homeObject().rent);
+
+  document.getElementById("powerCost").textContent=
+    game.power.available?"₦0":"₦500";
+
+  document.getElementById("transportCost").textContent=
+    vehicleObject().fuel?money(vehicleObject().fuel):"₦0";
+
+  const homeBox=document.getElementById("housingList");
+
+  homeBox.innerHTML="";
+
+  homes.forEach(h=>{
+
+    const owned=game.home===h.id;
+
+    const div=document.createElement("div");
+
+    div.className="listItem";
+
+    div.innerHTML=`
+
+      <div>
+        <strong>${h.name}</strong>
+        <span class="small">
+          ${h.price?money(h.price)+" purchase · ":""}
+          Weekly rent ${money(h.rent)} · Comfort ${h.comfort}
+        </span>
+      </div>
+
+      <button class="secondary"
+        onclick="buyHome('${h.id}')">
+        ${owned?"Current":h.price?"Buy":"Use"}
+      </button>
+
+    `;
+
+    homeBox.appendChild(div);
+
+  });
+
+  const vehicleBox=document.getElementById("vehicleList");
+
+  vehicleBox.innerHTML="";
+
+  vehicles.forEach(v=>{
+
+    const owned=game.vehicle===v.id;
+
+    const div=document.createElement("div");
+
+    div.className="listItem";
+
+    div.innerHTML=`
+
+      <div>
+        <strong>${v.name}</strong>
+        <span class="small">
+          ${v.price?money(v.price):"Free"} ·
+          Travel cost ${money(v.fuel)}
+        </span>
+      </div>
+
+      <button class="secondary"
+        onclick="buyVehicle('${v.id}')">
+        ${owned?"Current":v.price?"Buy":"Use"}
+      </button>
+
+    `;
+
+    vehicleBox.appendChild(div);
+
+  });
+
+  const eduBox=document.getElementById("educationList");
+
+  eduBox.innerHTML="";
+
+  education.forEach((e,index)=>{
+
+    const complete=game.educationLevel>=index;
+
+    const div=document.createElement("div");
+
+    div.className="listItem";
+
+    div.innerHTML=`
+
+      <div>
+        <strong>${e.name}</strong>
+        <span class="small">
+          ${e.cost?money(e.cost):"Free"} ·
+          Education +${e.education}
+        </span>
+      </div>
+
+      <button class="secondary"
+        onclick="study('${e.id}')">
+        ${complete?"Completed":"Study"}
+      </button>
+
+    `;
+
+    eduBox.appendChild(div);
+
+  });
+
+}
+
+function renderSocial(){
+
+  const box=document.getElementById("npcList");
+
+  box.innerHTML="";
+
+  npcs.forEach(n=>{
+
+    const friendship=game.friendship[n.id]||0;
+
+    const div=document.createElement("div");
+
+    div.className="listItem";
+
+    div.innerHTML=`
+
+      <div>
+        <strong>${n.name}</strong>
+        <span class="small">
+          ${n.role} · Friendship ${friendship}/100
+        </span>
+
+        <div class="progress">
+          <div style="width:${friendship}%"></div>
+        </div>
+      </div>
+
+      <button class="secondary"
+        onclick="talkTo('${n.id}')">
+        Talk
+      </button>
+
+    `;
+
+    box.appendChild(div);
+
+  });
+
+}
+
+function renderAchievements(){
+
+  const box=document.getElementById("achievementList");
+
+  box.innerHTML="";
+
+  achievementDefinitions.forEach(a=>{
+
+    const unlocked=game.achievements.includes(a.id);
+
+    const div=document.createElement("div");
+
+    div.className="listItem";
+
+    div.innerHTML=`
+
+      <div>
+        <strong>
+          ${unlocked?"🏆":"🔒"} ${a.name}
+        </strong>
+        <span class="small">${a.description}</span>
+      </div>
+
+      <span class="badge ${unlocked?"greenBadge":""}">
+        ${unlocked?"Unlocked":"Locked"}
+      </span>
+
+    `;
+
+    box.appendChild(div);
+
+  });
+
+}
+
+/* =========================================================
+   NEED ACTIONS
+   ========================================================= */
+
+function eat(){
+
+  if(game.cash<500){
+
+    toast("You need ₦500 to buy food.");
+
+    return;
+
+  }
+
+  game.cash-=500;
+  game.hunger=clamp(game.hunger+28);
+  game.health=clamp(game.health+4);
+  game.energy=clamp(game.energy+3);
+
+  spend(500);
+
+  addFeed("🍲","You bought food and ate.");
+  renderAll();
+  autosave();
+
+}
+
+function sleep(){
+
+  game.energy=100;
+  game.health=clamp(game.health+8);
+  game.hunger=clamp(game.hunger-12);
+  game.hygiene=clamp(game.hygiene-8);
+
+  advanceTime(8);
+
+  addFeed("😴","You slept and started a new part of your day.");
+
+  maybeLifeEvent();
+
+  renderAll();
+  autosave();
+
+}
+
+function shower(){
+
+  game.hygiene=100;
+  game.social=clamp(game.social+3);
+
+  advanceTime(1);
+
+  addFeed("🚿","You took a shower.");
+
+  renderAll();
+  autosave();
+
+}
+
+function haveFun(){
+
+  if(game.cash<300){
+
+    toast("You need ₦300 for entertainment.");
+
+    return;
+
+  }
+
+  game.cash-=300;
+
+  game.fun=clamp(game.fun+25);
+  game.social=clamp(game.social+5);
+  game.energy=clamp(game.energy-5);
+
+  spend(300);
+
+  advanceTime(2);
+
+  addFeed("🎮","You relaxed and had some fun.");
+
+  renderAll();
+  autosave();
+
+}
+
+function socialize(){
+
+  game.social=clamp(game.social+20);
+  game.fun=clamp(game.fun+10);
+  game.mood=clamp(game.mood+7);
+
+  advanceTime(2);
+
+  addFeed("👥","You spent time around people.");
+
+  renderAll();
+  autosave();
+
+}
+
+function healthCare(){
+
+  if(game.cash<1000){
+
+    toast("Healthcare costs ₦1,000.");
+
+    return;
+
+  }
+
+  game.cash-=1000;
+
+  game.health=100;
+
+  spend(1000);
+
+  advanceTime(2);
+
+  addFeed("🏥","You visited the hospital and restored your health.");
+
+  renderAll();
+  autosave();
+
+}
+
+/* =========================================================
+   CAREERS
+   ========================================================= */
+
+function chooseCareer(id){
+
+  const career=careers.find(c=>c.id===id);
+
+  if(!career) return;
+
+  if(game.career.id===id){
+
+    toast("You already have this career.");
+
+    return;
+
+  }
+
+  game.career.id=id;
+  game.career.level=1;
+  game.career.xp=0;
+
+  addFeed("💼",`You started working as a ${career.name}.`);
+
+  renderAll();
+  autosave();
+
+}
+
+function currentCareer(){
+
+  return careers.find(c=>c.id===game.career.id)||null;
+
+}
+
+function workShift(){
+
+  const career=currentCareer();
+
+  if(!career){
+
+    toast("Choose a career first.");
+
+    return;
+
+  }
+
+  if(game.energy<20){
+
+    toast("You're too tired to work. Get some rest.");
+
+    return;
+
+  }
+
+  if(game.hunger<15){
+
+    toast("You're too hungry to work.");
+
+    return;
+
+  }
+
+  const salary=
+    career.salaries[Math.max(0,game.career.level-1)];
+
+  let bonus=
+    Math.floor(
+      (game.skills[career.skill]||0)*15
+    );
+
+  if(!game.power.available && career.skill==="technology"){
+    bonus=Math.floor(bonus*.7);
+  }
+
+  const earned=salary+bonus;
+
+  game.cash+=earned;
+
+  game.stats.shifts++;
+  game.stats.moneyEarned+=earned;
+
+  game.energy=clamp(game.energy-20);
+  game.hunger=clamp(game.hunger-10);
+  game.fun=clamp(game.fun-5);
+  game.social=clamp(game.social-3);
+
+  game.career.xp+=12;
+
+  if(game.career.xp>=100){
+
+    if(game.career.level<5){
+
+      game.career.level++;
+      game.career.xp=0;
+
+      addFeed(
+        "📈",
+        `Promotion! You reached career level ${game.career.level}.`
+      );
+
+      toast("🎉 You got promoted!");
+
+    }else{
+
+      game.career.xp=100;
+
+    }
+
+  }
+
+  trainSkill(career.skill,true);
+
+  advanceTime(5);
+
+  addFeed(
+    "💼",
+    `You worked a shift and earned ${money(earned)}.`
+  );
+
+  checkAchievements();
+
+  renderAll();
+  autosave();
+
+}
+
+function doGig(id){
+
+  const gig=gigs.find(g=>g.id===id);
+
+  if(!gig) return;
+
+  if(game.energy<gig.energy){
+
+    toast("You're too tired for this gig.");
+
+    return;
+
+  }
+
+  game.cash+=gig.pay;
+
+  game.energy=clamp(game.energy-gig.energy);
+  game.hunger=clamp(game.hunger-5);
+
+  game.stats.gigs++;
+  game.stats.moneyEarned+=gig.pay;
+
+  trainSkill(gig.skill,true);
+
+  advanceTime(2);
+
+  addFeed(
+    "🛵",
+    `${gig.name} completed. You earned ${money(gig.pay)}.`
+  );
+
+  checkAchievements();
+
+  renderAll();
+  autosave();
+
+}
+
+/* =========================================================
+   SKILLS
+   ========================================================= */
+
+function trainSkill(skill,silent=false){
+
+  if(game.skills[skill]===undefined) return;
+
+  if(!silent){
+
+    if(game.energy<8){
+
+      toast("You're too tired to train.");
+
+      return;
+
+    }
+
+    game.energy=clamp(game.energy-8);
+    advanceTime(1);
+
+  }
+
+  game.skills[skill]=clamp(game.skills[skill]+3,0,100);
+
+  if(!silent){
+
+    addFeed("🧠",`${capitalize(skill)} skill improved.`);
+
+    renderAll();
+    autosave();
+
+  }
+
+}
+
+/* =========================================================
+   BANK
+   ========================================================= */
+
+function deposit(amount=1000){
+
+  if(game.cash<amount){
+
+    toast("Not enough cash.");
+
+    return;
+
+  }
+
+  game.cash-=amount;
+  game.bank+=amount;
+
+  spend(amount);
+
+  addFeed("🏦",`You deposited ${money(amount)}.`);
+
+  renderAll();
+  autosave();
+
+}
+
+function withdraw(amount=1000){
+
+  if(game.bank<amount){
+
+    toast("Not enough money in the bank.");
+
+    return;
+
+  }
+
+  game.bank-=amount;
+  game.cash+=amount;
+
+  addFeed("🏦",`You withdrew ${money(amount)}.`);
+
+  renderAll();
+  autosave();
+
+}
+
+/* =========================================================
+   INVESTMENTS
+   ========================================================= */
+
+function buyInvestment(id){
+
+  const item=investments.find(i=>i.id===id);
+
+  if(!item) return;
+
+  if(game.cash<item.price){
+
+    toast("Not enough cash.");
+
+    return;
+
+  }
+
+  game.cash-=item.price;
+  game.investments[id]=(game.investments[id]||0)+1;
+
+  game.stats.investmentsBought++;
+  spend(item.price);
+
+  addFeed(
+    "📈",
+    `You bought 1 unit of ${item.name}.`
+  );
+
+  checkAchievements();
+
+  renderAll();
+  autosave();
+
+}
+
+function investmentValue(){
+
+  return investments.reduce((total,item)=>{
+
+    const units=game.investments[item.id]||0;
+
+    const growth=1+(item.growth*(game.day/30));
+
+    return total+(units*item.price*growth);
+
+  },0);
+
+}
+
+/* =========================================================
+   BUSINESSES
+   ========================================================= */
+
+function buyBusiness(id){
+
+  const business=businesses.find(b=>b.id===id);
+
+  if(!business) return;
+
+  if(game.cash<business.cost){
+
+    toast("Not enough cash to start this business.");
+
+    return;
+
+  }
+
+  game.cash-=business.cost;
+
+  game.businesses[id]=(game.businesses[id]||0)+1;
+
+  game.stats.businessesBought++;
+
+  spend(business.cost);
+
+  addFeed(
+    "🏪",
+    `You started another ${business.name}.`
+  );
+
+  checkAchievements();
+
+  renderAll();
+  autosave();
+
+}
+
+/* =========================================================
+   LOANS
+   ========================================================= */
+
+function takeLoan(amount){
+
+  if(game.loan>0){
+
+    toast("Repay your current loan before taking another.");
+
+    return;
+
+  }
+
+  game.loan=Math.floor(amount*1.08);
+  game.cash+=amount;
+
+  addFeed(
+    "🏦",
+    `You received a fictional in-game microfinance loan of ${money(amount)}.`
+  );
+
+  renderAll();
+  autosave();
+
+}
+
+function repayLoan(amount){
+
+  if(game.loan<=0){
+
+    toast("You have no loan.");
+
+    return;
+
+  }
+
+  amount=Math.min(amount,game.loan);
+
+  if(game.cash<amount){
+
+    toast("Not enough cash.");
+
+    return;
+
+  }
+
+  game.cash-=amount;
+  game.loan-=amount;
+
+  spend(amount);
+
+  addFeed("💳",`You repaid ${money(amount)} of your loan.`);
+
+  renderAll();
+  autosave();
+
+}
+
+/* =========================================================
+   HOUSING
+   ========================================================= */
+
+function buyHome(id){
+
+  const home=homes.find(h=>h.id===id);
+
+  if(!home) return;
+
+  if(game.home===id){
+
+    toast("You're already living here.");
+
+    return;
+
+  }
+
+  if(home.price>0){
+
+    if(game.cash<home.price){
+
+      toast("Not enough cash.");
+
+      return;
+
+    }
+
+    game.cash-=home.price;
+
+    spend(home.price);
+
+  }
+
+  game.home=id;
+
+  addFeed("🏠",`You moved into ${home.name}.`);
+
+  renderAll();
+  autosave();
+
+}
+
+function buyVehicle(id){
+
+  const vehicle=vehicles.find(v=>v.id===id);
+
+  if(!vehicle) return;
+
+  if(game.vehicle===id){
+
+    toast("You already use this vehicle.");
+
+    return;
+
+  }
+
+  if(vehicle.price>0){
+
+    if(game.cash<vehicle.price){
+
+      toast("Not enough cash.");
+
+      return;
+
+    }
+
+    game.cash-=vehicle.price;
+
+    spend(vehicle.price);
+
+  }
+
+  game.vehicle=id;
+
+  addFeed("🚗",`You now use ${vehicle.name}.`);
+
+  checkAchievements();
+
+  renderAll();
+  autosave();
+
+}
+
+/* =========================================================
+   EDUCATION
+   ========================================================= */
+
+function study(id){
+
+  const index=education.findIndex(e=>e.id===id);
+
+  if(index<0) return;
+
+  if(index<=game.educationLevel){
+
+    toast("You already completed this level.");
+
+    return;
+
+  }
+
+  const item=education[index];
+
+  if(index!==game.educationLevel+1){
+
+    if(index>game.educationLevel+1){
+
+      toast("Complete the previous education level first.");
+
+      return;
+
+    }
+
+  }
+
+  if(game.cash<item.cost){
+
+    toast("Not enough money for this course.");
+
+    return;
+
+  }
+
+  game.cash-=item.cost;
+
+  game.educationLevel=index;
+  game.educationXP+=item.education;
+
+  game.skills.education=
+    clamp(game.skills.education+item.education);
+
+  spend(item.cost);
+
+  advanceTime(6);
+
+  addFeed(
+    "🎓",
+    `You completed ${item.name}.`
+  );
+
+  checkAchievements();
+
+  renderAll();
+  autosave();
+
+}
+
+/* =========================================================
+   SOCIAL
+   ========================================================= */
+
+function talkTo(id){
+
+  const npc=npcs.find(n=>n.id===id);
+
+  if(!npc) return;
+
+  const current=game.friendship[id]||0;
+
+  const newValue=clamp(current+8,0,100);
+
+  game.friendship[id]=newValue;
+
+  game.social=clamp(game.social+12);
+  game.fun=clamp(game.fun+8);
+  game.mood=clamp(game.mood+5);
+
+  game.stats.conversations++;
+
+  advanceTime(2);
+
+  const responses=[
+
+    `${npc.name} told you about something happening around Kaduna.`,
+    `${npc.name} shared some useful advice with you.`,
+    `You and ${npc.name} had a good conversation.`,
+    `${npc.name} told you about their day.`,
+    `You learned something interesting from ${npc.name}.`
+
+  ];
+
+  const response=
+    responses[Math.floor(Math.random()*responses.length)];
+
+  addFeed("💬",response);
+
+  toast(`${npc.name}: Friendship ${newValue}/100`);
+
+  checkAchievements();
+
+  renderAll();
+  autosave();
+
+}
+
+/* =========================================================
+   MAP
+   ========================================================= */
+
+function initMap(){
+
+  if(map) return;
+
+  const mapElement=document.getElementById("map");
+
+  if(!mapElement) return;
+
+  map=L.map("map").setView(
+    [game?.x||KADUNA_CENTER[0],game?.y||KADUNA_CENTER[1]],
+    13
+  );
+
+  L.tileLayer(
+    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    {
+      maxZoom:19,
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }
+  ).addTo(map);
+
+  Object.entries(locations).forEach(([id,l])=>{
+
+    const marker=L.marker([l.lat,l.lng]).addTo(map);
+
+    marker.bindPopup(`
+      <strong>${l.name}</strong><br>
+      ${l.description}
+      <br><br>
+      <button onclick="goLocation('${id}')">
+        Go Here
+      </button>
+    `);
+
+  });
+
+  npcs.forEach(n=>{
+
+    const marker=L.circleMarker(
+      [n.x,n.y],
+      {
+        radius:7
+      }
+    ).addTo(map);
+
+    marker.bindPopup(`
+      <strong>👤 ${n.name}</strong><br>
+      ${n.role}<br>
+      ${n.description}
+      <br><br>
+      <button onclick="talkTo('${n.id}')">
+        Talk
+      </button>
+    `);
+
+  });
+
+  playerMarker=L.circleMarker(
+    [game.x,game.y],
+    {
+      radius:10
+    }
+  ).addTo(map);
+
+  playerMarker.bindPopup("You are here.");
+
+  map.on("click",function(e){
+
+    movePlayer(e.latlng.lat,e.latlng.lng);
+
+  });
+
+  updateLocationUI();
+
+}
+
+function movePlayer(lat,lng){
+
+  if(!game) return;
+
+  const v=vehicleObject();
+
+  const distance=
+    Math.sqrt(
+      Math.pow((lat-game.x)*100,2)+
+      Math.pow((lng-game.y)*100,2)
+    );
+
+  const transportCost=
+    Math.max(
+      50,
+      Math.floor(distance*20/v.speed)
+    );
+
+  if(game.cash<transportCost){
+
+    toast(
+      `You need ${money(transportCost)} for transport.`
+    );
+
+    return;
+
+  }
+
+  game.cash-=transportCost;
+
+  game.stats.moves++;
+  game.stats.moneySpent+=transportCost;
+
+  game.x=lat;
+  game.y=lng;
+
+  game.energy=clamp(
+    game.energy-Math.min(5,Math.ceil(distance))
+  );
+
+  if(playerMarker){
+
+    playerMarker.setLatLng([lat,lng]);
+
+  }
+
+  if(map){
+
+    map.panTo([lat,lng]);
+
+  }
+
+  detectLocation();
+
+  addFeed(
+    "🗺️",
+    `You travelled to a new location. Transport cost ${money(transportCost)}.`
+  );
+
+  spend(transportCost);
+
+  broadcastMovement();
+
+  checkAchievements();
+
+  renderAll();
+  autosave();
+
+}
+
+function goLocation(id){
+
+  const l=locations[id];
+
+  if(!l || !map) return;
+
+  movePlayer(l.lat,l.lng);
+
+}
+
+function detectLocation(){
+
+  let nearest="home";
+  let smallest=Infinity;
+
+  Object.entries(locations).forEach(([id,l])=>{
+
+    const distance=
+      Math.sqrt(
+        Math.pow(game.x-l.lat,2)+
+        Math.pow(game.y-l.lng,2)
+      );
+
+    if(distance<smallest){
+
+      smallest=distance;
+      nearest=id;
+
+    }
+
+  });
+
+  game.currentLocation=nearest;
+
+  updateLocationUI();
+
+}
+
+function updateLocationUI(){
+
+  const l=locations[game.currentLocation]||locations.home;
+
+  document.getElementById("currentLocation").textContent=
+    `📍 ${l.name}`;
+
+  document.getElementById("locationDescription").textContent=
+    l.description;
+
+}
+
+/* =========================================================
+   POWER / TIME / DAYS
+   ========================================================= */
+
+function advanceTime(hours){
+
+  game.hour+=hours;
+
+  while(game.hour>=24){
+
+    game.hour-=24;
+
+    advanceDay();
+
+  }
+
+  if(game.power.outageTimer>0){
+
+    game.power.outageTimer-=hours;
+
+    if(game.power.outageTimer<=0){
+
+      game.power.outageTimer=0;
+      game.power.available=true;
+
+      addFeed("⚡","Power has returned.");
+
+    }
+
+  }
+
+}
+
+function advanceDay(){
+
+  game.day++;
+  game.stats.daysPlayed++;
+
+  if(game.day%7===1){
+
+    game.week++;
+
+    payWeeklySystems();
+
+  }
+
+  businessIncome();
+  investmentGrowthTick();
+  loanInterestTick();
+
+  decayNeeds();
+
+  randomPowerEvent();
+  maybeLifeEvent();
+
+  if(game.day%5===0){
+
+    randomLifeEvent();
+
+  }
+
+  if(game.day%10===0){
+
+    addFeed(
+      "📅",
+      `You have reached Day ${game.day} in Kaduna Life.`
+    );
+
+  }
+
+  checkAchievements();
+
+}
+
+function payWeeklySystems(){
+
+  const rent=homeObject().rent;
+
+  if(game.cash>=rent){
+
+    game.cash-=rent;
+
+    spend(rent);
+
+    addFeed(
+      "🏠",
+      `Weekly rent of ${money(rent)} was paid.`
+    );
+
+  }else if(game.bank>=rent){
+
+    game.bank-=rent;
+
+    addFeed(
+      "🏦",
+      `Weekly rent of ${money(rent)} was deducted from your bank.`
+    );
+
+  }else{
+
+    game.health=clamp(game.health-8);
+    game.mood=clamp(game.mood-8);
+
+    addFeed(
+      "⚠️",
+      "You couldn't fully cover your weekly rent."
+    );
+
+  }
+
+}
+
+function businessIncome(){
+
+  let total=0;
+
+  businesses.forEach(b=>{
+
+    const count=game.businesses[b.id]||0;
+
+    if(count>0){
+
+      total+=count*b.income;
+
+    }
+
+  });
+
+  if(total>0){
+
+    game.bank+=total;
+    game.stats.moneyEarned+=total;
+
+    addFeed(
+      "🏪",
+      `Your businesses generated ${money(total)}.`
+    );
+
+  }
+
+}
+
+function investmentGrowthTick(){
+
+  const value=investmentValue();
+
+  if(value>0){
+
+    const passive=Math.floor(value*.003);
+
+    game.bank+=passive;
+
+    if(passive>0){
+
+      addFeed(
+        "📈",
+        `Your investments generated about ${money(passive)} in growth.`
+      );
+
+    }
+
+  }
+
+}
+
+function loanInterestTick(){
+
+  if(game.loan>0){
+
+    game.loan=Math.floor(game.loan*1.01);
+
+  }
+
+}
+
+function decayNeeds(){
+
+  game.hunger=clamp(game.hunger-8);
+  game.energy=clamp(game.energy-4);
+  game.hygiene=clamp(game.hygiene-6);
+  game.fun=clamp(game.fun-5);
+  game.social=clamp(game.social-4);
+
+  if(game.hunger<20){
+
+    game.health=clamp(game.health-4);
+
+  }
+
+  if(game.hygiene<20){
+
+    game.health=clamp(game.health-2);
+
+  }
+
+  if(game.energy<15){
+
+    game.health=clamp(game.health-3);
+
+  }
+
+  updateMood();
+
+}
+
+function randomPowerEvent(){
+
+  const roll=Math.random();
+
+  if(roll<.14){
+
+    game.power.available=false;
+    game.power.outageTimer=4;
+    game.power.outages++;
+
+    addFeed(
+      "⚡",
+      "NEPA-style power outage: electricity is currently unavailable."
+    );
+
+  }
+
+}
+
+function randomLifeEvent(){
+
+  const events=[
+
+    {
+      title:"Unexpected Opportunity",
+      text:"Someone offered you a small paid opportunity.",
+      choices:[
+        {
+          label:"Accept",
+          action:()=>{
+            const amount=1500+Math.floor(Math.random()*2500);
+            game.cash+=amount;
+            game.stats.moneyEarned+=amount;
+            addFeed("✨",`You accepted an opportunity and earned ${money(amount)}.`);
+          }
+        },
+        {
+          label:"Decline",
+          action:()=>{
+            game.energy=clamp(game.energy+5);
+            addFeed("🧘","You declined the opportunity and kept your energy.");
+          }
+        }
+      ]
+    },
+
+    {
+      title:"Unexpected Expense",
+      text:"You suddenly need to handle an everyday expense.",
+      choices:[
+        {
+          label:"Pay ₦1,200",
+          action:()=>{
+            if(game.cash>=1200){
+              game.cash-=1200;
+              spend(1200);
+              addFeed("🧾","You handled an unexpected expense.");
+            }else{
+              game.mood=clamp(game.mood-8);
+              addFeed("⚠️","You couldn't cover the unexpected expense.");
+            }
+          }
+        },
+        {
+          label:"Ignore it",
+          action:()=>{
+            game.reputation=clamp(game.reputation-2);
+            addFeed("⚠️","You ignored the expense and lost some reputation.");
+          }
+        }
+      ]
+    },
+
+    {
+      title:"Good News",
+      text:"You received encouraging news that lifted your mood.",
+      choices:[
+        {
+          label:"Celebrate",
+          action:()=>{
+            game.mood=clamp(game.mood+15);
+            game.fun=clamp(game.fun+10);
+            addFeed("🎉","The good news improved your mood.");
+          }
+        }
+      ]
+    }
+
+  ];
+
+  const event=
+    events[Math.floor(Math.random()*events.length)];
+
+  openEvent(event);
+
+}
+
+function maybeLifeEvent(){
+
+  if(Math.random()<.10){
+
+    randomLifeEvent();
+
+  }
+
+}
+
+/* =========================================================
+   EVENT MODAL
+   ========================================================= */
+
+function openEvent(event){
+
+  document.getElementById("modalTitle").textContent=
+    event.title;
+
+  const content=document.getElementById("modalContent");
+
+  content.innerHTML=`
+    <p class="muted">${event.text}</p>
+  `;
+
+  event.choices.forEach(choice=>{
+
+    const button=document.createElement("button");
+
+    button.className="eventChoice";
+    button.textContent=choice.label;
+
+    button.onclick=()=>{
+
+      choice.action();
+      closeModal();
+      renderAll();
+      autosave();
+
+    };
+
+    content.appendChild(button);
+
+  });
+
+  document.getElementById("modal").classList.remove("hidden");
+
+}
+
+function closeModal(){
+
+  document.getElementById("modal").classList.add("hidden");
+
+}
+
+function closeModalOutside(event){
+
+  if(event.target.id==="modal"){
+
+    closeModal();
+
+  }
+
+}
+
+/* =========================================================
+   MOOD
+   ========================================================= */
+
+function updateMood(){
+
+  const average=
+    (
+      game.health+
+      game.hunger+
+      game.energy+
+      game.hygiene+
+      game.fun+
+      game.social
+    )/6;
+
+  game.mood=
+    clamp(
+      Math.round(
+        average*.7+
+        game.reputation*.2+
+        10
+      ),
+      0,
+      100
+    );
+
+}
+
+function moodEmoji(){
+
+  if(game.mood>=80) return "😎";
+  if(game.mood>=60) return "🙂";
+  if(game.mood>=40) return "😐";
+  if(game.mood>=20) return "😕";
+
+  return "😫";
+
+}
+
+function moodText(){
+
+  if(game.mood>=80) return "Great";
+  if(game.mood>=60) return "Good";
+  if(game.mood>=40) return "Okay";
+  if(game.mood>=20) return "Low";
+
+  return "Bad";
+
+}
+
+/* =========================================================
+   ACHIEVEMENTS
+   ========================================================= */
+
+function checkAchievements(){
+
+  achievementDefinitions.forEach(a=>{
+
+    if(
+      !game.achievements.includes(a.id) &&
+      a.check(game)
+    ){
+
+      game.achievements.push(a.id);
+
+      addFeed(
+        "🏆",
+        `Achievement unlocked: ${a.name}`
+      );
+
+      toast(`🏆 Achievement unlocked: ${a.name}`);
+
+    }
+
+  });
+
+}
+
+/* =========================================================
+   REALTIME MULTIPLAYER
+   ========================================================= */
+
+async function setupRealtime(){
+
+  if(!currentUser || realtimeChannel) return;
+
+  realtimeChannel=
+    supabaseClient.channel("kaduna-world",{
+      config:{
+        presence:{
+          key:currentUser.id
+        }
+      }
+    });
+
+  realtimeChannel
+    .on(
+      "broadcast",
+      {event:"chat"},
+      ({payload})=>{
+        renderChatMessage(payload);
+      }
+    )
+    .on(
+      "broadcast",
+      {event:"movement"},
+      ({payload})=>{
+        showRemoteMovement(payload);
+      }
+    )
+    .on(
+      "presence",
+      {event:"sync"},
+      ()=>{
+        const state=realtimeChannel.presenceState();
+
+        const count=Object.keys(state).length;
+
+        document.title=
+          `Kaduna Life — V39 · ${count} online`;
+      }
+    );
+
+  realtimeChannel.subscribe(async(status)=>{
+
+    if(status==="SUBSCRIBED"){
+
+      await realtimeChannel.track({
+
+        user_id:currentUser.id,
+        name:game?.name||"Player",
+        x:game?.x||KADUNA_CENTER[0],
+        y:game?.y||KADUNA_CENTER[1]
+
+      });
+
+    }
+
+  });
+
+}
+
+async function broadcastMovement(){
+
+  if(!realtimeChannel || !game) return;
+
+  try{
+
+    await realtimeChannel.send({
+      type:"broadcast",
+      event:"movement",
+      payload:{
+        id:currentUser.id,
+        name:game.name,
+        x:game.x,
+        y:game.y
+      }
+    });
+
+  }catch(e){
+
+    console.warn(e);
+
+  }
+
+}
+
+function showRemoteMovement(payload){
+
+  if(!map || !payload) return;
+
+  if(payload.id===currentUser?.id) return;
+
+  if(!payload.x || !payload.y) return;
+
+  const marker=L.circleMarker(
+    [payload.x,payload.y],
+    {
+      radius:6
+    }
+  ).addTo(map);
+
+  marker.bindTooltip(
+    `👤 ${escapeHtml(payload.name||"Player")}`,
+    {permanent:false}
+  );
+
+  setTimeout(()=>{
+
+    if(map){
+
+      map.removeLayer(marker);
+
+    }
+
+  },8000);
+
+}
+
+async function sendChat(){
+
+  const input=document.getElementById("chatInput");
+
+  const text=input.value.trim();
+
+  if(!text) return;
+
+  const payload={
+    id:currentUser.id,
+    name:game.name,
+    text:text,
+    time:Date.now()
+  };
+
+  renderChatMessage(payload);
+
+  input.value="";
+
+  if(realtimeChannel){
+
+    try{
+
+      await realtimeChannel.send({
+        type:"broadcast",
+        event:"chat",
+        payload:payload
+      });
+
+    }catch(e){
+
+      console.warn(e);
+
+    }
+
+  }
+
+}
+
+function renderChatMessage(payload){
+
+  const box=document.getElementById("chatBox");
+
+  const div=document.createElement("div");
+
+  div.className="chatMessage";
+
+  div.innerHTML=`
+    <strong>${escapeHtml(payload.name||"Player")}</strong>
+    <div>${escapeHtml(payload.text||"")}</div>
+  `;
+
+  box.appendChild(div);
+
+  box.scrollTop=box.scrollHeight;
+
+}
+
+/* =========================================================
+   FEED
+   ========================================================= */
+
+function addFeed(icon,text){
+
+  if(!game) return;
+
+  game.feed.unshift({
+    icon,
+    text,
+    day:game.day,
+    time:Date.now()
+  });
+
+  game.feed=game.feed.slice(0,30);
+
+}
+
+function spend(amount){
+
+  game.stats.moneySpent+=amount;
+
+}
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
+
+function homeObject(){
+
+  return homes.find(h=>h.id===game.home)||homes[0];
+
+}
+
+function vehicleObject(){
+
+  return vehicles.find(v=>v.id===game.vehicle)||vehicles[0];
+
+}
+
+function netWorth(){
+
+  const home=homeObject();
+
+  const vehicle=vehicleObject();
+
+  const homeValue=home.price||0;
+  const vehicleValue=vehicle.price||0;
+
+  return Math.max(
+    0,
+    game.cash+
+    game.bank+
+    investmentValue()+
+    homeValue+
+    vehicleValue+
+    businessValue()-
+    game.loan
+  );
+
+}
+
+function businessValue(){
+
+  return businesses.reduce((total,b)=>{
+
+    return total+
+      (game.businesses[b.id]||0)*b.cost;
+
+  },0);
+
+}
+
+function money(value){
+
+  return "₦"+Number(value||0).toLocaleString(
+    "en-NG",
+    {
+      maximumFractionDigits:0
+    }
+  );
+
+}
+
+function clamp(value,min=0,max=100){
+
+  return Math.max(min,Math.min(max,value));
+
+}
+
+function capitalize(text){
+
+  return text.charAt(0).toUpperCase()+text.slice(1);
+
+}
+
+function escapeHtml(text){
+
+  return String(text)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+
+}
+
+function toast(message){
+
+  const box=document.getElementById("toast");
+
+  box.textContent=message;
+
+  box.classList.add("show");
+
+  clearTimeout(window.__toastTimer);
+
+  window.__toastTimer=setTimeout(()=>{
+    box.classList.remove("show");
+  },2600);
+
+}
+
+function autosave(){
+
+  if(Date.now()-lastSave>3000){
+
+    saveGame();
+
+  }
+
+}
+
+/* =========================================================
+   AUTO SAVE
+   ========================================================= */
+
+setInterval(()=>{
+
+  if(game && currentUser){
+
+    saveGame();
+
+  }
+
+},30000);
+
+/* =========================================================
+   NEED DECAY
+   ========================================================= */
+
+setInterval(()=>{
+
+  if(
+    game &&
+    currentUser &&
+    !document.hidden
+  ){
+
+    game.hunger=clamp(game.hunger-.5);
+    game.energy=clamp(game.energy-.2);
+    game.hygiene=clamp(game.hygiene-.3);
+    game.fun=clamp(game.fun-.15);
+    game.social=clamp(game.social-.12);
+
+    updateMood();
+
+    renderNeeds();
+
+    document.getElementById("topMood").textContent=
+      moodEmoji()+" "+moodText();
+
+  }
+
+},10000);
+
+/* =========================================================
+   REAL-DAY CHECK
+   ========================================================= */
+
+setInterval(()=>{
+
+  if(!game || !currentUser) return;
+
+  const today=new Date().toISOString().slice(0,10);
+
+  if(today!==game.lastRealDay){
+
+    game.lastRealDay=today;
+
+    advanceDay();
+
+    addFeed(
+      "📅",
+      "A new real-world day has started."
+    );
+
+    renderAll();
+    autosave();
+
+  }
+
+},60000);
+
+/* =========================================================
+   CHAT ENTER KEY
+   ========================================================= */
+
+document.addEventListener("keydown",event=>{
+
+  if(
+    event.key==="Enter" &&
+    document.activeElement?.id==="chatInput"
+  ){
+
+    sendChat();
+
+  }
+
+});
+
+/* =========================================================
+   STARTUP
+   ========================================================= */
+
+(async function(){
+
+  try{
+
+    const {data}=await supabaseClient.auth.getSession();
+
+    if(data?.session){
+
+      currentUser=data.session.user;
+
+      await loadPlayer();
+
+    }
+
+  }catch(error){
+
+    console.error(error);
+
+  }
+
+})();
+
+</script>
+
+</body>
+</html>
