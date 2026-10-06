@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kaduna Life — V11</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#0b1020;
+  color:#fff;
+}
+
+header{
+  padding:20px;
+  text-align:center;
+  background:linear-gradient(135deg,#182848,#4b6cb7);
+}
+
+header h1{margin:0;font-size:28px}
+header p{margin:7px 0 0;opacity:.85}
+
+.container{
+  max-width:1100px;
+  margin:auto;
+  padding:15px;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+  margin-bottom:15px;
+}
+
+.stat{
+  background:#151d33;
+  padding:13px;
+  border-radius:12px;
+  text-align:center;
+  border:1px solid #27304b;
+}
+
+.stat small{
+  display:block;
+  color:#9da8c5;
+  margin-bottom:5px;
+}
+
+.stat strong{font-size:18px}
+
+.card{
+  background:#121a2d;
+  border:1px solid #27304b;
+  border-radius:16px;
+  padding:16px;
+  margin-bottom:15px;
+}
+
+.card h2{margin-top:0}
+
+.map{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+
+.location{
+  background:#1b2743;
+  border:1px solid #354467;
+  border-radius:12px;
+  padding:15px;
+  cursor:pointer;
+}
+
+.location:hover{background:#243455}
+
+.location.active{
+  border:2px solid #6ea8fe;
+}
+
+.location h3{margin:0 0 5px}
+.location p{
+  margin:0;
+  color:#aeb9d4;
+  font-size:13px;
+}
+
+.buttons{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:9px;
+}
+
+button{
+  border:0;
+  border-radius:10px;
+  padding:12px;
+  background:#273b68;
+  color:white;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+button:hover{background:#38558e}
+
+button:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
+
+.jobs{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+
+.job{
+  background:#17233c;
+  border:1px solid #34425f;
+  border-radius:14px;
+  padding:15px;
+}
+
+.job h3{margin-top:0}
+
+.job p{
+  color:#aeb9d4;
+  font-size:14px;
+}
+
+.job.current{
+  border:2px solid #65d6a6;
+}
+
+.job.locked{
+  opacity:.65;
+}
+
+.badge{
+  display:inline-block;
+  background:#2c416d;
+  padding:5px 8px;
+  border-radius:20px;
+  font-size:12px;
+  margin:3px;
+}
+
+.green{background:#245b48}
+.red{background:#5c3030}
+
+.progress{
+  height:8px;
+  background:#30394d;
+  border-radius:20px;
+  overflow:hidden;
+  margin:7px 0 12px;
+}
+
+.progress div{
+  height:100%;
+  background:#65d6a6;
+}
+
+.log{
+  max-height:230px;
+  overflow-y:auto;
+  background:#0c1324;
+  padding:12px;
+  border-radius:10px;
+}
+
+.log p{
+  margin:7px 0;
+  border-bottom:1px solid #202a40;
+  padding-bottom:7px;
+  font-size:14px;
+}
+
+.people{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+
+.npc{
+  background:#1a243b;
+  border:1px solid #34425f;
+  border-radius:14px;
+  padding:14px;
+}
+
+.npc h3{margin:0 0 5px}
+
+.role{
+  color:#9faac5;
+  font-size:13px;
+}
+
+.dialogue{
+  margin-top:12px;
+  padding:15px;
+  background:#0d1528;
+  border-radius:12px;
+}
+
+.choice{
+  display:block;
+  width:100%;
+  text-align:left;
+  margin-top:8px;
+}
+
+.quest{
+  background:#17243d;
+  padding:12px;
+  border-radius:10px;
+  margin-bottom:8px;
+}
+
+@media(max-width:700px){
+
+  .stats{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .map{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .buttons{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .jobs,.people{
+    grid-template-columns:1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🏙️ Kaduna Life</h1>
+  <p>V11 — Jobs & Careers</p>
+</header>
+
+<div class="container">
+
+<div class="stats">
+
+<div class="stat">
+<small>💰 Money</small>
+<strong id="money">₦0</strong>
+</div>
+
+<div class="stat">
+<small>❤️ Health</small>
+<strong id="health">100</strong>
+</div>
+
+<div class="stat">
+<small>😊 Mood</small>
+<strong id="mood">70</strong>
+</div>
+
+<div class="stat">
+<small>⚡ Energy</small>
+<strong id="energy">80</strong>
+</div>
+
+<div class="stat">
+<small>📚 Education</small>
+<strong id="education">50</strong>
+</div>
+
+<div class="stat">
+<small>⭐ Reputation</small>
+<strong id="reputation">0</strong>
+</div>
+
+<div class="stat">
+<small>📅 Day</small>
+<strong id="day">1</strong>
+</div>
+
+<div class="stat">
+<small>📍 Location</small>
+<strong id="location">Barnawa</strong>
+</div>
+
+</div>
+
+<div class="card">
+
+<h2>💼 Current Career</h2>
+
+<div id="careerStatus"></div>
+
+</div>
+
+<div class="card">
+
+<h2>💼 Job Market</h2>
+
+<p>Build your education and reputation to unlock better careers.</p>
+
+<div id="jobs" class="jobs"></div>
+
+</div>
+
+<div class="card">
+
+<h2>🗺️ Kaduna Map</h2>
+
+<div class="map">
+
+<div class="location" onclick="travel('Barnawa')" id="loc-Barnawa">
+<h3>🏘️ Barnawa</h3>
+<p>Residential area</p>
+</div>
+
+<div class="location" onclick="travel('Kaduna Central')" id="loc-Kaduna Central">
+<h3>🏙️ Kaduna Central</h3>
+<p>Busy city centre</p>
+</div>
+
+<div class="location" onclick="travel('Kawo')" id="loc-Kawo">
+<h3>🛍️ Kawo</h3>
+<p>Markets & businesses</p>
+</div>
+
+<div class="location" onclick="travel('Sabon Tasha')" id="loc-Sabon Tasha">
+<h3>🏠 Sabon Tasha</h3>
+<p>Homes & shops</p>
+</div>
+
+<div class="location" onclick="travel('Unguwan Rimi')" id="loc-Unguwan Rimi">
+<h3>🌆 Unguwan Rimi</h3>
+<p>Urban neighbourhood</p>
+</div>
+
+<div class="location" onclick="travel('Malali')" id="loc-Malali">
+<h3>🌳 Malali</h3>
+<p>Quiet neighbourhood</p>
+</div>
+
+</div>
+</div>
+
+<div class="card">
+
+<h2>🎮 Actions</h2>
+
+<div class="buttons">
+
+<button onclick="work()">💼 Work</button>
+<button onclick="study()">📚 Study</button>
+<button onclick="eat()">🍛 Eat</button>
+<button onclick="rest()">😴 Rest</button>
+<button onclick="hangout()">😎 Hangout</button>
+<button onclick="explore()">🔎 Explore</button>
+<button onclick="saveGame()">💾 Save</button>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h2>👥 People Nearby</h2>
+
+<div id="people" class="people"></div>
+
+<div id="dialogue"></div>
+
+</div>
+
+<div class="card">
+
+<h2>📋 Opportunities</h2>
+
+<div id="quests"></div>
+
+</div>
+
+<div class="card">
+
+<h2>📜 Life Log</h2>
+
+<div id="log" class="log"></div>
+
+</div>
+
+</div>
+
+<script>
+
+const locations=[
+"Barnawa",
+"Kaduna Central",
+"Kawo",
+"Sabon Tasha",
+"Unguwan Rimi",
+"Malali"
+];
+
+const jobs={
+
+shopAssistant:{
+name:"Shop Assistant",
+icon:"🛒",
+salary:2500,
+education:20,
+reputation:0,
+experience:0,
+description:"Help customers, organize stock and assist a local shop owner."
+},
+
+driver:{
+name:"Driver",
+icon:"🚕",
+salary:3500,
+education:10,
+reputation:2,
+experience:0,
+description:"Work as a local driver and complete daily trips."
+},
+
+computerAssistant:{
+name:"Computer Assistant",
+icon:"💻",
+salary:5000,
+education:50,
+reputation:5,
+experience:0,
+description:"Help customers with computers and basic digital tasks."
+},
+
+officeAssistant:{
+name:"Office Assistant",
+icon:"🧑🏽‍💼",
+salary:6000,
+education:60,
+reputation:8,
+experience:0,
+description:"Handle office tasks, records and customer support."
+},
+
+juniorDeveloper:{
+name:"Junior Developer",
+icon:"👨🏽‍💻",
+salary:10000,
+education:75,
+reputation:15,
+experience:0,
+description:"Build websites and software while developing your skills."
+},
+
+businessAssistant:{
+name:"Business Assistant",
+icon:"📊",
+salary:12000,
+education:80,
+reputation:20,
+experience:0,
+description:"Assist with business operations and management."
+}
+
+};
+
+const npcDefaults={
+
+Aisha:{
+name:"Aisha",
+role:"Student",
+location:"Kaduna Central"
+},
+
+Musa:{
+name:"Musa",
+role:"Shopkeeper",
+location:"Kawo"
+},
+
+Zara:{
+name:"Zara",
+role:"Neighbour",
+location:"Barnawa"
+},
+
+Sadiq:{
+name:"Sadiq",
+role:"Mechanic",
+location:"Sabon Tasha"
+},
+
+Maryam:{
+name:"Maryam",
+role:"Student",
+location:"Malali"
+},
+
+Daniel:{
+name:"Daniel",
+role:"Job Recruiter",
+location:"Unguwan Rimi"
+}
+
+};
+
+let oldSave=
+JSON.parse(localStorage.getItem("kadunaLifeV10")||"{}");
+
+let previousSave=
+JSON.parse(localStorage.getItem("kadunaLifeV8")||"{}");
+
+let baseSave=
+Object.keys(oldSave).length?oldSave:previousSave;
+
+let game={
+
+money:baseSave.money ?? 15000,
+
+health:baseSave.health ?? 100,
+
+mood:baseSave.mood ?? 70,
+
+energy:baseSave.energy ?? 80,
+
+education:baseSave.education ?? 50,
+
+day:baseSave.day ?? 1,
+
+location:baseSave.location ?? "Barnawa",
+
+reputation:baseSave.reputation ?? 0,
+
+relationships:baseSave.relationships||{},
+
+quests:baseSave.quests||[],
+
+career:baseSave.career||null,
+
+careerLevel:baseSave.careerLevel||1,
+
+careerXP:baseSave.careerXP||0,
+
+log:baseSave.log||[
+"🏙️ Welcome to Kaduna Life V11.",
+"💼 The job market is now open."
+]
+
+};
+
+function clamp(v,min,max){
+return Math.max(min,Math.min(max,v));
+}
+
+function moneyFormat(v){
+return "₦"+Math.floor(v).toLocaleString();
+}
+
+function log(message){
+
+game.log.unshift(message);
+
+if(game.log.length>50)
+game.log.pop();
+
+renderLog();
+
+}
+
+function renderStats(){
+
+document.getElementById("money").textContent=
+moneyFormat(game.money);
+
+document.getElementById("health").textContent=
+game.health;
+
+document.getElementById("mood").textContent=
+game.mood;
+
+document.getElementById("energy").textContent=
+game.energy;
+
+document.getElementById("education").textContent=
+game.education;
+
+document.getElementById("reputation").textContent=
+game.reputation;
+
+document.getElementById("day").textContent=
+game.day;
+
+document.getElementById("location").textContent=
+game.location;
+
+locations.forEach(loc=>{
+
+const el=document.getElementById("loc-"+loc);
+
+if(el)
+el.classList.toggle("active",loc===game.location);
+
+});
+
+}
+
+function renderCareer(){
+
+const box=document.getElementById("careerStatus");
+
+if(!game.career){
+
+box.innerHTML=`
+
+<p>😴 You currently have no job.</p>
+
+<p>
+Visit the <strong>Job Market</strong> below and apply for a career.
+</p>
+
+`;
+
+return;
+
+}
+
+const job=jobs[game.career];
+
+const xpNeeded=game.careerLevel*100;
+
+const xpPercent=
+Math.min(100,(game.careerXP/xpNeeded)*100);
+
+box.innerHTML=`
+
+<div class="job current">
+
+<h3>
+${job.icon} ${job.name}
+</h3>
+
+<span class="badge green">
+Level ${game.careerLevel}
+</span>
+
+<span class="badge">
+${moneyFormat(job.salary)}/day
+</span>
+
+<p>${job.description}</p>
+
+<strong>📈 Experience</strong>
+
+<div class="progress">
+<div style="width:${xpPercent}%"></div>
+</div>
+
+<p>
+${game.careerXP} / ${xpNeeded} XP
+</p>
+
+<button onclick="quitJob()">
+🚪 Quit Job
+</button>
+
+</div>
+
+`;
+
+}
+
+function renderJobs(){
+
+const box=document.getElementById("jobs");
+
+box.innerHTML=
+Object.keys(jobs).map(key=>{
+
+const job=jobs[key];
+
+const employed=
+game.career===key;
+
+const educationOK=
+game.education>=job.education;
+
+const reputationOK=
+game.reputation>=job.reputation;
+
+const locked=
+!educationOK||!reputationOK;
+
+return`
+
+<div class="job ${employed?"current":""} ${locked?"locked":""}">
+
+<h3>
+${job.icon} ${job.name}
+</h3>
+
+<span class="badge">
+💰 ${moneyFormat(job.salary)}/day
+</span>
+
+<span class="badge">
+📚 Education ${job.education}+
+</span>
+
+<span class="badge">
+⭐ Reputation ${job.reputation}+
+</span>
+
+<p>${job.description}</p>
+
+${
+employed
+?
+`<button disabled>✅ Current Job</button>`
+
+:
+locked
+?
+`<button disabled>🔒 Requirements Not Met</button>`
+
+:
+`<button onclick="applyJob('${key}')">
+📝 Apply
+</button>`
+}
+
+</div>
+
+`;
+
+}).join("");
+
+}
+
+function applyJob(key){
+
+const job=jobs[key];
+
+if(game.career===key){
+
+log("💼 You already have this job.");
+return;
+
+}
+
+if(game.education<job.education){
+
+log(
+`📚 You need ${job.education} education for ${job.name}.`
+);
+
+return;
+
+}
+
+if(game.reputation<job.reputation){
+
+log(
+`⭐ You need ${job.reputation} reputation for ${job.name}.`
+);
+
+return;
+
+}
+
+if(game.career){
+
+log(
+`🔄 You left your previous job and became a ${job.name}.`
+);
+
+}else{
+
+log(
+`🎉 You got hired as a ${job.name}!`
+);
+
+}
+
+game.career=key;
+
+game.careerLevel=1;
+
+game.careerXP=0;
+
+game.mood=clamp(game.mood+5,0,100);
+
+saveGame();
+
+renderAll();
+
+}
+
+function quitJob(){
+
+if(!game.career)return;
+
+const job=jobs[game.career];
+
+log(
+`🚪 You quit your job as a ${job.name}.`
+);
+
+game.career=null;
+
+game.careerLevel=1;
+
+game.careerXP=0;
+
+saveGame();
+
+renderAll();
+
+}
+
+function work(){
+
+if(!game.career){
+
+log(
+"💼 You don't have a career yet. Visit the Job Market."
+);
+
+return;
+
+}
+
+if(game.energy<15){
+
+log("⚡ You're too tired to work.");
+
+return;
+
+}
+
+const job=jobs[game.career];
+
+game.money+=job.salary;
+
+game.energy-=15;
+
+game.mood=
+clamp(game.mood-2,0,100);
+
+game.careerXP+=25;
+
+game.day++;
+
+game.reputation+=1;
+
+log(
+`💼 You worked as a ${job.name} and earned ${moneyFormat(job.salary)}.`
+);
+
+checkPromotion();
+
+randomEvent();
+
+saveGame();
+
+renderAll();
+
+}
+
+function checkPromotion(){
+
+if(!game.career)return;
+
+const needed=
+game.careerLevel*100;
+
+if(game.careerXP>=needed){
+
+game.careerXP-=needed;
+
+game.careerLevel++;
+
+game.salaryBoost=game.careerLevel*500;
+
+game.reputation+=3;
+
+log(
+`🎉 PROMOTION! You reached Career Level ${game.careerLevel}!`
+);
+
+}
+
+}
+
+function study(){
+
+if(game.energy<10){
+
+log("⚡ You need more energy.");
+
+return;
+
+}
+
+game.education=
+clamp(game.education+4,0,100);
+
+game.energy-=10;
+
+game.day++;
+
+log(
+"📚 You studied and improved your education."
+);
+
+saveGame();
+
+renderAll();
+
+}
+
+function eat(){
+
+if(game.money<1000){
+
+log("💸 You don't have enough money for food.");
+
+return;
+
+}
+
+game.money-=1000;
+
+game.health=
+clamp(game.health+8,0,100);
+
+game.energy=
+clamp(game.energy+8,0,100);
+
+game.mood=
+clamp(game.mood+4,0,100);
+
+log("🍛 You bought food and had a good meal.");
+
+saveGame();
+
+renderAll();
+
+}
+
+function rest(){
+
+game.energy=
+clamp(game.energy+25,0,100);
+
+game.health=
+clamp(game.health+5,0,100);
+
+game.day++;
+
+log("😴 You rested and recovered.");
+
+randomEvent();
+
+saveGame();
+
+renderAll();
+
+}
+
+function hangout(){
+
+if(game.energy<8){
+
+log("⚡ You're too tired to hang out.");
+
+return;
+
+}
+
+game.energy-=8;
+
+game.mood=
+clamp(game.mood+12,0,100);
+
+game.reputation++;
+
+log(
+`😎 You hung out around ${game.location}.`
+);
+
+saveGame();
+
+renderAll();
+
+}
+
+function explore(){
+
+if(game.energy<12){
+
+log("⚡ You need more energy to explore.");
+
+return;
+
+}
+
+game.energy-=12;
+
+game.day++;
+
+const events=[
+
+"🔎 You discovered a new place nearby.",
+
+"🤝 You met someone who may become useful later.",
+
+"💼 You heard about a possible job opportunity.",
+
+"🏪 A local business owner noticed you.",
+
+"⭐ You helped someone and gained reputation."
+
+];
+
+const event=
+events[Math.floor(Math.random()*events.length)];
+
+log(event);
+
+game.reputation++;
+
+randomEvent();
+
+saveGame();
+
+renderAll();
+
+}
+
+function travel(destination){
+
+if(destination===game.location){
+
+log(`📍 You're already in ${destination}.`);
+return;
+
+}
+
+if(game.energy<5){
+
+log("⚡ Not enough energy to travel.");
+return;
+
+}
+
+if(game.money<500){
+
+log("💸 You need ₦500 for transport.");
+return;
+
+}
+
+game.money-=500;
+
+game.energy-=5;
+
+game.location=destination;
+
+log(
+`🚌 You travelled to ${destination}.`
+);
+
+saveGame();
+
+renderAll();
+
+}
+
+function randomEvent(){
+
+if(Math.random()>.4)return;
+
+const events=[
+
+()=>{
+game.money+=1000;
+log("💰 You received ₦1,000 from a small opportunity.");
+},
+
+()=>{
+game.mood=clamp(game.mood+5,0,100);
+log("😊 Something good happened and improved your mood.");
+},
+
+()=>{
+game.reputation+=2;
+log("⭐ Your reputation increased.");
+},
+
+()=>{
+game.money=Math.max(0,game.money-500);
+log("😅 An unexpected expense cost you ₦500.");
+}
+
+];
+
+events[Math.floor(Math.random()*events.length)]();
+
+}
+
+function renderPeople(){
+
+const box=document.getElementById("people");
+
+const nearby=
+Object.keys(npcDefaults)
+.filter(k=>npcDefaults[k].location===game.location);
+
+if(!nearby.length){
+
+box.innerHTML=
+"<p>No familiar NPCs are nearby.</p>";
+
+return;
+
+}
+
+box.innerHTML=nearby.map(key=>{
+
+const npc=npcDefaults[key];
+
+return`
+
+<div class="npc">
+
+<h3>👤 ${npc.name}</h3>
+
+<div class="role">${npc.role}</div>
+
+<br>
+
+<button onclick="talk('${key}')">
+💬 Talk
+</button>
+
+</div>
+
+`;
+
+}).join("");
+
+}
+
+function talk(key){
+
+const npc=npcDefaults[key];
+
+document.getElementById("dialogue").innerHTML=`
+
+<div class="dialogue">
+
+<strong>👤 ${npc.name}</strong>
+
+<p>
+"${npc.name} is happy to see you around."
+</p>
+
+<button class="choice"
+onclick="npcFriendly('${key}')">
+😊 Be friendly
+</button>
+
+<button class="choice"
+onclick="npcOpportunity('${key}')">
+💼 Ask about work
+</button>
+
+</div>
+
+`;
+
+}
+
+function npcFriendly(key){
+
+if(!game.relationships[key]){
+
+game.relationships[key]={
+friendship:20,
+trust:20
+};
+
+}
+
+game.relationships[key].friendship=
+clamp(
+(game.relationships[key].friendship||20)+5,
+0,100
+);
+
+game.relationships[key].trust=
+clamp(
+(game.relationships[key].trust||20)+3,
+0,100
+);
+
+game.mood=
+clamp(game.mood+3,0,100);
+
+log(
+`😊 You had a friendly conversation with ${npcDefaults[key].name}.`
+);
+
+document.getElementById("dialogue").innerHTML="";
+
+saveGame();
+
+renderAll();
+
+}
+
+function npcOpportunity(key){
+
+const npc=npcDefaults[key];
+
+if(npc.role==="Job Recruiter"){
+
+game.reputation+=2;
+
+log(
+`💼 ${npc.name} told you to check the Job Market for new opportunities.`
+);
+
+}else{
+
+log(
+`💬 ${npc.name} doesn't have a job opportunity right now.`
+);
+
+}
+
+document.getElementById("dialogue").innerHTML="";
+
+saveGame();
+
+renderAll();
+
+}
+
+function renderQuests(){
+
+const box=document.getElementById("quests");
+
+if(!game.quests.length){
+
+box.innerHTML=
+"<p>No active opportunities. Explore Kaduna and meet people.</p>";
+
+return;
+
+}
+
+box.innerHTML=
+game.quests.map(q=>
+`<div class="quest">📋 ${q}</div>`
+).join("");
+
+}
+
+function renderLog(){
+
+document.getElementById("log").innerHTML=
+game.log.map(x=>`<p>${x}</p>`).join("");
+
+}
+
+function saveGame(){
+
+localStorage.setItem(
+"kadunaLifeV11",
+JSON.stringify(game)
+);
+
+}
+
+function renderAll(){
+
+renderStats();
+renderCareer();
+renderJobs();
+renderPeople();
+renderQuests();
+renderLog();
+
+}
+
+renderAll();
+
+</script>
+
+</body>
+</html>
